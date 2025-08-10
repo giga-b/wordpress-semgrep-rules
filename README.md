@@ -8,6 +8,8 @@ Comprehensive security scanning rules for WordPress plugin and theme development
 
 ## Quick Start
 
+> **Note**: This project is now live on GitHub! Check out the [repository](https://github.com/giga-b/wordpress-semgrep-rules) for the latest updates.
+
 1. **Install Semgrep:**
    ```bash
    pip install semgrep
