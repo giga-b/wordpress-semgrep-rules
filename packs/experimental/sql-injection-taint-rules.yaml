@@ -1,0 +1,807 @@
+rules:
+  # =============================================================================
+  # SQL INJECTION TAINT ANALYSIS RULES
+  # =============================================================================
+  # This file contains advanced taint analysis rules specifically for detecting
+  # SQL injection vulnerabilities in WordPress applications. These rules go
+  # beyond simple pattern matching to track data flow from sources to sinks.
+  # =============================================================================
+
+  # =============================================================================
+  # SQL INJECTION TAINT SOURCES - WordPress-specific sources
+  # =============================================================================
+
+  # WordPress user input sources
+  - id: sql-taint-source-wp-user-input
+    message: "SQL injection taint source - WordPress user input"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_GET[...]
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress GET parameter input"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-post-input
+    message: "SQL injection taint source - WordPress POST input"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_POST[...]
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress POST parameter input"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-request-input
+    message: "SQL injection taint source - WordPress REQUEST input"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_REQUEST[...]
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress REQUEST parameter input"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-cookie-input
+    message: "SQL injection taint source - WordPress cookie input"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_COOKIE[...]
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress cookie input"
+      cwe: "CWE-89"
+
+  # WordPress API sources
+  - id: sql-taint-source-wp-rest-api
+    message: "SQL injection taint source - WordPress REST API input"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $request->get_param(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress REST API parameter input"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-ajax-input
+    message: "SQL injection taint source - WordPress AJAX input"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_ajax_...()
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress AJAX handler input"
+      cwe: "CWE-89"
+
+  # WordPress database sources
+  - id: sql-taint-source-wp-db-result
+    message: "SQL injection taint source - WordPress database result"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->get_results(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress database query result"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-db-row
+    message: "SQL injection taint source - WordPress database row"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->get_row(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress database row result"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-db-var
+    message: "SQL injection taint source - WordPress database variable"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->get_var(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress database variable result"
+      cwe: "CWE-89"
+
+  # WordPress options and metadata sources
+  - id: sql-taint-source-wp-option
+    message: "SQL injection taint source - WordPress option"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      get_option(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress option value"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-meta
+    message: "SQL injection taint source - WordPress metadata"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      get_post_meta(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress post metadata"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-user-meta
+    message: "SQL injection taint source - WordPress user metadata"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      get_user_meta(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress user metadata"
+      cwe: "CWE-89"
+
+  # External API sources
+  - id: sql-taint-source-wp-remote-get
+    message: "SQL injection taint source - WordPress remote GET response"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_remote_get(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress remote GET response"
+      cwe: "CWE-89"
+
+  - id: sql-taint-source-wp-remote-post
+    message: "SQL injection taint source - WordPress remote POST response"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_remote_post(...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "source"
+      description: "WordPress remote POST response"
+      cwe: "CWE-89"
+
+  # =============================================================================
+  # SQL INJECTION TAINT SINKS - WordPress-specific sinks
+  # =============================================================================
+
+  # WordPress database query sinks
+  - id: sql-taint-sink-wp-query
+    message: "SQL injection sink - WordPress database query with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->query($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress database query"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-prepare
+    message: "SQL injection sink - WordPress prepared statement with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->prepare($tainted_data, ...)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress prepared statement"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-get-results
+    message: "SQL injection sink - WordPress get_results with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->get_results($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_results"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-get-row
+    message: "SQL injection sink - WordPress get_row with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->get_row($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_row"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-get-var
+    message: "SQL injection sink - WordPress get_var with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->get_var($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_var"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-get-col
+    message: "SQL injection sink - WordPress get_col with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->get_col($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_col"
+      cwe: "CWE-89"
+
+  # WordPress database operation sinks
+  - id: sql-taint-sink-wp-insert
+    message: "SQL injection sink - WordPress insert with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->insert($table, $tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress insert"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-update
+    message: "SQL injection sink - WordPress update with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->update($table, $tainted_data, $where)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress update"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-delete
+    message: "SQL injection sink - WordPress delete with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->delete($table, $tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress delete"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-replace
+    message: "SQL injection sink - WordPress replace with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->replace($table, $tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress replace"
+      cwe: "CWE-89"
+
+  # WordPress function sinks
+  - id: sql-taint-sink-wp-get-posts
+    message: "SQL injection sink - WordPress get_posts with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      get_posts($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_posts"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-get-users
+    message: "SQL injection sink - WordPress get_users with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      get_users($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_users"
+      cwe: "CWE-89"
+
+  - id: sql-taint-sink-wp-get-terms
+    message: "SQL injection sink - WordPress get_terms with tainted data"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      get_terms($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in WordPress get_terms"
+      cwe: "CWE-89"
+
+  # =============================================================================
+  # SQL INJECTION TAINT SANITIZERS - WordPress-specific sanitizers
+  # =============================================================================
+
+  # WordPress SQL sanitizers
+  - id: sql-taint-sanitizer-wp-esc-sql
+    message: "SQL injection sanitizer - WordPress esc_sql"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      esc_sql($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress SQL escaping"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-wp-prepare
+    message: "SQL injection sanitizer - WordPress prepare with placeholders"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->prepare($query, $tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress prepared statement"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-wp-esc-like
+    message: "SQL injection sanitizer - WordPress esc_like"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->esc_like($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress LIKE escaping"
+      sanitizes: ["sql-injection"]
+
+  # WordPress input sanitizers
+  - id: sql-taint-sanitizer-wp-sanitize-text-field
+    message: "SQL injection sanitizer - WordPress sanitize_text_field"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_text_field($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress text field sanitization"
+      sanitizes: ["sql-injection", "xss"]
+
+  - id: sql-taint-sanitizer-wp-sanitize-email
+    message: "SQL injection sanitizer - WordPress sanitize_email"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_email($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress email sanitization"
+      sanitizes: ["sql-injection", "email-injection"]
+
+  - id: sql-taint-sanitizer-wp-sanitize-url
+    message: "SQL injection sanitizer - WordPress sanitize_url"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_url($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress URL sanitization"
+      sanitizes: ["sql-injection", "ssrf"]
+
+  - id: sql-taint-sanitizer-wp-sanitize-file-name
+    message: "SQL injection sanitizer - WordPress sanitize_file_name"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_file_name($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress filename sanitization"
+      sanitizes: ["sql-injection", "path-traversal"]
+
+  # WordPress validation functions
+  - id: sql-taint-sanitizer-wp-is-email
+    message: "SQL injection sanitizer - WordPress is_email"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      is_email($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress email validation"
+      sanitizes: ["email-injection"]
+
+  - id: sql-taint-sanitizer-wp-is-url
+    message: "SQL injection sanitizer - WordPress is_url"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      is_url($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress URL validation"
+      sanitizes: ["ssrf"]
+
+  # Type casting sanitizers
+  - id: sql-taint-sanitizer-type-cast-int
+    message: "SQL injection sanitizer - Integer type casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (int)$tainted_data
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "Integer type casting"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-type-cast-float
+    message: "SQL injection sanitizer - Float type casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (float)$tainted_data
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "Float type casting"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-type-cast-string
+    message: "SQL injection sanitizer - String type casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (string)$tainted_data
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "String type casting"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-type-cast-array
+    message: "SQL injection sanitizer - Array type casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (array)$tainted_data
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "Array type casting"
+      sanitizes: ["sql-injection"]
+
+  # WordPress type functions
+  - id: sql-taint-sanitizer-wp-intval
+    message: "SQL injection sanitizer - WordPress intval"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      intval($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress integer validation"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-wp-floatval
+    message: "SQL injection sanitizer - WordPress floatval"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      floatval($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress float validation"
+      sanitizes: ["sql-injection"]
+
+  - id: sql-taint-sanitizer-wp-strval
+    message: "SQL injection sanitizer - WordPress strval"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      strval($tainted_data)
+    metadata:
+      category: "sql-injection-taint"
+      type: "sanitizer"
+      description: "WordPress string validation"
+      sanitizes: ["sql-injection"]
+
+  # =============================================================================
+  # SQL INJECTION TAINT FLOW DETECTION - Advanced patterns
+  # =============================================================================
+
+  # Direct flow from user input to SQL query
+  - id: sql-taint-flow-direct-user-to-query
+    message: "SQL injection vulnerability - tainted user input flows directly to database query"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $wpdb->query($user_input);
+      - pattern: |
+          $user_input = $_POST[...];
+          $wpdb->query($user_input);
+      - pattern: |
+          $user_input = $_REQUEST[...];
+          $wpdb->query($user_input);
+    metadata:
+      category: "sql-injection-taint"
+      type: "flow"
+      vulnerability: "sql-injection"
+      description: "Direct flow from user input to SQL query"
+      cwe: "CWE-89"
+
+  # String concatenation flow
+  - id: sql-taint-flow-string-concatenation
+    message: "SQL injection vulnerability - tainted user input concatenated into SQL query"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $sql = "SELECT * FROM table WHERE id = " . $user_input;
+          $wpdb->query($sql);
+      - pattern: |
+          $user_input = $_POST[...];
+          $sql = "SELECT * FROM table WHERE name = '$user_input'";
+          $wpdb->query($sql);
+      - pattern: |
+          $user_input = $_REQUEST[...];
+          $sql = "SELECT * FROM table WHERE email = '$user_input'";
+          $wpdb->query($sql);
+    metadata:
+      category: "sql-injection-taint"
+      type: "flow"
+      vulnerability: "sql-injection"
+      description: "String concatenation flow to SQL query"
+      cwe: "CWE-89"
+
+  # Dynamic table name flow
+  - id: sql-taint-flow-dynamic-table
+    message: "SQL injection vulnerability - tainted user input used as table name"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $table_name = $_GET[...];
+          $wpdb->query("SELECT * FROM $table_name");
+      - pattern: |
+          $table_name = $_POST[...];
+          $wpdb->query("SELECT * FROM $table_name");
+      - pattern: |
+          $table_name = $_REQUEST[...];
+          $wpdb->query("SELECT * FROM $table_name");
+    metadata:
+      category: "sql-injection-taint"
+      type: "flow"
+      vulnerability: "sql-injection"
+      description: "Dynamic table name flow"
+      cwe: "CWE-89"
+
+  # WordPress function flow
+  - id: sql-taint-flow-wp-function
+    message: "SQL injection vulnerability - tainted user input flows to WordPress function"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          get_posts($user_input);
+      - pattern: |
+          $user_input = $_POST[...];
+          get_users($user_input);
+      - pattern: |
+          $user_input = $_REQUEST[...];
+          get_terms($user_input);
+    metadata:
+      category: "sql-injection-taint"
+      type: "flow"
+      vulnerability: "sql-injection"
+      description: "WordPress function flow"
+      cwe: "CWE-89"
+
+  # =============================================================================
+  # SQL INJECTION TAINT BYPASS DETECTION - Advanced evasion techniques
+  # =============================================================================
+
+  # Obfuscated string concatenation
+  - id: sql-taint-bypass-obfuscated-concatenation
+    message: "SQL injection bypass attempt - obfuscated string concatenation"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $sql = "SELECT * FROM table WHERE id = " . $user_input . "";
+          $wpdb->query($sql);
+      - pattern: |
+          $user_input = $_POST[...];
+          $sql = "SELECT * FROM table WHERE name = '" . $user_input . "'";
+          $wpdb->query($sql);
+    metadata:
+      category: "sql-injection-taint"
+      type: "bypass"
+      vulnerability: "sql-injection"
+      description: "Obfuscated string concatenation"
+      cwe: "CWE-89"
+
+  # Variable assignment bypass
+  - id: sql-taint-bypass-variable-assignment
+    message: "SQL injection bypass attempt - variable assignment to hide taint"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $temp = $user_input;
+          $wpdb->query("SELECT * FROM table WHERE id = $temp");
+      - pattern: |
+          $user_input = $_POST[...];
+          $temp = $user_input;
+          $wpdb->query("SELECT * FROM table WHERE name = '$temp'");
+    metadata:
+      category: "sql-injection-taint"
+      type: "bypass"
+      vulnerability: "sql-injection"
+      description: "Variable assignment bypass"
+      cwe: "CWE-89"
+
+  # Function call bypass
+  - id: sql-taint-bypass-function-call
+    message: "SQL injection bypass attempt - function call to hide taint"
+    severity: ERROR
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $processed = some_function($user_input);
+          $wpdb->query("SELECT * FROM table WHERE id = $processed");
+      - pattern: |
+          $user_input = $_POST[...];
+          $processed = another_function($user_input);
+          $wpdb->query("SELECT * FROM table WHERE name = '$processed'");
+    metadata:
+      category: "sql-injection-taint"
+      type: "bypass"
+      vulnerability: "sql-injection"
+      description: "Function call bypass"
+      cwe: "CWE-89"
+
+  # =============================================================================
+  # SQL INJECTION TAINT SAFE PATTERNS - Exclusions
+  # =============================================================================
+
+  # Safe prepared statement patterns
+  - id: sql-taint-safe-prepared-statement
+    message: "Safe SQL pattern - proper prepared statement usage"
+    severity: INFO
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $wpdb->prepare("SELECT * FROM table WHERE id = %d", $user_input);
+      - pattern: |
+          $user_input = $_POST[...];
+          $wpdb->prepare("SELECT * FROM table WHERE name = %s", $user_input);
+      - pattern: |
+          $user_input = $_REQUEST[...];
+          $wpdb->prepare("SELECT * FROM table WHERE email = %s", $user_input);
+    metadata:
+      category: "sql-injection-taint"
+      type: "safe"
+      description: "Safe prepared statement usage"
+
+  # Safe sanitization patterns
+  - id: sql-taint-safe-sanitization
+    message: "Safe SQL pattern - proper sanitization before query"
+    severity: INFO
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $safe_input = esc_sql($user_input);
+          $wpdb->query("SELECT * FROM table WHERE id = $safe_input");
+      - pattern: |
+          $user_input = $_POST[...];
+          $safe_input = sanitize_text_field($user_input);
+          $wpdb->query("SELECT * FROM table WHERE name = '$safe_input'");
+    metadata:
+      category: "sql-injection-taint"
+      type: "safe"
+      description: "Safe sanitization usage"
+
+  # Safe type casting patterns
+  - id: sql-taint-safe-type-casting
+    message: "Safe SQL pattern - proper type casting before query"
+    severity: INFO
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          $safe_input = (int)$user_input;
+          $wpdb->query("SELECT * FROM table WHERE id = $safe_input");
+      - pattern: |
+          $user_input = $_POST[...];
+          $safe_input = intval($user_input);
+          $wpdb->query("SELECT * FROM table WHERE id = $safe_input");
+    metadata:
+      category: "sql-injection-taint"
+      type: "safe"
+      description: "Safe type casting usage"
+
+  # Safe validation patterns
+  - id: sql-taint-safe-validation
+    message: "Safe SQL pattern - proper validation before query"
+    severity: INFO
+    languages: [php]
+    patterns:
+      - pattern: |
+          $user_input = $_GET[...];
+          if (is_numeric($user_input)) {
+              $wpdb->query("SELECT * FROM table WHERE id = $user_input");
+          }
+      - pattern: |
+          $user_input = $_POST[...];
+          if (is_email($user_input)) {
+              $wpdb->query("SELECT * FROM table WHERE email = '$user_input'");
+          }
+    metadata:
+      category: "sql-injection-taint"
+      type: "safe"
+      description: "Safe validation usage"

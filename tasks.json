@@ -209,7 +209,7 @@
         "dependencies": [],
         "estimated_hours": 12,
         "category": "taint-analysis",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.257998"
       },
       {
@@ -439,7 +439,7 @@
     ],
     "metadata": {
       "created": "2025-08-10T05:21:42.265Z",
-      "updated": "2025-08-10T07:52:12.168Z",
+      "updated": "2025-08-10T07:57:32.972Z",
       "description": "Tasks for master context"
     }
   }
