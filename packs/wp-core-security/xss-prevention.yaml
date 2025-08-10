@@ -1,0 +1,578 @@
+rules:
+  # XSS Prevention Rules - Context-Aware Escaping
+  
+  # HTML Context - Direct Output Without Escaping
+  - id: wordpress.xss.unsafe-html-output
+    languages: [php]
+    message: "Unsafe HTML output without escaping. Use esc_html() for safe HTML output."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects direct output of user input in HTML context without proper escaping"
+    patterns:
+      - pattern: |
+          $user_input = $_GET['input'];
+          echo $user_input;
+      - pattern: |
+          $user_input = $_POST['input'];
+          print $user_input;
+      - pattern: |
+          $user_input = $_REQUEST['input'];
+          echo "<div>" . $user_input . "</div>";
+      - pattern-not: |
+          $user_input = esc_html($_GET['input']);
+          echo $user_input;
+      - pattern-not: |
+          $user_input = wp_kses_post($_POST['input']);
+          echo $user_input;
+      - pattern-not: |
+          $user_input = sanitize_text_field($_REQUEST['input']);
+          echo "<div>" . $user_input . "</div>";
+
+  # HTML Attribute Context - Unsafe Attribute Values
+  - id: wordpress.xss.unsafe-attribute
+    languages: [php]
+    message: "Unsafe attribute value without escaping. Use esc_attr() for safe attribute values."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects user input used in HTML attributes without proper escaping"
+    patterns:
+      - pattern: |
+          $value = $_GET['value'];
+          echo "<input value='" . $value . "'>";
+      - pattern: |
+          $title = $_POST['title'];
+          echo "<div title='" . $title . "'>Content</div>";
+      - pattern: |
+          $class = $_REQUEST['class'];
+          echo "<span class='" . $class . "'>Text</span>";
+      - pattern-not: |
+          $value = esc_attr($_GET['value']);
+          echo "<input value='" . $value . "'>";
+      - pattern-not: |
+          $title = sanitize_text_field($_POST['title']);
+          echo "<div title='" . $title . "'>Content</div>";
+
+  # URL Context - Unsafe URLs
+  - id: wordpress.xss.unsafe-url
+    languages: [php]
+    message: "Unsafe URL without validation. Use esc_url() for safe URLs."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects user input used as URLs without proper validation"
+    patterns:
+      - pattern: |
+          $url = $_GET['url'];
+          echo "<a href='" . $url . "'>Link</a>";
+      - pattern: |
+          $redirect = $_POST['redirect'];
+          echo "<meta http-equiv='refresh' content='0;url=" . $redirect . "'>";
+      - pattern: |
+          $image_url = $_REQUEST['image'];
+          echo "<img src='" . $image_url . "'>";
+      - pattern-not: |
+          $url = esc_url($_GET['url']);
+          echo "<a href='" . $url . "'>Link</a>";
+      - pattern-not: |
+          $redirect = esc_url_raw($_POST['redirect']);
+          echo "<meta http-equiv='refresh' content='0;url=" . $redirect . "'>";
+
+  # JavaScript Context - Unsafe JavaScript
+  - id: wordpress.xss.unsafe-javascript
+    languages: [php]
+    message: "Unsafe JavaScript output. Use esc_js() for safe JavaScript values."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects user input output in JavaScript context without proper escaping"
+    patterns:
+      - pattern: |
+          $data = $_GET['data'];
+          echo "<script>var data = '" . $data . "';</script>";
+      - pattern: |
+          $message = $_POST['message'];
+          echo "<script>alert('" . $message . "');</script>";
+      - pattern: |
+          $value = $_REQUEST['value'];
+          echo "<script>document.getElementById('input').value = '" . $value . "';</script>";
+      - pattern-not: |
+          $data = esc_js($_GET['data']);
+          echo "<script>var data = '" . $data . "';</script>";
+      - pattern-not: |
+          $message = wp_json_encode($_POST['message']);
+          echo "<script>alert(" . $message . ");</script>";
+
+  # CSS Context - Unsafe CSS
+  - id: wordpress.xss.unsafe-css
+    languages: [php]
+    message: "Unsafe CSS output. Use sanitize_hex_color() or esc_attr() for safe CSS values."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects user input used in CSS context without proper validation"
+    patterns:
+      - pattern: |
+          $color = $_GET['color'];
+          echo "<div style='color: " . $color . "'>Content</div>";
+      - pattern: |
+          $background = $_POST['background'];
+          echo "<span style='background-color: " . $background . "'>Text</span>";
+      - pattern: |
+          $size = $_REQUEST['size'];
+          echo "<p style='font-size: " . $size . "'>Text</p>";
+      - pattern-not: |
+          $color = sanitize_hex_color($_GET['color']);
+          echo "<div style='color: " . $color . "'>Content</div>";
+      - pattern-not: |
+          $background = esc_attr($_POST['background']);
+          echo "<span style='background-color: " . $background . "'>Text</span>";
+
+  # Form Input Context - Unsafe Form Values
+  - id: wordpress.xss.unsafe-form-value
+    languages: [php]
+    message: "Unsafe form value without escaping. Use esc_attr() for safe form values."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects user input used as form values without proper escaping"
+    patterns:
+      - pattern: |
+          $value = $_POST['value'];
+          echo "<input type='text' value='" . $value . "'>";
+      - pattern: |
+          $selected = $_GET['selected'];
+          echo "<option value='1' " . ($selected == '1' ? 'selected' : '') . ">Option</option>";
+      - pattern-not: |
+          $value = esc_attr($_POST['value']);
+          echo "<input type='text' value='" . $value . "'>";
+      - pattern-not: |
+          $selected = sanitize_text_field($_GET['selected']);
+          echo "<option value='1' " . ($selected == '1' ? 'selected' : '') . ">Option</option>";
+
+  # Content Context - Unsafe Content Output
+  - id: wordpress.xss.unsafe-content
+    languages: [php]
+    message: "Unsafe content output. Use wp_kses_post() for safe HTML content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects user input output as content without proper sanitization"
+    patterns:
+      - pattern: |
+          $content = $_POST['content'];
+          echo "<div class='content'>" . $content . "</div>";
+      - pattern: |
+          $description = $_GET['description'];
+          echo "<p>" . $description . "</p>";
+      - pattern-not: |
+          $content = wp_kses_post($_POST['content']);
+          echo "<div class='content'>" . $content . "</div>";
+      - pattern-not: |
+          $description = esc_html($_GET['description']);
+          echo "<p>" . $description . "</p>";
+
+  # Database Output - Unsafe Database Output
+  - id: wordpress.xss.unsafe-db-output
+    languages: [php]
+    message: "Unsafe database output without escaping. Use esc_html() or wp_kses_post() for safe output."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects database query results output without proper escaping"
+    patterns:
+      - pattern: |
+          $result = $wpdb->get_row("SELECT * FROM posts WHERE id = 1");
+          echo "<h1>" . $result->title . "</h1>";
+      - pattern: |
+          $posts = $wpdb->get_results("SELECT * FROM posts");
+          foreach ($posts as $post) {
+              echo "<div>" . $post->content . "</div>";
+          }
+      - pattern-not: |
+          $result = $wpdb->get_row("SELECT * FROM posts WHERE id = 1");
+          echo "<h1>" . esc_html($result->title) . "</h1>";
+      - pattern-not: |
+          $posts = $wpdb->get_results("SELECT * FROM posts");
+          foreach ($posts as $post) {
+              echo "<div>" . wp_kses_post($post->content) . "</div>";
+          }
+
+  # AJAX Response - Unsafe AJAX Output
+  - id: wordpress.xss.unsafe-ajax-output
+    languages: [php]
+    message: "Unsafe AJAX response without escaping. Use wp_json_encode() or esc_html() for safe AJAX responses."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects AJAX responses with unescaped user data"
+    patterns:
+      - pattern: |
+          $data = $_POST['data'];
+          wp_send_json_success($data);
+      - pattern: |
+          $message = $_GET['message'];
+          echo json_encode(['message' => $message]);
+      - pattern-not: |
+          $data = sanitize_text_field($_POST['data']);
+          wp_send_json_success($data);
+      - pattern-not: |
+          $message = esc_html($_GET['message']);
+          echo wp_json_encode(['message' => $message]);
+
+  # REST API Response - Unsafe REST Output
+  - id: wordpress.xss.unsafe-rest-output
+    languages: [php]
+    message: "Unsafe REST API response without escaping. Use wp_json_encode() or esc_html() for safe REST responses."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects REST API responses with unescaped user data"
+    patterns:
+      - pattern: |
+          $content = $_POST['content'];
+          return new WP_REST_Response(['content' => $content], 200);
+      - pattern: |
+          $title = $_GET['title'];
+          return rest_ensure_response(['title' => $title]);
+      - pattern-not: |
+          $content = wp_kses_post($_POST['content']);
+          return new WP_REST_Response(['content' => $content], 200);
+      - pattern-not: |
+          $title = esc_html($_GET['title']);
+          return rest_ensure_response(['title' => $title]);
+
+  # Template Context - Unsafe Template Variables
+  - id: wordpress.xss.unsafe-template
+    languages: [php]
+    message: "Unsafe template variable without escaping. Use esc_html() or wp_kses_post() for safe template output."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects template variables output without proper escaping"
+    patterns:
+      - pattern: |
+          $title = get_post_meta($post_id, 'custom_title', true);
+          echo "<h1>" . $title . "</h1>";
+      - pattern: |
+          $description = get_option('site_description');
+          echo "<meta name='description' content='" . $description . "'>";
+      - pattern-not: |
+          $title = esc_html(get_post_meta($post_id, 'custom_title', true));
+          echo "<h1>" . $title . "</h1>";
+      - pattern-not: |
+          $description = esc_attr(get_option('site_description'));
+          echo "<meta name='description' content='" . $description . "'>";
+
+  # Widget Output - Unsafe Widget Content
+  - id: wordpress.xss.unsafe-widget
+    languages: [php]
+    message: "Unsafe widget output without escaping. Use esc_html() or wp_kses_post() for safe widget content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects widget content output without proper escaping"
+    patterns:
+      - pattern: |
+          $widget_text = $instance['text'];
+          echo "<div class='widget-content'>" . $widget_text . "</div>";
+      - pattern: |
+          $widget_title = $instance['title'];
+          echo "<h3>" . $widget_title . "</h3>";
+      - pattern-not: |
+          $widget_text = wp_kses_post($instance['text']);
+          echo "<div class='widget-content'>" . $widget_text . "</div>";
+      - pattern-not: |
+          $widget_title = esc_html($instance['title']);
+          echo "<h3>" . $widget_title . "</h3>";
+
+  # Shortcode Output - Unsafe Shortcode Content
+  - id: wordpress.xss.unsafe-shortcode
+    languages: [php]
+    message: "Unsafe shortcode output without escaping. Use esc_html() or wp_kses_post() for safe shortcode content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects shortcode content output without proper escaping"
+    patterns:
+      - pattern: |
+          $content = $atts['content'];
+          return "<div class='shortcode'>" . $content . "</div>";
+      - pattern: |
+          $title = $atts['title'];
+          return "<h2>" . $title . "</h2>";
+      - pattern-not: |
+          $content = wp_kses_post($atts['content']);
+          return "<div class='shortcode'>" . $content . "</div>";
+      - pattern-not: |
+          $title = esc_html($atts['title']);
+          return "<h2>" . $title . "</h2>";
+
+  # Admin Output - Unsafe Admin Content
+  - id: wordpress.xss.unsafe-admin
+    languages: [php]
+    message: "Unsafe admin output without escaping. Use esc_html() or wp_kses_post() for safe admin content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects admin page content output without proper escaping"
+    patterns:
+      - pattern: |
+          $admin_message = $_GET['message'];
+          echo "<div class='notice'>" . $admin_message . "</div>";
+      - pattern: |
+          $error_msg = $_POST['error'];
+          echo "<div class='error'>" . $error_msg . "</div>";
+      - pattern-not: |
+          $admin_message = esc_html($_GET['message']);
+          echo "<div class='notice'>" . $admin_message . "</div>";
+      - pattern-not: |
+          $error_msg = wp_kses_post($_POST['error']);
+          echo "<div class='error'>" . $error_msg . "</div>";
+
+  # Email Content - Unsafe Email Output
+  - id: wordpress.xss.unsafe-email
+    languages: [php]
+    message: "Unsafe email content without escaping. Use esc_html() for safe email content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects email content with unescaped user data"
+    patterns:
+      - pattern: |
+          $email_content = $_POST['email_content'];
+          wp_mail($to, $subject, $email_content);
+      - pattern: |
+          $message = $_GET['message'];
+          $headers = "Content-Type: text/html; charset=UTF-8";
+          wp_mail($to, $subject, $message, $headers);
+      - pattern-not: |
+          $email_content = esc_html($_POST['email_content']);
+          wp_mail($to, $subject, $email_content);
+      - pattern-not: |
+          $message = wp_kses_post($_GET['message']);
+          $headers = "Content-Type: text/html; charset=UTF-8";
+          wp_mail($to, $subject, $message, $headers);
+
+  # Logging - Unsafe Log Output
+  - id: wordpress.xss.unsafe-logging
+    languages: [php]
+    message: "Unsafe logging without escaping. Use esc_html() for safe log messages."
+    severity: WARNING
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects log messages with unescaped user data"
+    patterns:
+      - pattern: |
+          $user_data = $_POST['data'];
+          error_log("User submitted: " . $user_data);
+      - pattern: |
+          $input = $_GET['input'];
+          trigger_error("Invalid input: " . $input, E_USER_WARNING);
+      - pattern-not: |
+          $user_data = esc_html($_POST['data']);
+          error_log("User submitted: " . $user_data);
+      - pattern-not: |
+          $input = sanitize_text_field($_GET['input']);
+          trigger_error("Invalid input: " . $input, E_USER_WARNING);
+
+  # File Content - Unsafe File Output
+  - id: wordpress.xss.unsafe-file-output
+    languages: [php]
+    message: "Unsafe file content output without escaping. Use esc_html() for safe file content display."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects file content output without proper escaping"
+    patterns:
+      - pattern: |
+          $file_content = file_get_contents($file_path);
+          echo "<pre>" . $file_content . "</pre>";
+      - pattern: |
+          $log_content = file_get_contents($log_file);
+          echo "<div class='log'>" . $log_content . "</div>";
+      - pattern-not: |
+          $file_content = esc_html(file_get_contents($file_path));
+          echo "<pre>" . $file_content . "</pre>";
+      - pattern-not: |
+          $log_content = esc_html(file_get_contents($log_file));
+          echo "<div class='log'>" . $log_content . "</div>";
+
+  # Comment Content - Unsafe Comment Output
+  - id: wordpress.xss.unsafe-comment
+    languages: [php]
+    message: "Unsafe comment output without escaping. Use esc_html() or wp_kses_post() for safe comment display."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects comment content output without proper escaping"
+    patterns:
+      - pattern: |
+          $comment_content = $comment->comment_content;
+          echo "<div class='comment'>" . $comment_content . "</div>";
+      - pattern: |
+          $comment_author = $comment->comment_author;
+          echo "<span class='author'>" . $comment_author . "</span>";
+      - pattern-not: |
+          $comment_content = wp_kses_post($comment->comment_content);
+          echo "<div class='comment'>" . $comment_content . "</div>";
+      - pattern-not: |
+          $comment_author = esc_html($comment->comment_author);
+          echo "<span class='author'>" . $comment_author . "</span>";
+
+  # Meta Data - Unsafe Meta Output
+  - id: wordpress.xss.unsafe-meta
+    languages: [php]
+    message: "Unsafe meta data output without escaping. Use esc_attr() for safe meta content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects meta tag content output without proper escaping"
+    patterns:
+      - pattern: |
+          $meta_description = get_post_meta($post_id, 'description', true);
+          echo "<meta name='description' content='" . $meta_description . "'>";
+      - pattern: |
+          $meta_keywords = get_option('site_keywords');
+          echo "<meta name='keywords' content='" . $meta_keywords . "'>";
+      - pattern-not: |
+          $meta_description = esc_attr(get_post_meta($post_id, 'description', true));
+          echo "<meta name='description' content='" . $meta_description . "'>";
+      - pattern-not: |
+          $meta_keywords = esc_attr(get_option('site_keywords'));
+          echo "<meta name='keywords' content='" . $meta_keywords . "'>";
+
+  # JSON Output - Unsafe JSON
+  - id: wordpress.xss.unsafe-json
+    languages: [php]
+    message: "Unsafe JSON output without proper encoding. Use wp_json_encode() for safe JSON responses."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects JSON output with unescaped user data"
+    patterns:
+      - pattern: |
+          $data = $_POST['data'];
+          echo json_encode(['result' => $data]);
+      - pattern: |
+          $message = $_GET['message'];
+          echo '{"message": "' . $message . '"}';
+      - pattern-not: |
+          $data = sanitize_text_field($_POST['data']);
+          echo wp_json_encode(['result' => $data]);
+      - pattern-not: |
+          $message = esc_html($_GET['message']);
+          echo wp_json_encode(['message' => $message]);
+
+  # XML Output - Unsafe XML
+  - id: wordpress.xss.unsafe-xml
+    languages: [php]
+    message: "Unsafe XML output without escaping. Use esc_html() for safe XML content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects XML output with unescaped user data"
+    patterns:
+      - pattern: |
+          $title = $_POST['title'];
+          echo "<title>" . $title . "</title>";
+      - pattern: |
+          $content = $_GET['content'];
+          echo "<content>" . $content . "</content>";
+      - pattern-not: |
+          $title = esc_html($_POST['title']);
+          echo "<title>" . $title . "</title>";
+      - pattern-not: |
+          $content = esc_html($_GET['content']);
+          echo "<content>" . $content . "</content>";
+
+  # RSS Feed - Unsafe RSS Output
+  - id: wordpress.xss.unsafe-rss
+    languages: [php]
+    message: "Unsafe RSS output without escaping. Use esc_html() for safe RSS content."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects RSS feed output with unescaped user data"
+    patterns:
+      - pattern: |
+          $rss_title = $_POST['rss_title'];
+          echo "<title>" . $rss_title . "</title>";
+      - pattern: |
+          $rss_description = $_GET['rss_description'];
+          echo "<description>" . $rss_description . "</description>";
+      - pattern-not: |
+          $rss_title = esc_html($_POST['rss_title']);
+          echo "<title>" . $rss_title . "</title>";
+      - pattern-not: |
+          $rss_description = esc_html($_GET['rss_description']);
+          echo "<description>" . $rss_description . "</description>";
+
+  # API Response Headers - Unsafe Headers
+  - id: wordpress.xss.unsafe-headers
+    languages: [php]
+    message: "Unsafe HTTP headers without escaping. Use esc_html() for safe header values."
+    severity: ERROR
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects HTTP headers with unescaped user data"
+    patterns:
+      - pattern: |
+          $header_value = $_GET['header'];
+          header("X-Custom-Header: " . $header_value);
+      - pattern: |
+          $cookie_value = $_POST['cookie'];
+          setcookie("custom_cookie", $cookie_value);
+      - pattern-not: |
+          $header_value = esc_html($_GET['header']);
+          header("X-Custom-Header: " . $header_value);
+      - pattern-not: |
+          $cookie_value = sanitize_text_field($_POST['cookie']);
+          setcookie("custom_cookie", $cookie_value);
+
+  # Debug Output - Unsafe Debug
+  - id: wordpress.xss.unsafe-debug
+    languages: [php]
+    message: "Unsafe debug output without escaping. Use esc_html() for safe debug information."
+    severity: WARNING
+    metadata:
+      category: "xss-prevention"
+      cwe: "CWE-79"
+      description: "Detects debug output with unescaped user data"
+    patterns:
+      - pattern: |
+          $debug_data = $_POST['debug'];
+          var_dump($debug_data);
+      - pattern: |
+          $debug_info = $_GET['debug'];
+          print_r($debug_info);
+      - pattern-not: |
+          $debug_data = esc_html($_POST['debug']);
+          var_dump($debug_data);
+      - pattern-not: |
+          $debug_info = esc_html($_GET['debug']);
+          print_r($debug_info);

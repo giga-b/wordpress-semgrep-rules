@@ -2,6 +2,13 @@
 # Essential security rules for WordPress development with minimal false positives
 # Optimized for CI/CD integration and fast scanning performance
 
+# Include rule packs
+include:
+  - packs/wp-core-security/nonce-verification.yaml
+  - packs/wp-core-security/capability-checks.yaml
+  - packs/wp-core-security/sanitization-functions.yaml
+  - packs/wp-core-security/xss-prevention.yaml
+
 rules:
   # ============================================================================
   # NONCE VERIFICATION RULES
@@ -174,31 +181,8 @@ rules:
   # SQL INJECTION PREVENTION
   # ============================================================================
   
-  - id: wordpress.sql-injection.direct-query
-    languages: [php]
-    message: "Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $wpdb->query("SELECT * FROM $wpdb->posts WHERE ID = " . $_GET['id']);
-      - pattern-not: |
-          $wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID = %d", $_GET['id']);
-
-  - id: wordpress.sql-injection.unsafe-insert
-    languages: [php]
-    message: "Unsafe database insert with user input. Use $wpdb->prepare() for safe inserts."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $wpdb->query("INSERT INTO posts (title, content) VALUES ('$title', '$content')");
-      - pattern-not: |
-          $wpdb->prepare("INSERT INTO posts (title, content) VALUES (%s, %s)", $title, $content);
+  # Include comprehensive SQL injection rules
+  - include: "../packs/wp-core-security/sql-injection.yaml"
 
   # ============================================================================
   # XSS PREVENTION

@@ -171,8 +171,9 @@
         ],
         "estimated_hours": 16,
         "category": "rules",
-        "status": "in-progress",
-        "created": "2025-08-10T00:26:06.257991"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.257991",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 13,
