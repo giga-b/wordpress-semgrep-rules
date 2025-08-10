@@ -58,14 +58,34 @@ The extension can be configured in VS Code settings:
 - `wordpressSemgrep.rulesPath`: Path to your custom rules directory
 - `wordpressSemgrep.severity`: Minimum severity level to display
 
-## 📊 HTML Dashboard
+## 📊 HTML Dashboards
 
-### What You Get
-A beautiful, interactive web dashboard that displays:
-- Security scan metrics and statistics
-- Performance data and trends
-- Rule effectiveness analysis
-- Visual charts and graphs
+### **Two Different Dashboards for Different Users**
+
+#### 1. **Developer/Admin Dashboard** (`dashboard/index.html`)
+**For:** Project maintainers, rule developers, and administrators
+
+**Shows:**
+- Overall performance metrics and trends
+- Rule effectiveness statistics across all scans
+- False positive analysis over time
+- Aggregate scan performance data
+- Rule pack performance comparisons
+
+**Use Case:** "How well are our rules performing overall?"
+
+#### 2. **User Scan Results Dashboard** (`dashboard/user-dashboard.html`)
+**For:** End users scanning their own code
+
+**Shows:**
+- Individual scan results from your codebase
+- Specific security findings with file locations
+- Code snippets showing the problematic code
+- Step-by-step fix suggestions
+- Rule explanations and context
+- Export options for reports
+
+**Use Case:** "What security issues are in my code and how do I fix them?"
 
 ### How to Access
 
@@ -75,7 +95,8 @@ A beautiful, interactive web dashboard that displays:
 python serve-dashboard.py
 
 # Then open your browser to:
-# http://localhost:8080
+# http://localhost:8080                    # Admin dashboard
+# http://localhost:8080/user-dashboard.html # User results dashboard
 ```
 
 #### Option 2: Use Any Web Server
@@ -90,13 +111,24 @@ python -m http.server 8080
 ```
 
 #### Option 3: Open Directly in Browser
-Simply open `dashboard/index.html` in your web browser (some features may not work due to CORS restrictions).
+Simply open these files in your web browser:
+- `dashboard/index.html` - Admin dashboard
+- `dashboard/user-dashboard.html` - User results dashboard
 
 ### Dashboard Features
+
+#### Admin Dashboard Features:
 - **Metrics Overview**: Key statistics about your security scans
 - **Performance Charts**: Visual representation of scan performance
 - **Rule Analysis**: Effectiveness of different security rules
 - **Trend Analysis**: Historical performance data
+
+#### User Dashboard Features:
+- **Scan Summary**: Quick overview of findings
+- **Detailed Findings**: Each security issue with context
+- **Fix Suggestions**: Step-by-step solutions
+- **Rule Information**: Educational content about each rule
+- **Export Options**: Generate reports in various formats
 
 ## 🔧 For External Users
 
