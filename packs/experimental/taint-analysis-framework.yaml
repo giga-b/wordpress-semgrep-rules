@@ -1,0 +1,607 @@
+rules:
+  # =============================================================================
+  # TAINT ANALYSIS FRAMEWORK
+  # =============================================================================
+  # This file contains the core taint analysis infrastructure for WordPress
+  # security scanning. It defines sources (where tainted data enters),
+  # sinks (where tainted data can cause harm), and sanitizers (functions
+  # that clean tainted data).
+  # =============================================================================
+
+  # =============================================================================
+  # TAINT SOURCES - Where untrusted data enters the application
+  # =============================================================================
+
+  # User input sources
+  - id: taint-source-user-input
+    message: "User input source - data from $_GET, $_POST, $_REQUEST"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_GET[...]
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "User input from GET parameters"
+      cwe: "CWE-20"
+
+  - id: taint-source-post-input
+    message: "User input source - data from $_POST"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_POST[...]
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "User input from POST parameters"
+      cwe: "CWE-20"
+
+  - id: taint-source-request-input
+    message: "User input source - data from $_REQUEST"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_REQUEST[...]
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "User input from REQUEST parameters"
+      cwe: "CWE-20"
+
+  - id: taint-source-cookie-input
+    message: "User input source - data from $_COOKIE"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_COOKIE[...]
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "User input from cookies"
+      cwe: "CWE-20"
+
+  - id: taint-source-server-input
+    message: "User input source - data from $_SERVER"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $_SERVER[...]
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "User input from server variables"
+      cwe: "CWE-20"
+
+  # File content sources
+  - id: taint-source-file-content
+    message: "File content source - data from file operations"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      file_get_contents(...)
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "Data from file contents"
+      cwe: "CWE-73"
+
+  - id: taint-source-file-read
+    message: "File content source - data from file read operations"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      fread(...)
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "Data from file read operations"
+      cwe: "CWE-73"
+
+  # Database query sources
+  - id: taint-source-database-query
+    message: "Database query source - data from database operations"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->get_results(...)
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "Data from database queries"
+      cwe: "CWE-89"
+
+  - id: taint-source-database-row
+    message: "Database row source - data from database rows"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      $wpdb->get_row(...)
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "Data from database rows"
+      cwe: "CWE-89"
+
+  # External API sources
+  - id: taint-source-external-api
+    message: "External API source - data from external API calls"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_remote_get(...)
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "Data from external API calls"
+      cwe: "CWE-918"
+
+  - id: taint-source-curl
+    message: "External API source - data from cURL operations"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      curl_exec(...)
+    metadata:
+      category: "taint-analysis"
+      type: "source"
+      description: "Data from cURL operations"
+      cwe: "CWE-918"
+
+  # =============================================================================
+  # TAINT SINKS - Where tainted data can cause harm
+  # =============================================================================
+
+  # XSS sinks - Output functions
+  - id: taint-sink-xss-echo
+    message: "XSS sink - tainted data in echo statement"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      echo $tainted_data;
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "xss"
+      description: "Tainted data in echo statement"
+      cwe: "CWE-79"
+
+  - id: taint-sink-xss-print
+    message: "XSS sink - tainted data in print statement"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      print $tainted_data;
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "xss"
+      description: "Tainted data in print statement"
+      cwe: "CWE-79"
+
+  - id: taint-sink-xss-printf
+    message: "XSS sink - tainted data in printf statement"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      printf($tainted_data, ...);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "xss"
+      description: "Tainted data in printf statement"
+      cwe: "CWE-79"
+
+  # SQL injection sinks
+  - id: taint-sink-sql-query
+    message: "SQL injection sink - tainted data in database query"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->query($tainted_data);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in database query"
+      cwe: "CWE-89"
+
+  - id: taint-sink-sql-prepare
+    message: "SQL injection sink - tainted data in prepared statement"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->prepare($tainted_data, ...);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "sql-injection"
+      description: "Tainted data in prepared statement"
+      cwe: "CWE-89"
+
+  # File operation sinks
+  - id: taint-sink-file-include
+    message: "File inclusion sink - tainted data in include statement"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      include $tainted_data;
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "file-inclusion"
+      description: "Tainted data in include statement"
+      cwe: "CWE-98"
+
+  - id: taint-sink-file-require
+    message: "File inclusion sink - tainted data in require statement"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      require $tainted_data;
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "file-inclusion"
+      description: "Tainted data in require statement"
+      cwe: "CWE-98"
+
+  - id: taint-sink-file-get-contents
+    message: "File operation sink - tainted data in file_get_contents"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      file_get_contents($tainted_data);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "file-inclusion"
+      description: "Tainted data in file_get_contents"
+      cwe: "CWE-73"
+
+  # Command execution sinks
+  - id: taint-sink-command-exec
+    message: "Command execution sink - tainted data in exec"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      exec($tainted_data);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "command-injection"
+      description: "Tainted data in exec command"
+      cwe: "CWE-78"
+
+  - id: taint-sink-command-system
+    message: "Command execution sink - tainted data in system"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      system($tainted_data);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "command-injection"
+      description: "Tainted data in system command"
+      cwe: "CWE-78"
+
+  - id: taint-sink-command-shell-exec
+    message: "Command execution sink - tainted data in shell_exec"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      shell_exec($tainted_data);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "command-injection"
+      description: "Tainted data in shell_exec command"
+      cwe: "CWE-78"
+
+  # Header injection sinks
+  - id: taint-sink-header-injection
+    message: "Header injection sink - tainted data in header function"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      header($tainted_data);
+    metadata:
+      category: "taint-analysis"
+      type: "sink"
+      vulnerability: "header-injection"
+      description: "Tainted data in header function"
+      cwe: "CWE-113"
+
+  # =============================================================================
+  # TAINT SANITIZERS - Functions that clean tainted data
+  # =============================================================================
+
+  # WordPress sanitization functions
+  - id: taint-sanitizer-wp-sanitize-text-field
+    message: "WordPress sanitizer - sanitize_text_field"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_text_field($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress text field sanitization"
+      sanitizes: ["xss"]
+
+  - id: taint-sanitizer-wp-sanitize-email
+    message: "WordPress sanitizer - sanitize_email"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_email($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress email sanitization"
+      sanitizes: ["xss", "email-injection"]
+
+  - id: taint-sanitizer-wp-sanitize-url
+    message: "WordPress sanitizer - sanitize_url"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_url($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress URL sanitization"
+      sanitizes: ["xss", "ssrf"]
+
+  - id: taint-sanitizer-wp-sanitize-file-name
+    message: "WordPress sanitizer - sanitize_file_name"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      sanitize_file_name($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress filename sanitization"
+      sanitizes: ["path-traversal"]
+
+  - id: taint-sanitizer-wp-esc-html
+    message: "WordPress sanitizer - esc_html"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      esc_html($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress HTML escaping"
+      sanitizes: ["xss"]
+
+  - id: taint-sanitizer-wp-esc-attr
+    message: "WordPress sanitizer - esc_attr"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      esc_attr($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress attribute escaping"
+      sanitizes: ["xss"]
+
+  - id: taint-sanitizer-wp-esc-js
+    message: "WordPress sanitizer - esc_js"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      esc_js($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress JavaScript escaping"
+      sanitizes: ["xss"]
+
+  - id: taint-sanitizer-wp-esc-sql
+    message: "WordPress sanitizer - esc_sql"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      esc_sql($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "WordPress SQL escaping"
+      sanitizes: ["sql-injection"]
+
+  # Type casting sanitizers
+  - id: taint-sanitizer-type-cast-int
+    message: "Type casting sanitizer - integer casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (int)$tainted_data
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "Integer type casting"
+      sanitizes: ["sql-injection", "xss"]
+
+  - id: taint-sanitizer-type-cast-float
+    message: "Type casting sanitizer - float casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (float)$tainted_data
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "Float type casting"
+      sanitizes: ["sql-injection", "xss"]
+
+  - id: taint-sanitizer-type-cast-string
+    message: "Type casting sanitizer - string casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (string)$tainted_data
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "String type casting"
+      sanitizes: ["sql-injection"]
+
+  - id: taint-sanitizer-type-cast-array
+    message: "Type casting sanitizer - array casting"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      (array)$tainted_data
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "Array type casting"
+      sanitizes: ["sql-injection"]
+
+  # Validation functions
+  - id: taint-sanitizer-is-numeric
+    message: "Validation sanitizer - is_numeric check"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      is_numeric($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "Numeric validation"
+      sanitizes: ["sql-injection", "xss"]
+
+  - id: taint-sanitizer-is-email
+    message: "Validation sanitizer - is_email check"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      is_email($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "Email validation"
+      sanitizes: ["email-injection"]
+
+  - id: taint-sanitizer-is-url
+    message: "Validation sanitizer - is_url check"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      is_url($tainted_data)
+    metadata:
+      category: "taint-analysis"
+      type: "sanitizer"
+      description: "URL validation"
+      sanitizes: ["ssrf"]
+
+  # =============================================================================
+  # TAINT FLOW DETECTION RULES
+  # =============================================================================
+
+  # XSS flow detection
+  - id: taint-flow-xss-user-to-output
+    message: "XSS vulnerability - tainted user input flows to output"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $user_input = $_GET[...];
+      ...
+      echo $user_input;
+    metadata:
+      category: "taint-analysis"
+      type: "flow"
+      vulnerability: "xss"
+      description: "Tainted user input flows to output without sanitization"
+      cwe: "CWE-79"
+
+  # SQL injection flow detection
+  - id: taint-flow-sql-user-to-query
+    message: "SQL injection vulnerability - tainted user input flows to query"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $user_input = $_POST[...];
+      ...
+      $wpdb->query("SELECT * FROM users WHERE id = " . $user_input);
+    metadata:
+      category: "taint-analysis"
+      type: "flow"
+      vulnerability: "sql-injection"
+      description: "Tainted user input flows to SQL query without sanitization"
+      cwe: "CWE-89"
+
+  # File inclusion flow detection
+  - id: taint-flow-file-user-to-include
+    message: "File inclusion vulnerability - tainted user input flows to include"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $user_input = $_GET[...];
+      ...
+      include $user_input;
+    metadata:
+      category: "taint-analysis"
+      type: "flow"
+      vulnerability: "file-inclusion"
+      description: "Tainted user input flows to include without sanitization"
+      cwe: "CWE-98"
+
+  # Command injection flow detection
+  - id: taint-flow-command-user-to-exec
+    message: "Command injection vulnerability - tainted user input flows to exec"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $user_input = $_POST[...];
+      ...
+      exec($user_input);
+    metadata:
+      category: "taint-analysis"
+      type: "flow"
+      vulnerability: "command-injection"
+      description: "Tainted user input flows to command execution without sanitization"
+      cwe: "CWE-78"
+
+  # =============================================================================
+  # TAINT ANALYSIS CONFIGURATION
+  # =============================================================================
+
+  # Configuration for taint analysis
+  - id: taint-config-sources
+    message: "Taint analysis sources configuration"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      // TAINT_SOURCES: $_GET, $_POST, $_REQUEST, $_COOKIE, $_SERVER, file_get_contents, $wpdb->get_results, wp_remote_get
+    metadata:
+      category: "taint-analysis"
+      type: "configuration"
+      description: "Taint analysis sources configuration"
+
+  - id: taint-config-sinks
+    message: "Taint analysis sinks configuration"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      // TAINT_SINKS: echo, print, printf, $wpdb->query, include, require, file_get_contents, exec, system, shell_exec, header
+    metadata:
+      category: "taint-analysis"
+      type: "configuration"
+      description: "Taint analysis sinks configuration"
+
+  - id: taint-config-sanitizers
+    message: "Taint analysis sanitizers configuration"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      // TAINT_SANITIZERS: sanitize_text_field, sanitize_email, esc_html, esc_attr, (int), (float), is_numeric, is_email
+    metadata:
+      category: "taint-analysis"
+      type: "configuration"
+      description: "Taint analysis sanitizers configuration"
