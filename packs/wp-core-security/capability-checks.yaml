@@ -1,0 +1,389 @@
+rules:
+  # Missing Capability Checks
+  - id: wordpress.capability.missing-check
+    languages: [php]
+    message: "Missing capability check. Use current_user_can() to verify user permissions before performing sensitive operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['delete_user'])) {
+            wp_delete_user($user_id);
+          }
+      - pattern-not: |
+          if (isset($_POST['delete_user'])) {
+            if (current_user_can('delete_users')) {
+              wp_delete_user($user_id);
+            }
+          }
+
+  - id: wordpress.capability.missing-admin-check
+    languages: [php]
+    message: "Missing admin capability check. Use current_user_can('manage_options') for admin-only operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['update_settings'])) {
+            update_option('sensitive_setting', $_POST['value']);
+          }
+      - pattern-not: |
+          if (isset($_POST['update_settings'])) {
+            if (current_user_can('manage_options')) {
+              update_option('sensitive_setting', sanitize_text_field($_POST['value']));
+            }
+          }
+
+  # Weak Capability Checks
+  - id: wordpress.capability.weak-check
+    languages: [php]
+    message: "Weak capability check. Use specific capabilities instead of generic checks."
+    severity: WARNING
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: current_user_can('read')
+      - pattern: current_user_can('edit_posts')
+      - pattern: current_user_can('publish_posts')
+
+  - id: wordpress.capability.overly-permissive
+    languages: [php]
+    message: "Overly permissive capability check. Use more specific capabilities for sensitive operations."
+    severity: WARNING
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (current_user_can('edit_posts')) {
+            wp_delete_user($user_id);
+          }
+      - pattern: |
+          if (current_user_can('publish_posts')) {
+            update_option('admin_setting', $_POST['value']);
+          }
+
+  # Missing Nonce with Capability Check
+  - id: wordpress.capability.missing-nonce
+    languages: [php]
+    message: "Capability check without nonce verification. Always verify nonces for form submissions."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          if (current_user_can('manage_options')) {
+            if (isset($_POST['submit'])) {
+              update_option('setting', $_POST['value']);
+            }
+          }
+      - pattern-not: |
+          if (current_user_can('manage_options')) {
+            if (isset($_POST['submit'])) {
+              if (wp_verify_nonce($_POST['_wpnonce'], 'update_settings')) {
+                update_option('setting', sanitize_text_field($_POST['value']));
+              }
+            }
+          }
+
+  # AJAX Capability Checks
+  - id: wordpress.capability.ajax-missing
+    languages: [php]
+    message: "AJAX handler missing capability check. Verify user permissions in AJAX callbacks."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          add_action('wp_ajax_delete_user', 'delete_user_callback');
+          function delete_user_callback() {
+            wp_delete_user($_POST['user_id']);
+          }
+      - pattern-not: |
+          add_action('wp_ajax_delete_user', 'delete_user_callback');
+          function delete_user_callback() {
+            if (current_user_can('delete_users')) {
+              wp_delete_user(intval($_POST['user_id']));
+            }
+          }
+
+  - id: wordpress.capability.ajax-weak
+    languages: [php]
+    message: "Weak AJAX capability check. Use specific capabilities for AJAX operations."
+    severity: WARNING
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          function ajax_callback() {
+            if (current_user_can('read')) {
+              // Perform sensitive operation
+            }
+          }
+
+  # REST API Capability Checks
+  - id: wordpress.capability.rest-missing
+    languages: [php]
+    message: "REST API endpoint missing capability check. Implement proper permission_callback for security."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          register_rest_route('my-namespace/v1', '/users', array(
+            'methods' => 'DELETE',
+            'callback' => 'delete_user_rest',
+            'permission_callback' => '__return_true'
+          ));
+      - pattern-not: |
+          register_rest_route('my-namespace/v1', '/users', array(
+            'methods' => 'DELETE',
+            'callback' => 'delete_user_rest',
+            'permission_callback' => function() {
+              return current_user_can('delete_users');
+            }
+          ));
+
+
+
+  # User Role Checks
+  - id: wordpress.capability.role-check-instead
+    languages: [php]
+    message: "Using user role check instead of capability check. Use current_user_can() for better security."
+    severity: WARNING
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (current_user_can('administrator')) {
+            // Admin operation
+          }
+      - pattern: |
+          if (current_user_can('editor')) {
+            // Editor operation
+          }
+      - pattern: |
+          if (current_user_can('author')) {
+            // Author operation
+          }
+
+  - id: wordpress.capability.role-comparison
+    languages: [php]
+    message: "Direct role comparison is insecure. Use current_user_can() for capability checks."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if ($user->roles[0] === 'administrator') {
+            // Admin operation
+          }
+      - pattern: |
+          if (in_array('administrator', $user->roles)) {
+            // Admin operation
+          }
+
+  # Conditional Capability Checks
+  - id: wordpress.capability.conditional-missing
+    languages: [php]
+    message: "Missing capability check in conditional logic. Always verify permissions before sensitive operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if ($action === 'delete') {
+            wp_delete_user($user_id);
+          } elseif ($action === 'update') {
+            wp_update_user($user_data);
+          }
+      - pattern-not: |
+          if ($action === 'delete' && current_user_can('delete_users')) {
+            wp_delete_user($user_id);
+          } elseif ($action === 'update' && current_user_can('edit_users')) {
+            wp_update_user($user_data);
+          }
+
+  # File Operation Capability Checks
+  - id: wordpress.capability.file-operation-missing
+    languages: [php]
+    message: "File operation missing capability check. Verify user permissions before file operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['upload_file'])) {
+            move_uploaded_file($_FILES['file']['tmp_name'], $destination);
+          }
+      - pattern-not: |
+          if (isset($_POST['upload_file'])) {
+            if (current_user_can('upload_files')) {
+              move_uploaded_file($_FILES['file']['tmp_name'], $destination);
+            }
+          }
+
+  # Database Operation Capability Checks
+  - id: wordpress.capability.db-operation-missing
+    languages: [php]
+    message: "Database operation missing capability check. Verify user permissions before database operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['delete_option'])) {
+            delete_option($_POST['option_name']);
+          }
+      - pattern-not: |
+          if (isset($_POST['delete_option'])) {
+            if (current_user_can('manage_options')) {
+              delete_option(sanitize_text_field($_POST['option_name']));
+            }
+          }
+
+  # Plugin/Theme Management Capability Checks
+  - id: wordpress.capability.plugin-management-missing
+    languages: [php]
+    message: "Plugin management operation missing capability check. Use 'activate_plugins' or 'install_plugins' capabilities."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['activate_plugin'])) {
+            activate_plugin($_POST['plugin_file']);
+          }
+      - pattern-not: |
+          if (isset($_POST['activate_plugin'])) {
+            if (current_user_can('activate_plugins')) {
+              activate_plugin(sanitize_text_field($_POST['plugin_file']));
+            }
+          }
+
+  # User Management Capability Checks
+  - id: wordpress.capability.user-management-missing
+    languages: [php]
+    message: "User management operation missing capability check. Use appropriate user management capabilities."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['create_user'])) {
+            wp_insert_user($_POST['user_data']);
+          }
+      - pattern-not: |
+          if (isset($_POST['create_user'])) {
+            if (current_user_can('create_users')) {
+              wp_insert_user($_POST['user_data']);
+            }
+          }
+
+  # Content Management Capability Checks
+  - id: wordpress.capability.content-management-missing
+    languages: [php]
+    message: "Content management operation missing capability check. Use appropriate content management capabilities."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['publish_post'])) {
+            wp_publish_post($_POST['post_id']);
+          }
+      - pattern-not: |
+          if (isset($_POST['publish_post'])) {
+            if (current_user_can('publish_posts')) {
+              wp_publish_post(intval($_POST['post_id']));
+            }
+          }
+
+  # Settings Management Capability Checks
+  - id: wordpress.capability.settings-management-missing
+    languages: [php]
+    message: "Settings management operation missing capability check. Use 'manage_options' for settings operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['update_settings'])) {
+            update_option('site_title', $_POST['title']);
+            update_option('site_description', $_POST['description']);
+          }
+      - pattern-not: |
+          if (isset($_POST['update_settings'])) {
+            if (current_user_can('manage_options')) {
+              update_option('site_title', sanitize_text_field($_POST['title']));
+              update_option('site_description', sanitize_text_field($_POST['description']));
+            }
+          }
+
+  # Multisite Capability Checks
+  - id: wordpress.capability.multisite-missing
+    languages: [php]
+    message: "Multisite operation missing capability check. Use multisite-specific capabilities for network operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['create_site'])) {
+            wpmu_create_blog($_POST['domain'], $_POST['path'], $_POST['title']);
+          }
+      - pattern-not: |
+          if (isset($_POST['create_site'])) {
+            if (current_user_can('manage_sites')) {
+              wpmu_create_blog(sanitize_text_field($_POST['domain']), sanitize_text_field($_POST['path']), sanitize_text_field($_POST['title']));
+            }
+          }
+
+  # Security Best Practices
+  - id: wordpress.capability.hardcoded-capability
+    languages: [php]
+    message: "Hardcoded capability string. Use constants or variables for better maintainability."
+    severity: INFO
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: current_user_can("manage_options")
+      - pattern: current_user_can("delete_users")
+      - pattern: current_user_can("edit_posts")
+
+  - id: wordpress.capability.multiple-checks
+    languages: [php]
+    message: "Multiple capability checks can be optimized. Consider using a single check with multiple capabilities."
+    severity: INFO
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (current_user_can('edit_posts') && current_user_can('publish_posts')) {
+            // Operation
+          }
+      - pattern-not: |
+          if (current_user_can('edit_posts') || current_user_can('publish_posts')) {
+            // Operation
+          }

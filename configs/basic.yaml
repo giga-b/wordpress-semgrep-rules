@@ -1,0 +1,52 @@
+# WordPress Core Security Rules - Basic Configuration
+# These rules cover essential WordPress security patterns
+
+rules:
+  - id: wordpress.nonce.insecure-creation
+    languages: [php]
+    message: "Nonce created with predictable or empty action. Use a specific, unique action name."
+    severity: WARNING
+    metadata:
+      category: "nonce-verification"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: wp_create_nonce("")
+      - pattern: wp_create_nonce("action")
+      - pattern: wp_create_nonce("nonce")
+      - pattern: wp_create_nonce("token")
+      - pattern: wp_create_nonce($variable)
+
+  - id: wordpress.nonce.missing-verification
+    languages: [php]
+    message: "Nonce verification is missing. Use wp_verify_nonce() to verify the nonce before processing form data."
+    severity: ERROR
+    metadata:
+      category: "nonce-verification"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          if (isset($_POST['submit'])) {
+            $data = $_POST['data'];
+          }
+      - pattern-not: |
+          if (isset($_POST['submit'])) {
+            if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
+              $data = $_POST['data'];
+            }
+          }
+
+  - id: wordpress.nonce.weak-verification
+    languages: [php]
+    message: "Nonce verification is weak. Check the return value of wp_verify_nonce() explicitly."
+    severity: WARNING
+    metadata:
+      category: "nonce-verification"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          wp_verify_nonce($_POST['_wpnonce'], 'action_name');
+          $data = $_POST['data'];
+      - pattern-not: |
+          if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
+            $data = $_POST['data'];
+          }

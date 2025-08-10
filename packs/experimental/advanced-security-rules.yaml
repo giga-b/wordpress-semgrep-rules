@@ -1,0 +1,163 @@
+rules:
+  # Control-flow divergence detection
+  - id: php-control-flow-sql-injection
+    message: "Potential SQL injection in conditional control flow"
+    severity: ERROR
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          if (date('N') == ... && ...) {
+            ...
+            $sql = "... $...";
+            $wpdb->get_results($sql);
+          }
+      - pattern: |
+          if (date('H') == ... && ...) {
+            ...
+            $sql = "... $...";
+            $wpdb->query($sql);
+          }
+    
+  # Obfuscated sinks with misleading function names
+  - id: php-obfuscated-ssrf
+    message: "Potential SSRF via obfuscated function call"
+    severity: ERROR
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          function ..._fetch_...($...) {
+            ...
+            return wp_remote_get($...);
+          }
+      - pattern: |
+          function ..._resource($...) {
+            ...
+            return wp_remote_get($...);
+          }
+      - pattern: |
+          function safe_...($...) {
+            ...
+            wp_remote_get($...);
+          }
+    
+  # Callback chains and multi-step data flows
+  - id: php-callback-chain-xss
+    message: "Potential XSS via callback chain data flow"
+    severity: ERROR
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          apply_filters(..., $...);
+          ...
+          echo "... $...";
+      - pattern: |
+          self::$... = $...;
+          ...
+          echo "... $...";
+      - pattern: |
+          static::$... = $...;
+          ...
+          echo "... $...";
+    
+  # Insecure deserialization
+  - id: php-insecure-deserialization
+    message: "Potential insecure deserialization"
+    severity: ERROR
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          if (strpos($..., 'O:') === 0) {
+            return maybe_unserialize($...);
+          }
+      - pattern: |
+          maybe_unserialize($...);
+      - pattern: |
+          unserialize($...);
+    
+  # Weak randomness detection
+  - id: php-weak-randomness
+    message: "Weak randomness generation"
+    severity: WARNING
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          $... = md5(mt_rand() . ...);
+      - pattern: |
+          $... = md5(... . microtime(true));
+      - pattern: |
+          $... = mt_rand() . ...;
+    
+  # Path traversal through obfuscated functions
+  - id: php-obfuscated-path-traversal
+    message: "Potential path traversal via obfuscated path resolution"
+    severity: ERROR
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          function ..._path($...) {
+            ...
+            return ... . $...;
+          }
+      - pattern: |
+          function resolve_...($...) {
+            ...
+            file_get_contents($...);
+          }
+    
+  # WordPress-specific vulnerability patterns
+  - id: php-wp-unsafe-sql-prepare
+    message: "Misuse of wpdb->prepare with string interpolation"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->prepare("... $...");
+    
+  # Time-based conditional vulnerabilities
+  - id: php-time-based-vulnerability
+    message: "Time-based conditional vulnerability"
+    severity: WARNING
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          if (date('N') == ... && date('H') == ...) {
+            ...
+            $_GET[...];
+          }
+      - pattern: |
+          if (date('N') == ... && date('H') > ...) {
+            ...
+            $_POST[...];
+          }
+    
+  # Misleading function names containing vulnerabilities
+  - id: php-misleading-function-names
+    message: "Function with misleading name contains vulnerability"
+    severity: WARNING
+    languages: [php]
+    pattern-either:
+      - pattern: |
+          function safe_...($...) {
+            ...
+            echo $...;
+          }
+      - pattern: |
+          function secure_...($...) {
+            ...
+            $wpdb->query("... $...");
+          }
+      - pattern: |
+          function validate_...($...) {
+            ...
+            file_get_contents($...);
+          }
+    
+  # REST API vulnerabilities
+  - id: php-wp-rest-no-auth
+    message: "REST API endpoint without proper authentication"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      register_rest_route(..., [
+        ...
+        'permission_callback' => '__return_true'
+      ]);

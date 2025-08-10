@@ -1,0 +1,82 @@
+rules:
+  # SQL injection in conditional blocks
+  - id: php-conditional-sql-injection
+    message: "SQL injection in conditional control flow"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      if (date('N') == 6 && date('H') > 14) {
+        ...
+        $sql = "SELECT * FROM {$wpdb->users} WHERE user_login = '$user_input'";
+        $wpdb->get_results($sql);
+      }
+    
+  # Obfuscated SSRF via function names
+  - id: php-safe-function-ssrf
+    message: "SSRF via function with misleading name"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      function safe_data_fetcher() {
+        ...
+        wp_remote_get($url);
+      }
+    
+  # Insecure deserialization
+  - id: php-object-injection
+    message: "Potential object injection via unserialize"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      if (strpos($config, 'O:') === 0) {
+        return maybe_unserialize($config);
+      }
+    
+  # Weak randomness
+  - id: php-weak-token-generation
+    message: "Weak token generation using mt_rand and md5"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      $token = md5(mt_rand() . microtime(true) . $_SERVER['REMOTE_ADDR']);
+    
+  # Path traversal in obfuscated functions
+  - id: php-resolve-path-traversal
+    message: "Path traversal via resolve_file_path function"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      function resolve_file_path($input) {
+        ...
+        file_get_contents($file_path);
+      }
+    
+  # REST API without auth
+  - id: php-rest-no-auth
+    message: "REST API endpoint without authentication"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      'permission_callback' => '__return_true'
+    
+  # Time-based conditional vulnerability
+  - id: php-time-based-vuln
+    message: "Time-based conditional vulnerability"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      if (date('N') == 3 && date('H') == 15 && date('i') > 30) {
+        ...
+        $_POST['avt_special'];
+      }
+    
+  # Misleading function name with XSS
+  - id: php-safe-function-xss
+    message: "XSS in function with misleading name"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      function safe_data_fetcher() {
+        ...
+        echo $response;
+      }

@@ -1,0 +1,4 @@
+rules:
+  - packs/wp-core-security/
+  - packs/wp-core-quality/
+  - packs/experimental/

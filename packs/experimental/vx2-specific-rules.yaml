@@ -1,0 +1,81 @@
+rules:
+  # WordPress wpdb prepare misuse
+  - id: php-wpdb-prepare-misuse
+    message: "Misuse of wpdb->prepare with string interpolation"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $wpdb->prepare("... $...");
+    
+  # REST API without authentication
+  - id: php-rest-no-auth-vx2
+    message: "REST API endpoint without authentication"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      'permission_callback' => '__return_true'
+    
+  # Insecure deserialization
+  - id: php-maybe-unserialize
+    message: "Potential insecure deserialization"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      maybe_unserialize($...);
+    
+  # Weak randomness
+  - id: php-weak-randomness-vx2
+    message: "Weak randomness generation"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      $token = md5($raw);
+    
+  # Path traversal
+  - id: php-path-traversal-vx2
+    message: "Potential path traversal"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $full = $base . $path;
+      file_get_contents($full);
+    
+  # XSS via unescaped output
+  - id: php-xss-unescaped
+    message: "XSS via unescaped output"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      echo "<div class=\"notice\">{$data['html']}</div>";
+    
+  # Open redirect
+  - id: php-open-redirect
+    message: "Potential open redirect"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      wp_safe_redirect($opt['redirect']);
+    
+  # Header injection
+  - id: php-header-injection
+    message: "Potential header injection"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      header('X-User: ' . $_POST['x_user']);
+    
+  # SSRF via wp_remote_request
+  - id: php-ssrf-wp-remote
+    message: "Potential SSRF via wp_remote_request"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      wp_remote_request($url, $args);
+    
+  # Zip slip vulnerability
+  - id: php-zip-slip
+    message: "Potential Zip Slip vulnerability"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $zip->extractTo($dest);
