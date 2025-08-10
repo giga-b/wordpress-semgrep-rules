@@ -1,0 +1,256 @@
+# WordPress Semgrep Rules - Auto-fix Configuration
+# This file configures the automatic fixing system for WordPress security issues
+
+# Global settings
+settings:
+  # Minimum confidence level for applying fixes (0.0 to 1.0)
+  # Increased from 0.7 to 0.8 for better security
+  min_confidence: 0.8
+  
+  # Whether to create backups before applying fixes
+  create_backups: true
+  
+  # Maximum number of fixes to apply per file
+  # Reduced from 10 to 5 for safety
+  max_fixes_per_file: 5
+  
+  # Whether to apply fixes automatically or require confirmation
+  # Default to false for security
+  auto_apply: false
+  
+  # Whether to require manual approval for each fix
+  require_approval: true
+  
+  # Whether to preview fixes before applying
+  preview_fixes: true
+  
+  # Maximum file size to process (in MB)
+  max_file_size_mb: 10
+  
+  # File extensions to process
+  file_extensions:
+    - ".php"
+    - ".inc"
+  
+  # Directories to exclude
+  exclude_directories:
+    - "vendor"
+    - "node_modules"
+    - ".git"
+    - "tests"
+    - "backup"
+    - "cache"
+    - "logs"
+    - "temp"
+  
+  # Additional security settings
+  security:
+    # Whether to validate fixes before applying
+    validate_fixes: true
+    
+    # Whether to check for dangerous patterns
+    check_dangerous_patterns: true
+    
+    # Whether to require backup before any changes
+    require_backup: true
+    
+    # Maximum number of files to process in one run
+    max_files_per_run: 50
+
+# Custom fix rules (in addition to built-in rules)
+fix_rules:
+  # XSS Prevention Fixes
+  - rule_id: "wordpress.xss.unsafe-echo"
+    pattern: "echo\\s+\\$_\\w+\\[\\s*['\"][^'\"]+['\"]\\s*\\];"
+    replacement: "echo esc_html($_POST['user_input']);"
+    conditions: ["php", "output", "user_input"]
+    confidence: 0.9
+    description: "Add HTML escaping to unsafe echo statements"
+    category: "xss-prevention"
+  
+  # SQL Injection Prevention
+  - rule_id: "wordpress.sql.unsafe-query"
+    pattern: "\\$wpdb->query\\s*\\(\\s*['\"][^'\"]*\\$[^'\"]*['\"]\\s*\\);"
+    replacement: "$wpdb->prepare('SELECT * FROM table WHERE id = %d', $user_input);"
+    conditions: ["php", "database", "user_input"]
+    confidence: 0.8
+    description: "Convert unsafe database queries to prepared statements"
+    category: "sql-injection"
+  
+  # File Upload Security
+  - rule_id: "wordpress.file.unsafe-upload"
+    pattern: "move_uploaded_file\\s*\\(\\s*\\$_\\w+\\[\\s*['\"][^'\"]+['\"]\\s*\\]\\[\\s*['\"][^'\"]+['\"]\\s*\\],\\s*['\"][^'\"]+['\"]\\s*\\)"
+    replacement: |
+      $uploaded_file = $_FILES['upload']['tmp_name'];
+      $file_type = wp_check_filetype($_FILES['upload']['name']);
+      if ($file_type['ext']) {
+          move_uploaded_file($uploaded_file, $upload_dir . '/' . sanitize_file_name($_FILES['upload']['name']));
+      }
+    conditions: ["php", "file_upload"]
+    confidence: 0.7
+    description: "Add file type validation to uploads"
+    category: "file-security"
+  
+  # REST API Security
+  - rule_id: "wordpress.rest.missing-permission"
+    pattern: "register_rest_route\\s*\\(\\s*['\"][^'\"]+['\"]\\s*,\\s*['\"][^'\"]+['\"]\\s*,\\s*array\\s*\\(\\s*['\"][^'\"]+['\"]\\s*=>\\s*['\"][^'\"]+['\"]\\s*\\)\\s*\\)"
+    replacement: |
+      register_rest_route('myplugin/v1', '/endpoint', array(
+          'methods' => 'POST',
+          'callback' => 'my_callback',
+          'permission_callback' => function() {
+              return current_user_can('edit_posts');
+          }
+      ))
+    conditions: ["php", "rest_api"]
+    confidence: 0.6
+    description: "Add permission callback to REST API endpoints"
+    category: "rest-api-security"
+
+# Fix categories and their priorities
+categories:
+  nonce-verification:
+    priority: 1
+    description: "CSRF protection fixes"
+    confidence_threshold: 0.8
+  
+  sanitization:
+    priority: 2
+    description: "Input sanitization fixes"
+    confidence_threshold: 0.9
+  
+  output-escaping:
+    priority: 3
+    description: "Output escaping fixes"
+    confidence_threshold: 0.85
+  
+  database-security:
+    priority: 4
+    description: "Database security fixes"
+    confidence_threshold: 0.8
+  
+  capability-checks:
+    priority: 5
+    description: "User capability check fixes"
+    confidence_threshold: 0.7
+  
+  ajax-security:
+    priority: 6
+    description: "AJAX security fixes"
+    confidence_threshold: 0.75
+  
+  xss-prevention:
+    priority: 7
+    description: "XSS prevention fixes"
+    confidence_threshold: 0.9
+  
+  sql-injection:
+    priority: 8
+    description: "SQL injection prevention fixes"
+    confidence_threshold: 0.8
+  
+  file-security:
+    priority: 9
+    description: "File security fixes"
+    confidence_threshold: 0.7
+  
+  rest-api-security:
+    priority: 10
+    description: "REST API security fixes"
+    confidence_threshold: 0.6
+
+# Template patterns for common fixes
+templates:
+  nonce_field: |
+    <input type="hidden" name="_wpnonce" value="<?php echo wp_create_nonce('{action_name}'); ?>" />
+  
+  nonce_verification: |
+    if (!wp_verify_nonce($_POST['_wpnonce'], '{action_name}')) {
+        wp_die(__('Security check failed.'));
+    }
+  
+  capability_check: |
+    if (!current_user_can('{capability}')) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+  
+  ajax_nonce_check: |
+    check_ajax_referer('{action_name}', 'nonce');
+  
+  sanitize_input: |
+    ${variable} = sanitize_text_field($_POST['{field_name}']);
+  
+  escape_output: |
+    echo esc_html(${variable});
+  
+  prepared_query: |
+    $wpdb->prepare("SELECT * FROM {table} WHERE {column} = %s", ${variable});
+
+# WordPress-specific patterns
+wordpress_patterns:
+  # Common WordPress functions that should be used
+  safe_functions:
+    - "sanitize_text_field"
+    - "sanitize_email"
+    - "sanitize_url"
+    - "wp_kses_post"
+    - "esc_html"
+    - "esc_attr"
+    - "esc_url"
+    - "wp_verify_nonce"
+    - "check_ajax_referer"
+    - "current_user_can"
+    - "wp_die"
+    - "wp_create_nonce"
+  
+  # Unsafe patterns to avoid
+  unsafe_patterns:
+    - "echo $_\\w+"
+    - "print $_\\w+"
+    - "$wpdb->query.*$"
+    - "include.*$"
+    - "require.*$"
+    - "file_get_contents.*$"
+  
+  # WordPress superglobals
+  superglobals:
+    - "$_POST"
+    - "$_GET"
+    - "$_REQUEST"
+    - "$_FILES"
+    - "$_COOKIE"
+    - "$_SERVER"
+
+# Reporting configuration
+reporting:
+  # Generate HTML report
+  html_report: true
+  
+  # Generate JSON report
+  json_report: true
+  
+  # Include code diffs in report
+  include_diffs: true
+  
+  # Include confidence scores in report
+  include_confidence: true
+  
+  # Group fixes by category in report
+  group_by_category: true
+  
+  # Include file statistics in report
+  include_file_stats: true
+
+# Validation settings
+validation:
+  # Validate PHP syntax after applying fixes
+  validate_php_syntax: true
+  
+  # Check for common WordPress coding standards
+  check_wordpress_standards: true
+  
+  # Validate nonce action names
+  validate_nonce_actions: true
+  
+  # Check for proper capability names
+  validate_capabilities: true

@@ -1,0 +1,17 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📚 Documentation
+    url: https://github.com/your-org/wordpress-semgrep-rules/tree/main/docs
+    about: 📖 Read the documentation and guides
+  - name: 💬 Community Discussions
+    url: https://github.com/your-org/wordpress-semgrep-rules/discussions
+    about: 💭 Ask questions and share ideas with the community
+  - name: 🔧 Rule Development Guide
+    url: https://github.com/your-org/wordpress-semgrep-rules/blob/main/docs/DEVELOPMENT-GUIDE.md
+    about: 🛠️ Learn how to develop and contribute rules
+  - name: 🧪 Testing Guide
+    url: https://github.com/your-org/wordpress-semgrep-rules/blob/main/docs/automated-testing-guide.md
+    about: 🧪 Learn how to test rules and configurations
+  - name: 📋 Contribution Guidelines
+    url: https://github.com/your-org/wordpress-semgrep-rules/blob/main/CONTRIBUTING.md
+    about: 📝 Learn how to contribute to the project

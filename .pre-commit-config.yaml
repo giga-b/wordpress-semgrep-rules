@@ -1,0 +1,171 @@
+repos:
+  # ============================================================================
+  # SEMGREP SECURITY SCANNING
+  # ============================================================================
+  
+  # Primary Semgrep security scan with basic configuration
+  - repo: https://github.com/returntocorp/semgrep
+    rev: v1.75.0
+    hooks:
+      - id: semgrep
+        name: Semgrep Basic Security Scan
+        description: "Run Semgrep security analysis with basic configuration"
+        args:
+          - --config=configs/basic.yaml
+          - --error
+          - --quiet
+          - --json
+          - --output=.pre-commit-semgrep-basic.json
+        files: \.(php|inc)$
+        language: python
+        additional_dependencies: [semgrep==1.75.0]
+        exclude: |
+          (?x)^(
+              tests/vulnerable-examples/|
+              tests/safe-examples/|
+              vendor/|
+              node_modules/|
+              \.git/|
+              \.semgrep/
+          )$
+
+  # Secondary Semgrep scan with plugin development configuration
+  - repo: https://github.com/returntocorp/semgrep
+    rev: v1.75.0
+    hooks:
+      - id: semgrep
+        name: Semgrep Plugin Development Scan
+        description: "Run Semgrep security analysis with plugin development configuration"
+        args:
+          - --config=configs/plugin-development.yaml
+          - --warning
+          - --quiet
+          - --json
+          - --output=.pre-commit-semgrep-plugin.json
+        files: \.(php|inc)$
+        language: python
+        additional_dependencies: [semgrep==1.75.0]
+        exclude: |
+          (?x)^(
+              tests/vulnerable-examples/|
+              tests/safe-examples/|
+              vendor/|
+              node_modules/|
+              \.git/|
+              \.semgrep/
+          )$
+
+  # ============================================================================
+  # CODE QUALITY AND SYNTAX CHECKS
+  # ============================================================================
+
+  # YAML syntax validation
+  - repo: https://github.com/pre-commit/mirrors-yamllint
+    rev: v1.35.1
+    hooks:
+      - id: yamllint
+        name: YAML Lint
+        description: "Validate YAML syntax in configuration files"
+        files: \.(yaml|yml)$
+        args: [--strict]
+
+  # PHP syntax check
+  - repo: local
+    hooks:
+      - id: php-syntax-check
+        name: PHP Syntax Check
+        description: "Check PHP syntax for errors"
+        entry: bash -c 'for file in "$@"; do php -l "$file" || exit 1; done'
+        language: system
+        files: \.php$
+        exclude: |
+          (?x)^(
+              tests/vulnerable-examples/|
+              tests/safe-examples/|
+              vendor/|
+              node_modules/
+          )$
+
+  # ============================================================================
+  # FILE FORMATTING AND CLEANUP
+  # ============================================================================
+
+  # Basic file formatting and cleanup
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: trailing-whitespace
+        name: Trailing Whitespace
+        description: "Remove trailing whitespace"
+      - id: end-of-file-fixer
+        name: End of File Fixer
+        description: "Ensure files end with a newline"
+      - id: check-yaml
+        name: Check YAML
+        description: "Check YAML syntax"
+      - id: check-json
+        name: Check JSON
+        description: "Check JSON syntax"
+      - id: check-merge-conflict
+        name: Check for merge conflicts
+        description: "Check for merge conflict markers"
+      - id: check-added-large-files
+        name: Check for large files
+        description: "Prevent large files from being committed"
+        args: [--maxkb=1000]
+      - id: check-case-conflict
+        name: Check for case conflicts
+        description: "Check for files that would conflict in case-insensitive filesystems"
+
+  # ============================================================================
+  # SECURITY AND SECRETS DETECTION
+  # ============================================================================
+
+  # Detect secrets and sensitive data
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: Detect Secrets
+        description: "Detect secrets and sensitive data in code"
+        args: [--baseline, .secrets.baseline]
+        exclude: |
+          (?x)^(
+              tests/vulnerable-examples/|
+              tests/safe-examples/|
+              \.git/
+          )$
+
+  # ============================================================================
+  # CUSTOM WORDPRESS-SPECIFIC CHECKS
+  # ============================================================================
+
+  # Custom hook for WordPress-specific validation
+  - repo: local
+    hooks:
+      - id: wordpress-config-validation
+        name: WordPress Config Validation
+        description: "Validate WordPress Semgrep configuration files"
+        entry: python tooling/validate-configs.py
+        language: python
+        files: ^configs/.*\.yaml$
+        additional_dependencies: [PyYAML>=6.0]
+
+      - id: wordpress-rule-validation
+        name: WordPress Rule Validation
+        description: "Validate Semgrep rule syntax and structure"
+        entry: python tooling/validate-rules.py
+        language: python
+        files: ^packs/.*\.yaml$
+        additional_dependencies: [PyYAML>=6.0]
+
+# ============================================================================
+# GLOBAL CONFIGURATION
+# ============================================================================
+
+default_language_version:
+  python: python3.11
+
+# Pre-commit configuration
+fail_fast: false
+reuse_env: true

@@ -1,0 +1,250 @@
+{
+  "semgrep_binary": "semgrep",
+  "rules_path": "../packs/",
+  "tests_path": "./",
+  "configs_path": "../configs/",
+  "output_path": "./test-results/",
+  "iterations": 3,
+  "warmup_runs": 1,
+  "timeout": 120,
+  "performance_thresholds": {
+    "max_scan_time": 30.0,
+    "max_memory_usage": 500.0,
+    "max_cpu_percent": 80.0,
+    "min_success_rate": 0.95
+  },
+  "test_suites": {
+    "basic_security": {
+      "name": "Basic Security Rules",
+      "description": "Core WordPress security rules for nonce, capability, and sanitization",
+      "test_files": [
+        "vulnerable-examples/nonce-vulnerable.php",
+        "vulnerable-examples/capability-vulnerable.php",
+        "vulnerable-examples/sanitization-vulnerable.php",
+        "safe-examples/nonce-safe.php",
+        "safe-examples/capability-safe.php",
+        "safe-examples/sanitization-safe.php"
+      ],
+      "rule_packs": ["wp-core-security"],
+      "expected_results": {
+        "vulnerable-examples/nonce-vulnerable.php": {
+          "nonce-verification.yaml": 3,
+          "capability-checks.yaml": 0,
+          "sanitization-functions.yaml": 0
+        },
+        "vulnerable-examples/capability-vulnerable.php": {
+          "nonce-verification.yaml": 0,
+          "capability-checks.yaml": 4,
+          "sanitization-functions.yaml": 0
+        },
+        "vulnerable-examples/sanitization-vulnerable.php": {
+          "nonce-verification.yaml": 0,
+          "capability-checks.yaml": 0,
+          "sanitization-functions.yaml": 5
+        },
+        "safe-examples/nonce-safe.php": {
+          "nonce-verification.yaml": 0,
+          "capability-checks.yaml": 0,
+          "sanitization-functions.yaml": 0
+        },
+        "safe-examples/capability-safe.php": {
+          "nonce-verification.yaml": 0,
+          "capability-checks.yaml": 0,
+          "sanitization-functions.yaml": 0
+        },
+        "safe-examples/sanitization-safe.php": {
+          "nonce-verification.yaml": 0,
+          "capability-checks.yaml": 0,
+          "sanitization-functions.yaml": 0
+        }
+      }
+    },
+    "advanced_security": {
+      "name": "Advanced Security Rules",
+      "description": "Advanced WordPress security patterns for REST API, AJAX, SQL injection, and XSS",
+      "test_files": [
+        "vulnerable-examples/rest-api-vulnerable.php",
+        "vulnerable-examples/ajax-vulnerable.php",
+        "vulnerable-examples/sql-injection-vulnerable.php",
+        "vulnerable-examples/xss-vulnerable.php",
+        "safe-examples/rest-api-safe.php",
+        "safe-examples/ajax-safe.php",
+        "safe-examples/sql-safe.php",
+        "safe-examples/xss-safe.php"
+      ],
+      "rule_packs": ["wp-core-security"],
+      "expected_results": {
+        "vulnerable-examples/rest-api-vulnerable.php": {
+          "rest-api-security.yaml": 4,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 0
+        },
+        "vulnerable-examples/ajax-vulnerable.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 3,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 0
+        },
+        "vulnerable-examples/sql-injection-vulnerable.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 2,
+          "xss-prevention.yaml": 0
+        },
+        "vulnerable-examples/xss-vulnerable.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 6
+        },
+        "safe-examples/rest-api-safe.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 0
+        },
+        "safe-examples/ajax-safe.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 0
+        },
+        "safe-examples/sql-safe.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 0
+        },
+        "safe-examples/xss-safe.php": {
+          "rest-api-security.yaml": 0,
+          "ajax-security.yaml": 0,
+          "sql-injection.yaml": 0,
+          "xss-prevention.yaml": 0
+        }
+      }
+    },
+    "taint_analysis": {
+      "name": "Taint Analysis Rules",
+      "description": "Advanced taint analysis patterns for detecting data flow vulnerabilities",
+      "test_files": [
+        "vulnerable-examples/taint-analysis-vulnerable.php",
+        "vulnerable-examples/sql-injection-taint-vulnerable.php",
+        "vulnerable-examples/xss-taint-vulnerable.php",
+        "safe-examples/taint-analysis-safe.php",
+        "safe-examples/sql-injection-taint-safe.php",
+        "safe-examples/xss-taint-safe.php"
+      ],
+      "rule_packs": ["experimental"],
+      "expected_results": {
+        "vulnerable-examples/taint-analysis-vulnerable.php": {
+          "taint-analysis-framework.yaml": 8,
+          "sql-injection-taint-rules.yaml": 0,
+          "xss-taint-rules.yaml": 0
+        },
+        "vulnerable-examples/sql-injection-taint-vulnerable.php": {
+          "taint-analysis-framework.yaml": 0,
+          "sql-injection-taint-rules.yaml": 6,
+          "xss-taint-rules.yaml": 0
+        },
+        "vulnerable-examples/xss-taint-vulnerable.php": {
+          "taint-analysis-framework.yaml": 0,
+          "sql-injection-taint-rules.yaml": 0,
+          "xss-taint-rules.yaml": 7
+        },
+        "safe-examples/taint-analysis-safe.php": {
+          "taint-analysis-framework.yaml": 0,
+          "sql-injection-taint-rules.yaml": 0,
+          "xss-taint-rules.yaml": 0
+        },
+        "safe-examples/sql-injection-taint-safe.php": {
+          "taint-analysis-framework.yaml": 0,
+          "sql-injection-taint-rules.yaml": 0,
+          "xss-taint-rules.yaml": 0
+        },
+        "safe-examples/xss-taint-safe.php": {
+          "taint-analysis-framework.yaml": 0,
+          "sql-injection-taint-rules.yaml": 0,
+          "xss-taint-rules.yaml": 0
+        }
+      }
+    },
+    "edge_cases": {
+      "name": "Edge Case Testing",
+      "description": "Testing edge cases and complex vulnerability patterns",
+      "test_files": [
+        "vulnerable-examples/edge-case-vulnerabilities.php",
+        "vulnerable-examples/advanced-vulnerabilities.php",
+        "vulnerable-examples/file-operation-vulnerable.php",
+        "safe-examples/advanced-vulnerabilities-safe.php"
+      ],
+      "rule_packs": ["wp-core-security", "experimental"],
+      "expected_results": {
+        "vulnerable-examples/edge-case-vulnerabilities.php": {
+          "advanced-security-rules.yaml": 12,
+          "comprehensive-security-rules.yaml": 15,
+          "advanced-obfuscation-rules.yaml": 8
+        },
+        "vulnerable-examples/advanced-vulnerabilities.php": {
+          "advanced-security-rules.yaml": 10,
+          "comprehensive-security-rules.yaml": 13,
+          "advanced-obfuscation-rules.yaml": 6
+        },
+        "vulnerable-examples/file-operation-vulnerable.php": {
+          "advanced-security-rules.yaml": 2,
+          "comprehensive-security-rules.yaml": 2,
+          "advanced-obfuscation-rules.yaml": 0
+        },
+        "safe-examples/advanced-vulnerabilities-safe.php": {
+          "advanced-security-rules.yaml": 0,
+          "comprehensive-security-rules.yaml": 0,
+          "advanced-obfuscation-rules.yaml": 0
+        }
+      }
+    }
+  },
+  "performance_scenarios": {
+    "small_test": {
+      "name": "Small Test Suite",
+      "path": "vulnerable-examples/",
+      "description": "Small test files for quick performance validation",
+      "expected_duration": 5.0,
+      "expected_memory": 100.0
+    },
+    "medium_test": {
+      "name": "Medium Test Suite",
+      "path": "./",
+      "description": "All test files for comprehensive testing",
+      "expected_duration": 15.0,
+      "expected_memory": 200.0
+    },
+    "large_test": {
+      "name": "Large Test Suite",
+      "path": "../",
+      "description": "Entire project for full-scale testing",
+      "expected_duration": 60.0,
+      "expected_memory": 500.0
+    }
+  },
+  "regression_testing": {
+    "baseline_file": "test-results/baseline-results.json",
+    "current_file": "test-results/current-results.json",
+    "regression_threshold": 0.1,
+    "performance_degradation_threshold": 0.2,
+    "findings_regression_threshold": 0.05
+  },
+  "reporting": {
+    "generate_json": true,
+    "generate_html": true,
+    "generate_csv": false,
+    "include_performance_metrics": true,
+    "include_recommendations": true,
+    "save_detailed_results": true
+  },
+  "notifications": {
+    "email_notifications": false,
+    "slack_notifications": false,
+    "github_issues": false,
+    "failure_threshold": 0.1
+  }
+}

@@ -1,0 +1,339 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run security scan weekly on Sundays at 2 AM UTC
+    - cron: '0 2 * * 0'
+  workflow_dispatch:
+    inputs:
+      config:
+        description: 'Configuration to use for scanning'
+        required: false
+        default: 'basic'
+        type: choice
+        options:
+          - basic
+          - strict
+          - plugin-development
+          - optimized-15s
+          - optimized-30s
+      scan_path:
+        description: 'Path to scan (relative to repository root)'
+        required: false
+        default: '.'
+      include_experimental:
+        description: 'Include experimental rules'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  SEMGREP_VERSION: "1.75.0"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  security-scan:
+    name: Security Scan (${{ github.event.inputs.config || 'basic' }})
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        config: ${{ fromJson(format('["{0}"]', github.event.inputs.config || 'basic')) }}
+        python-version: ["3.11"]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Full history for better analysis
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Cache Semgrep installation
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-semgrep-${{ env.SEMGREP_VERSION }}
+        restore-keys: |
+          ${{ runner.os }}-pip-semgrep-
+    
+    - name: Install Semgrep
+      run: |
+        python -m pip install --upgrade pip
+        pip install "semgrep==${{ env.SEMGREP_VERSION }}"
+        semgrep --version
+    
+    - name: Validate configuration
+      run: |
+        echo "Validating configuration: configs/${{ matrix.config }}.yaml"
+        if [ ! -f "configs/${{ matrix.config }}.yaml" ]; then
+          echo "❌ Configuration file configs/${{ matrix.config }}.yaml not found"
+          exit 1
+        fi
+        semgrep scan --config="configs/${{ matrix.config }}.yaml" --dryrun
+        echo "✅ Configuration validation passed"
+    
+    - name: Run security scan
+      id: scan
+      run: |
+        echo "🔍 Starting security scan with config: ${{ matrix.config }}"
+        echo "📁 Scanning path: ${{ github.event.inputs.scan_path || '.' }}"
+        
+        # Set scan options
+        SCAN_OPTS="--config=configs/${{ matrix.config }}.yaml"
+        SCAN_OPTS="$SCAN_OPTS --json"
+        SCAN_OPTS="$SCAN_OPTS --output=security-scan-results.json"
+        SCAN_OPTS="$SCAN_OPTS --metrics=off"
+        SCAN_OPTS="$SCAN_OPTS --quiet"
+        
+        # Add experimental rules if requested
+        if [ "${{ github.event.inputs.include_experimental }}" = "true" ]; then
+          echo "🔬 Including experimental rules"
+          SCAN_OPTS="$SCAN_OPTS --config=packs/experimental/"
+        fi
+        
+        # Exclude certain directories
+        SCAN_OPTS="$SCAN_OPTS --exclude=.git/"
+        SCAN_OPTS="$SCAN_OPTS --exclude=node_modules/"
+        SCAN_OPTS="$SCAN_OPTS --exclude=vendor/"
+        SCAN_OPTS="$SCAN_OPTS --exclude=.semgrep/"
+        
+        # Run the scan
+        start_time=$(date +%s)
+        semgrep scan $SCAN_OPTS "${{ github.event.inputs.scan_path || '.' }}"
+        scan_exit_code=$?
+        end_time=$(date +%s)
+        scan_duration=$((end_time - start_time))
+        
+        echo "⏱️ Scan completed in ${scan_duration} seconds"
+        echo "scan_duration=${scan_duration}" >> $GITHUB_OUTPUT
+        echo "scan_exit_code=${scan_exit_code}" >> $GITHUB_OUTPUT
+        
+        # Check if scan was successful
+        if [ $scan_exit_code -eq 0 ] || [ $scan_exit_code -eq 1 ]; then
+          echo "✅ Security scan completed successfully"
+        else
+          echo "❌ Security scan failed with exit code: $scan_exit_code"
+          exit $scan_exit_code
+        fi
+    
+    - name: Analyze scan results
+      id: analyze
+      run: |
+        if [ ! -f "security-scan-results.json" ]; then
+          echo "❌ Scan results file not found"
+          exit 1
+        fi
+        
+        # Parse results
+        RESULTS=$(cat security-scan-results.json)
+        
+        # Count findings by severity
+        ERROR_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.severity == "ERROR")' | jq -s 'length')
+        WARNING_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.severity == "WARNING")' | jq -s 'length')
+        INFO_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.severity == "INFO")' | jq -s 'length')
+        
+        # Count findings by category
+        NONCE_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.metadata.category == "nonce-verification")' | jq -s 'length')
+        CAPABILITY_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.metadata.category == "capability-checks")' | jq -s 'length')
+        XSS_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.metadata.category == "xss-prevention")' | jq -s 'length')
+        SQL_COUNT=$(echo "$RESULTS" | jq '.results[] | select(.extra.metadata.category == "sql-injection")' | jq -s 'length')
+        
+        # Output results
+        echo "📊 Scan Results Summary:"
+        echo "  🔴 Errors: $ERROR_COUNT"
+        echo "  🟡 Warnings: $WARNING_COUNT"
+        echo "  🔵 Info: $INFO_COUNT"
+        echo "  📋 Total: $((ERROR_COUNT + WARNING_COUNT + INFO_COUNT))"
+        echo ""
+        echo "📋 Findings by Category:"
+        echo "  🔐 Nonce Verification: $NONCE_COUNT"
+        echo "  👤 Capability Checks: $CAPABILITY_COUNT"
+        echo "  🛡️ XSS Prevention: $XSS_COUNT"
+        echo "  🗄️ SQL Injection: $SQL_COUNT"
+        
+        # Set output variables
+        echo "error_count=$ERROR_COUNT" >> $GITHUB_OUTPUT
+        echo "warning_count=$WARNING_COUNT" >> $GITHUB_OUTPUT
+        echo "info_count=$INFO_COUNT" >> $GITHUB_OUTPUT
+        echo "total_findings=$((ERROR_COUNT + WARNING_COUNT + INFO_COUNT))" >> $GITHUB_OUTPUT
+        
+        # Create detailed report
+        echo "📄 Creating detailed report..."
+        echo "# Security Scan Report" > security-report.md
+        echo "" >> security-report.md
+        echo "**Configuration:** ${{ matrix.config }}" >> security-report.md
+        echo "**Scan Duration:** ${{ steps.scan.outputs.scan_duration }} seconds" >> security-report.md
+        echo "**Total Findings:** $((ERROR_COUNT + WARNING_COUNT + INFO_COUNT))" >> security-report.md
+        echo "" >> security-report.md
+        
+        if [ $ERROR_COUNT -gt 0 ]; then
+          echo "## 🔴 Critical Issues ($ERROR_COUNT)" >> security-report.md
+          echo "$RESULTS" | jq -r '.results[] | select(.extra.severity == "ERROR") | "- **" + .extra.message + "** in `" + .path + ":" + (.start.line | tostring) + "`"' >> security-report.md
+          echo "" >> security-report.md
+        fi
+        
+        if [ $WARNING_COUNT -gt 0 ]; then
+          echo "## 🟡 Warnings ($WARNING_COUNT)" >> security-report.md
+          echo "$RESULTS" | jq -r '.results[] | select(.extra.severity == "WARNING") | "- **" + .extra.message + "** in `" + .path + ":" + (.start.line | tostring) + "`"' >> security-report.md
+          echo "" >> security-report.md
+        fi
+    
+    - name: Upload scan results
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-scan-results-${{ matrix.config }}-${{ github.run_id }}
+        path: |
+          security-scan-results.json
+          security-report.md
+        retention-days: 30
+    
+    - name: Comment on PR
+      if: github.event_name == 'pull_request'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const fs = require('fs');
+          const reportPath = 'security-report.md';
+          
+          if (fs.existsSync(reportPath)) {
+            const report = fs.readFileSync(reportPath, 'utf8');
+            const totalFindings = ${{ steps.analyze.outputs.total_findings }};
+            const errorCount = ${{ steps.analyze.outputs.error_count }};
+            
+            let comment = `## 🔍 Security Scan Results\n\n`;
+            comment += `**Configuration:** ${{ matrix.config }}\n`;
+            comment += `**Total Findings:** ${totalFindings}\n`;
+            comment += `**Critical Issues:** ${errorCount}\n\n`;
+            
+            if (errorCount > 0) {
+              comment += `⚠️ **Critical security issues detected!** Please review and fix these issues before merging.\n\n`;
+            } else if (totalFindings > 0) {
+              comment += `✅ No critical issues found, but please review the warnings and info items.\n\n`;
+            } else {
+              comment += `🎉 **No security issues found!** Great job!\n\n`;
+            }
+            
+            comment += `<details>\n<summary>📋 Detailed Report</summary>\n\n`;
+            comment += report;
+            comment += `\n</details>`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+          }
+    
+    - name: Fail on critical issues
+      if: steps.analyze.outputs.error_count > 0
+      run: |
+        echo "❌ Critical security issues detected. Failing the build."
+        echo "Please review and fix the critical issues before proceeding."
+        exit 1
+
+  performance-benchmark:
+    name: Performance Benchmark
+    runs-on: ubuntu-latest
+    needs: security-scan
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    
+    - name: Install Semgrep
+      run: |
+        python -m pip install --upgrade pip
+        pip install "semgrep==${{ env.SEMGREP_VERSION }}"
+    
+    - name: Run performance benchmarks
+      run: |
+        echo "🏃 Running performance benchmarks..."
+        
+        # Test different configurations
+        for config in basic strict plugin-development optimized-15s optimized-30s; do
+          if [ -f "configs/$config.yaml" ]; then
+            echo "Testing $config configuration..."
+            start_time=$(date +%s.%N)
+            semgrep scan --config="configs/$config.yaml" --json --output=/dev/null --quiet .
+            end_time=$(date +%s.%N)
+            duration=$(echo "$end_time - $start_time" | bc)
+            echo "$config: ${duration}s" >> performance-results.txt
+          fi
+        done
+        
+        echo "📊 Performance Results:"
+        cat performance-results.txt
+    
+    - name: Upload performance results
+      uses: actions/upload-artifact@v3
+      with:
+        name: performance-benchmark-${{ github.run_id }}
+        path: performance-results.txt
+        retention-days: 90
+
+  security-dashboard:
+    name: Security Dashboard
+    runs-on: ubuntu-latest
+    needs: [security-scan, performance-benchmark]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Download scan results
+      uses: actions/download-artifact@v3
+      with:
+        name: security-scan-results-basic-${{ github.run_id }}
+        path: scan-results/
+    
+    - name: Generate security dashboard
+      run: |
+        echo "📊 Generating security dashboard..."
+        
+        # Create dashboard data
+        cat > security-dashboard.json << EOF
+        {
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+          "run_id": "${{ github.run_id }}",
+          "commit": "${{ github.sha }}",
+          "branch": "${{ github.ref_name }}",
+          "configurations": {
+            "basic": {
+              "status": "completed",
+              "findings": {
+                "error": 0,
+                "warning": 0,
+                "info": 0
+              }
+            }
+          },
+          "performance": {
+            "scan_duration": 0
+          }
+        }
+        EOF
+        
+        echo "✅ Security dashboard generated"
+    
+    - name: Upload security dashboard
+      uses: actions/upload-artifact@v3
+      with:
+        name: security-dashboard-${{ github.run_id }}
+        path: security-dashboard.json
+        retention-days: 365

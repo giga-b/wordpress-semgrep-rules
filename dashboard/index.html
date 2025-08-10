@@ -1,0 +1,373 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress Semgrep Rules - Metrics Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        .metric-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chart-section {
+            padding: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+        .chart-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .table-section {
+            padding: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+        .table-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-good { background-color: #28a745; }
+        .status-warning { background-color: #ffc107; }
+        .status-poor { background-color: #dc3545; }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e1e5e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>WordPress Semgrep Rules</h1>
+            <p>Metrics Dashboard - 2025-08-10T09:29:08.277331</p>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Scans</div>
+                <div class="metric-value">412</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Findings</div>
+                <div class="metric-value">1792</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">False Positives</div>
+                <div class="metric-value">264</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Overall Precision</div>
+                <div class="metric-value">85.3%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Overall Recall</div>
+                <div class="metric-value">90.0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">F1 Score</div>
+                <div class="metric-value">0.88</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Avg Scan Time</div>
+                <div class="metric-value">3.29s</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Scan Time</div>
+                <div class="metric-value">1357.1s</div>
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>Performance Trends</h2>
+            <div class="chart-container">
+                <img src="performance_trends.png" alt="Performance Trends">
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>False Positive Trends</h2>
+            <div class="chart-container">
+                <img src="false_positive_trends.png" alt="False Positive Trends">
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>Rule Performance</h2>
+            <div class="chart-container">
+                <img src="rule_performance.png" alt="Rule Performance">
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>Pack Performance</h2>
+            <div class="chart-container">
+                <img src="pack_performance.png" alt="Pack Performance">
+            </div>
+        </div>
+        
+        <div class="table-section">
+            <h2>Top Performing Rules</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule Name</th>
+                        <th>Pack</th>
+                        <th>F1 Score</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>Total Runs</th>
+                        <th>Avg Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>Advanced Obfuscation Rules</td>
+                        <td>experimental</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>20</td>
+                        <td>3.04s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Advanced Security Rules</td>
+                        <td>experimental</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>20</td>
+                        <td>3.12s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Ajax Security</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>36</td>
+                        <td>3.29s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Capability Checks</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>36</td>
+                        <td>3.04s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Comprehensive Security Rules</td>
+                        <td>experimental</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>20</td>
+                        <td>2.91s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Nonce Verification</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>36</td>
+                        <td>3.22s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rest Api Security</td>
+                        <td>wp-core-security</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>36</td>
+                        <td>3.73s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Sanitization Functions</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>36</td>
+                        <td>3.32s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Simple Advanced Rules</td>
+                        <td>experimental</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>20</td>
+                        <td>3.16s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Sql Injection</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>36</td>
+                        <td>3.34s</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="table-section">
+            <h2>Rule Pack Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pack Name</th>
+                        <th>Total Rules</th>
+                        <th>Active Rules</th>
+                        <th>Performance Score</th>
+                        <th>False Positive Rate</th>
+                        <th>Avg Scan Time</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>experimental</td>
+                        <td>8</td>
+                        <td>8</td>
+                        <td>
+                            <span class="status-indicator 
+                                status-good
+                                "></span>
+                            89.0
+                        </td>
+                        <td>15.0%</td>
+                        <td>65.44s</td>
+                        <td>2025-08-10T05:25:47.998955</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>wp-core-security</td>
+                        <td>7</td>
+                        <td>7</td>
+                        <td>
+                            <span class="status-indicator 
+                                status-good
+                                "></span>
+                            83.7
+                        </td>
+                        <td>14.7%</td>
+                        <td>119.08s</td>
+                        <td>2025-08-10T05:25:47.998955</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-10T09:29:08.277331 | WordPress Semgrep Rules Dashboard</p>
+        </div>
+    </div>
+</body>
+</html>
+        

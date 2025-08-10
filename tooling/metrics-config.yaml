@@ -1,0 +1,211 @@
+# WordPress Semgrep Rules - Metrics Dashboard Configuration
+
+# Database configuration
+database:
+  path: "metrics.db"
+  backup_enabled: true
+  backup_interval_hours: 24
+  max_backups: 7
+
+# Data collection settings
+collection:
+  # Test results sources
+  test_results:
+    - path: "tests/test-results/automated-test-report.json"
+      enabled: true
+      update_interval_minutes: 30
+    
+  # Performance reports sources
+  performance_reports:
+    - path: "performance-optimization-report.json"
+      enabled: true
+    - path: "performance-test-*.json"
+      enabled: true
+      pattern: true
+    
+  # Semgrep scan results
+  scan_results:
+    - path: "semgrep-results.json"
+      enabled: true
+    - path: "test-results.json"
+      enabled: true
+
+# Dashboard configuration
+dashboard:
+  output_directory: "dashboard"
+  update_interval_seconds: 300
+  auto_refresh: true
+  charts:
+    performance_trends:
+      enabled: true
+      days: 30
+      chart_type: "line"
+    false_positive_trends:
+      enabled: true
+      days: 30
+      chart_type: "line"
+    rule_performance:
+      enabled: true
+      top_rules: 10
+      chart_type: "bar"
+    pack_performance:
+      enabled: true
+      chart_type: "bar"
+  
+  # Table configurations
+  tables:
+    top_rules:
+      enabled: true
+      max_rows: 20
+      sort_by: "f1_score"
+      sort_order: "desc"
+    pack_performance:
+      enabled: true
+      sort_by: "performance_score"
+      sort_order: "desc"
+
+# Metrics calculation settings
+metrics:
+  # Precision/Recall calculation
+  precision_recall:
+    # Ground truth data sources (for accurate calculations)
+    ground_truth:
+      enabled: false
+      sources: []
+    
+    # Fallback calculations (when ground truth not available)
+    fallback:
+      precision_estimate: 0.85
+      recall_estimate: 0.90
+      false_positive_rate: 0.15
+  
+  # Performance scoring
+  performance_scoring:
+    # Weights for different factors
+    weights:
+      false_positive_rate: 0.30
+      scan_time: 0.20
+      success_rate: 0.25
+      findings_rate: 0.25
+    
+    # Thresholds
+    thresholds:
+      excellent_score: 80
+      good_score: 60
+      poor_score: 40
+
+# Alerting configuration
+alerts:
+  enabled: true
+  email:
+    enabled: false
+    smtp_server: ""
+    smtp_port: 587
+    username: ""
+    password: ""
+    recipients: []
+  
+  # Alert thresholds
+  thresholds:
+    false_positive_rate:
+      warning: 0.10
+      critical: 0.20
+    scan_time:
+      warning: 30.0
+      critical: 60.0
+    success_rate:
+      warning: 0.90
+      critical: 0.80
+
+# Web server configuration
+server:
+  port: 8080
+  host: "localhost"
+  auto_open_browser: true
+  cors_enabled: true
+  max_connections: 100
+
+# Logging configuration
+logging:
+  level: "INFO"
+  file: "metrics-dashboard.log"
+  max_size_mb: 10
+  backup_count: 5
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+
+# Export settings
+export:
+  formats:
+    - "json"
+    - "csv"
+    - "html"
+  auto_export: false
+  export_interval_hours: 24
+  output_directory: "exports"
+
+# Integration settings
+integrations:
+  # GitHub Actions integration
+  github_actions:
+    enabled: false
+    workflow_file: ".github/workflows/metrics.yml"
+    artifact_name: "metrics-dashboard"
+  
+  # Slack integration
+  slack:
+    enabled: false
+    webhook_url: ""
+    channel: "#security"
+  
+  # Teams integration
+  teams:
+    enabled: false
+    webhook_url: ""
+
+# Rule pack specific settings
+rule_packs:
+  wp-core-security:
+    priority: "high"
+    expected_false_positive_rate: 0.05
+    performance_target_seconds: 15
+    
+  wp-core-quality:
+    priority: "medium"
+    expected_false_positive_rate: 0.10
+    performance_target_seconds: 20
+    
+  experimental:
+    priority: "low"
+    expected_false_positive_rate: 0.15
+    performance_target_seconds: 30
+
+# Custom metrics
+custom_metrics:
+  # Custom metric definitions
+  definitions:
+    - name: "security_coverage"
+      description: "Percentage of security rules that found vulnerabilities"
+      calculation: "true_positives / total_security_rules"
+      unit: "percentage"
+    
+    - name: "rule_efficiency"
+      description: "Findings per scan time"
+      calculation: "total_findings / total_scan_time"
+      unit: "findings/second"
+    
+    - name: "maintenance_score"
+      description: "Overall rule maintenance quality"
+      calculation: "(success_rate * 0.4) + (precision * 0.3) + (1 - false_positive_rate * 0.3)"
+      unit: "score"
+
+# Retention policy
+retention:
+  # How long to keep metrics data
+  scan_results_days: 90
+  performance_data_days: 180
+  trend_data_days: 365
+  
+  # Cleanup settings
+  auto_cleanup: true
+  cleanup_interval_hours: 24
+  backup_before_cleanup: true

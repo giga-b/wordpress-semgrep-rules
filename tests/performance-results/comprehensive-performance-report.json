@@ -1,0 +1,397 @@
+{
+  "timestamp": "2025-08-10T10:08:37.564174",
+  "duration": 75.9644832611084,
+  "total_tests": 18,
+  "successful_tests": 8,
+  "failed_tests": 10,
+  "test_summaries": [
+    {
+      "config_name": "basic.yaml",
+      "test_path": "small_project",
+      "iterations": 2,
+      "mean_scan_time": 2.9922125339508057,
+      "median_scan_time": 2.9922125339508057,
+      "std_scan_time": 0.05168720913982001,
+      "min_scan_time": 2.9556641578674316,
+      "max_scan_time": 3.0287609100341797,
+      "mean_memory_peak": 61.5703125,
+      "mean_memory_final": 61.5703125,
+      "mean_cpu_percent": 0.26,
+      "mean_findings_count": 0,
+      "success_rate": 1.0,
+      "total_duration": 5.984425067901611,
+      "throughput_files_per_second": 1.0027521824326215,
+      "throughput_rules_per_second": 0.0
+    },
+    {
+      "config_name": "strict.yaml",
+      "test_path": "small_project",
+      "iterations": 2,
+      "mean_scan_time": 0,
+      "median_scan_time": 0,
+      "std_scan_time": 0,
+      "min_scan_time": 0,
+      "max_scan_time": 0,
+      "mean_memory_peak": 0,
+      "mean_memory_final": 0,
+      "mean_cpu_percent": 0,
+      "mean_findings_count": 0,
+      "success_rate": 0,
+      "total_duration": 0,
+      "throughput_files_per_second": 0,
+      "throughput_rules_per_second": 0
+    },
+    {
+      "config_name": "basic.yaml",
+      "test_path": "medium_project",
+      "iterations": 2,
+      "mean_scan_time": 6.025212287902832,
+      "median_scan_time": 6.025212287902832,
+      "std_scan_time": 0.001136279035853703,
+      "min_scan_time": 6.02440881729126,
+      "max_scan_time": 6.026015758514404,
+      "mean_memory_peak": 61.59375,
+      "mean_memory_final": 61.59375,
+      "mean_cpu_percent": 0.12916666666666668,
+      "mean_findings_count": 3,
+      "success_rate": 1.0,
+      "total_duration": 12.050424575805664,
+      "throughput_files_per_second": 3.9832622121827352,
+      "throughput_rules_per_second": 0.4979077765228419
+    },
+    {
+      "config_name": "strict.yaml",
+      "test_path": "medium_project",
+      "iterations": 2,
+      "mean_scan_time": 0,
+      "median_scan_time": 0,
+      "std_scan_time": 0,
+      "min_scan_time": 0,
+      "max_scan_time": 0,
+      "mean_memory_peak": 0,
+      "mean_memory_final": 0,
+      "mean_cpu_percent": 0,
+      "mean_findings_count": 0,
+      "success_rate": 0,
+      "total_duration": 0,
+      "throughput_files_per_second": 0,
+      "throughput_rules_per_second": 0
+    },
+    {
+      "config_name": "plugin-development.yaml",
+      "test_path": "medium_project",
+      "iterations": 2,
+      "mean_scan_time": 0,
+      "median_scan_time": 0,
+      "std_scan_time": 0,
+      "min_scan_time": 0,
+      "max_scan_time": 0,
+      "mean_memory_peak": 0,
+      "mean_memory_final": 0,
+      "mean_cpu_percent": 0,
+      "mean_findings_count": 0,
+      "success_rate": 0,
+      "total_duration": 0,
+      "throughput_files_per_second": 0,
+      "throughput_rules_per_second": 0
+    },
+    {
+      "config_name": "basic.yaml",
+      "test_path": "large_project",
+      "iterations": 2,
+      "mean_scan_time": 7.2936201095581055,
+      "median_scan_time": 7.2936201095581055,
+      "std_scan_time": 1.7350542550261534,
+      "min_scan_time": 6.066751480102539,
+      "max_scan_time": 8.520488739013672,
+      "mean_memory_peak": 61.736328125,
+      "mean_memory_final": 61.736328125,
+      "mean_cpu_percent": 0.25573770491803277,
+      "mean_findings_count": 3,
+      "success_rate": 1.0,
+      "total_duration": 14.587240219116211,
+      "throughput_files_per_second": 3.386364240061339,
+      "throughput_rules_per_second": 0.4232955300076674
+    },
+    {
+      "config_name": "strict.yaml",
+      "test_path": "large_project",
+      "iterations": 2,
+      "mean_scan_time": 0,
+      "median_scan_time": 0,
+      "std_scan_time": 0,
+      "min_scan_time": 0,
+      "max_scan_time": 0,
+      "mean_memory_peak": 0,
+      "mean_memory_final": 0,
+      "mean_cpu_percent": 0,
+      "mean_findings_count": 0,
+      "success_rate": 0,
+      "total_duration": 0,
+      "throughput_files_per_second": 0,
+      "throughput_rules_per_second": 0
+    },
+    {
+      "config_name": "plugin-development.yaml",
+      "test_path": "large_project",
+      "iterations": 2,
+      "mean_scan_time": 0,
+      "median_scan_time": 0,
+      "std_scan_time": 0,
+      "min_scan_time": 0,
+      "max_scan_time": 0,
+      "mean_memory_peak": 0,
+      "mean_memory_final": 0,
+      "mean_cpu_percent": 0,
+      "mean_findings_count": 0,
+      "success_rate": 0,
+      "total_duration": 0,
+      "throughput_files_per_second": 0,
+      "throughput_rules_per_second": 0
+    },
+    {
+      "config_name": "optimized-30s.yaml",
+      "test_path": "large_project",
+      "iterations": 2,
+      "mean_scan_time": 6.069329857826233,
+      "median_scan_time": 6.069329857826233,
+      "std_scan_time": 0.2163055501654282,
+      "min_scan_time": 5.916378736495972,
+      "max_scan_time": 6.222280979156494,
+      "mean_memory_peak": 61.6953125,
+      "mean_memory_final": 61.6953125,
+      "mean_cpu_percent": 0.12580645161290321,
+      "mean_findings_count": 1,
+      "success_rate": 1.0,
+      "total_duration": 12.138659715652466,
+      "throughput_files_per_second": 3.9568209353119155,
+      "throughput_rules_per_second": 0.16486753897132983
+    }
+  ],
+  "performance_rankings": {
+    "fastest_configs": [
+      "strict.yaml",
+      "strict.yaml",
+      "plugin-development.yaml",
+      "strict.yaml",
+      "plugin-development.yaml"
+    ],
+    "highest_throughput": [
+      "basic.yaml",
+      "optimized-30s.yaml",
+      "basic.yaml",
+      "basic.yaml",
+      "strict.yaml"
+    ],
+    "most_memory_efficient": [
+      "strict.yaml",
+      "strict.yaml",
+      "plugin-development.yaml",
+      "strict.yaml",
+      "plugin-development.yaml"
+    ],
+    "scan_time_rankings": [
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        2.9922125339508057
+      ],
+      [
+        "basic.yaml",
+        6.025212287902832
+      ],
+      [
+        "optimized-30s.yaml",
+        6.069329857826233
+      ],
+      [
+        "basic.yaml",
+        7.2936201095581055
+      ]
+    ],
+    "throughput_rankings": [
+      [
+        "basic.yaml",
+        3.9832622121827352
+      ],
+      [
+        "optimized-30s.yaml",
+        3.9568209353119155
+      ],
+      [
+        "basic.yaml",
+        3.386364240061339
+      ],
+      [
+        "basic.yaml",
+        1.0027521824326215
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ]
+    ]
+  },
+  "optimization_recommendations": [
+    "Configuration 'strict.yaml' has low throughput (0.000 files/s < 0.1). Consider performance optimization.",
+    "Configuration 'strict.yaml' has low throughput (0.000 files/s < 0.1). Consider performance optimization.",
+    "Configuration 'plugin-development.yaml' has low throughput (0.000 files/s < 0.1). Consider performance optimization.",
+    "Configuration 'strict.yaml' has low throughput (0.000 files/s < 0.1). Consider performance optimization.",
+    "Configuration 'plugin-development.yaml' has low throughput (0.000 files/s < 0.1). Consider performance optimization."
+  ],
+  "baseline_comparison": {
+    "status": "no_baseline",
+    "message": "No baseline file found"
+  },
+  "performance_trends": {
+    "scan_time_trends": [
+      [
+        "basic.yaml",
+        2.9922125339508057
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        6.025212287902832
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        7.2936201095581055
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "optimized-30s.yaml",
+        6.069329857826233
+      ]
+    ],
+    "memory_usage_trends": [
+      [
+        "basic.yaml",
+        61.5703125
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        61.59375
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        61.736328125
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "optimized-30s.yaml",
+        61.6953125
+      ]
+    ],
+    "throughput_trends": [
+      [
+        "basic.yaml",
+        1.0027521824326215
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        3.9832622121827352
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "basic.yaml",
+        3.386364240061339
+      ],
+      [
+        "strict.yaml",
+        0
+      ],
+      [
+        "plugin-development.yaml",
+        0
+      ],
+      [
+        "optimized-30s.yaml",
+        3.9568209353119155
+      ]
+    ]
+  }
+}

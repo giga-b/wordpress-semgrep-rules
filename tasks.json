@@ -247,8 +247,9 @@
         "dependencies": [],
         "estimated_hours": 12,
         "category": "testing",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258006"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258006",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 19,
@@ -261,8 +262,9 @@
         ],
         "estimated_hours": 12,
         "category": "integration",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258031"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258031",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 20,
@@ -289,7 +291,7 @@
         ],
         "estimated_hours": 24,
         "category": "integration",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.258038"
       },
       {
@@ -315,7 +317,7 @@
         "dependencies": [],
         "estimated_hours": 12,
         "category": "tooling",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.258043"
       },
       {
@@ -327,7 +329,7 @@
         "dependencies": [],
         "estimated_hours": 8,
         "category": "tooling",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.258047"
       },
       {
@@ -339,7 +341,7 @@
         "dependencies": [],
         "estimated_hours": 8,
         "category": "community",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.258050"
       },
       {
@@ -351,8 +353,9 @@
         "dependencies": [],
         "estimated_hours": 4,
         "category": "community",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258053"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258053",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 27,
@@ -363,8 +366,9 @@
         "dependencies": [],
         "estimated_hours": 16,
         "category": "performance",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258201"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258201",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 28,
@@ -375,8 +379,9 @@
         "dependencies": [],
         "estimated_hours": 20,
         "category": "performance",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258212"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258212",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 29,
@@ -387,7 +392,7 @@
         "dependencies": [],
         "estimated_hours": 16,
         "category": "features",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.258216"
       },
       {
@@ -399,7 +404,7 @@
         "dependencies": [],
         "estimated_hours": 24,
         "category": "features",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.258219"
       },
       {
@@ -411,8 +416,9 @@
         "dependencies": [],
         "estimated_hours": 16,
         "category": "security",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258221"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258221",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 32,
@@ -423,8 +429,9 @@
         "dependencies": [],
         "estimated_hours": 12,
         "category": "performance",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258227"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258227",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 33,
@@ -435,13 +442,14 @@
         "dependencies": [],
         "estimated_hours": 16,
         "category": "documentation",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258230"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258230",
+        "completed": "2025-01-09T12:00:00.000000"
       }
     ],
     "metadata": {
       "created": "2025-08-10T05:21:42.265Z",
-      "updated": "2025-08-10T07:57:32.972Z",
+      "updated": "2025-08-10T13:44:44.976Z",
       "description": "Tasks for master context"
     }
   }

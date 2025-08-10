@@ -1,0 +1,212 @@
+{
+  "name": "wordpress-semgrep-security-cursor",
+  "displayName": "WordPress Semgrep Security for Cursor",
+  "description": "Real-time WordPress security scanning with Semgrep for Cursor IDE",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other",
+    "Security",
+    "Linters"
+  ],
+  "activationEvents": [
+    "onLanguage:php",
+    "onCommand:wordpress-semgrep-cursor.scanFile",
+    "onCommand:wordpress-semgrep-cursor.scanWorkspace",
+    "onCommand:wordpress-semgrep-cursor.showProblems",
+    "onCommand:wordpress-semgrep-cursor.configureRules",
+    "onCommand:wordpress-semgrep-cursor.quickFix"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "wordpress-semgrep-cursor.scanFile",
+        "title": "🔒 Scan Current File for Security Issues",
+        "category": "WordPress Security"
+      },
+      {
+        "command": "wordpress-semgrep-cursor.scanWorkspace",
+        "title": "🔒 Scan Workspace for Security Issues",
+        "category": "WordPress Security"
+      },
+      {
+        "command": "wordpress-semgrep-cursor.showProblems",
+        "title": "🔍 Show Security Problems",
+        "category": "WordPress Security"
+      },
+      {
+        "command": "wordpress-semgrep-cursor.configureRules",
+        "title": "⚙️ Configure Security Rules",
+        "category": "WordPress Security"
+      },
+      {
+        "command": "wordpress-semgrep-cursor.installSemgrep",
+        "title": "📦 Install/Update Semgrep",
+        "category": "WordPress Security"
+      },
+      {
+        "command": "wordpress-semgrep-cursor.quickFix",
+        "title": "🔧 Apply Quick Fix",
+        "category": "WordPress Security"
+      }
+    ],
+    "configuration": {
+      "title": "WordPress Semgrep Security",
+      "properties": {
+        "wordpressSemgrepCursor.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable WordPress Semgrep Security scanning"
+        },
+        "wordpressSemgrepCursor.autoScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan files on save"
+        },
+        "wordpressSemgrepCursor.configPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Semgrep configuration file"
+        },
+        "wordpressSemgrepCursor.rulesPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to custom Semgrep rules directory"
+        },
+        "wordpressSemgrepCursor.severity": {
+          "type": "string",
+          "enum": ["ERROR", "WARNING", "INFO"],
+          "default": "WARNING",
+          "description": "Minimum severity level to report"
+        },
+        "wordpressSemgrepCursor.maxProblems": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum number of problems to report"
+        },
+        "wordpressSemgrepCursor.timeout": {
+          "type": "number",
+          "default": 30000,
+          "description": "Timeout for Semgrep scans in milliseconds"
+        },
+        "wordpressSemgrepCursor.showInline": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show security issues inline in the editor"
+        },
+        "wordpressSemgrepCursor.quickFixEnabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable quick fix suggestions"
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "wordpress-semgrep-cursor.scanFile"
+        },
+        {
+          "command": "wordpress-semgrep-cursor.scanWorkspace"
+        },
+        {
+          "command": "wordpress-semgrep-cursor.showProblems"
+        },
+        {
+          "command": "wordpress-semgrep-cursor.configureRules"
+        },
+        {
+          "command": "wordpress-semgrep-cursor.installSemgrep"
+        },
+        {
+          "command": "wordpress-semgrep-cursor.quickFix"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "wordpress-semgrep-cursor.scanFile",
+          "when": "resourceLangId == php"
+        },
+        {
+          "command": "wordpress-semgrep-cursor.quickFix",
+          "when": "resourceLangId == php"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "wordpress-semgrep-cursor-problems",
+          "name": "🔒 Security Issues"
+        }
+      ],
+      "activitybar": [
+        {
+          "id": "wordpress-semgrep-cursor-status",
+          "name": "🔒 WordPress Security Status"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "wordpress-semgrep-cursor",
+          "title": "WordPress Security",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "wordpress-semgrep-cursor.scanFile",
+        "key": "ctrl+shift+s",
+        "when": "resourceLangId == php"
+      },
+      {
+        "command": "wordpress-semgrep-cursor.quickFix",
+        "key": "ctrl+shift+f",
+        "when": "resourceLangId == php"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTests.js",
+    "test:unit": "node ./out/test/runTests.js --suite unit",
+    "test:integration": "node ./out/test/runTests.js --suite integration"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "typescript": "^4.8.4",
+    "@vscode/test-electron": "^2.3.8"
+  },
+  "dependencies": {
+    "child_process": "^1.0.2"
+  },
+  "publisher": "wordpress-semgrep",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wordpress-semgrep/cursor-extension.git"
+  },
+  "keywords": [
+    "wordpress",
+    "security",
+    "semgrep",
+    "static-analysis",
+    "php",
+    "cursor",
+    "ide"
+  ],
+  "license": "MIT"
+}

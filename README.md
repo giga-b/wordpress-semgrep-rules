@@ -10,6 +10,8 @@ Comprehensive security scanning rules for WordPress plugin and theme development
 
 > **Note**: This project is now live on GitHub! Check out the [repository](https://github.com/giga-b/wordpress-semgrep-rules) for the latest updates.
 
+> **⚠️ Security Notice**: Before using the auto-fix system, please review our [Security Considerations](docs/SECURITY-CONSIDERATIONS.md) guide.
+
 1. **Install Semgrep:**
    ```bash
    pip install semgrep
@@ -23,6 +25,11 @@ Comprehensive security scanning rules for WordPress plugin and theme development
 3. **Generate custom rules:**
    ```bash
    python tooling/generate_rules.py --categories wordpress-core,php-security --output custom-rules.yaml
+   ```
+
+4. **Use auto-fix system (with caution):**
+   ```bash
+   python tooling/auto_fix.py --results semgrep-results.json --dry-run
    ```
 
 ## Project Structure
@@ -73,6 +80,25 @@ wordpress-semgrep-rules/
 - File operation security
 - Deserialization safety
 
+## Security
+
+### Security Considerations
+This project includes automated security scanning and fixing capabilities. Please review our comprehensive [Security Considerations](docs/SECURITY-CONSIDERATIONS.md) guide before using these features.
+
+### Key Security Features
+- **Enhanced Auto-fix Validation**: Multi-layer validation system for generated fixes
+- **Path Validation**: Comprehensive path sanitization and validation
+- **Configuration Hardening**: Secure default settings and validation
+- **Error Handling**: Robust error handling with rollback capabilities
+- **Backup System**: Automatic backup creation before any changes
+
+### Security Best Practices
+- Always test auto-fixes in development environment first
+- Use preview mode to review proposed changes
+- Enable backup creation before applying fixes
+- Monitor logs for security events
+- Regular security audits and updates
+
 ## Testing
 
 Run tests against vulnerable examples:
@@ -113,11 +139,19 @@ Integrated security scanning in GitHub Actions.
 ### IDE Integration
 Configure your IDE to use these rules for real-time scanning.
 
-## Support
+## Documentation
 
+### Production Documentation
+- [Production Deployment Guide](docs/PRODUCTION-DEPLOYMENT-GUIDE.md) - Complete deployment instructions for production environments
+- [Production User Guide](docs/PRODUCTION-USER-GUIDE.md) - User guide for production workflows and integrations
+- [API Reference](docs/API-REFERENCE.md) - Complete API documentation for all tools and interfaces
+
+### Technical Documentation
 - [WordPress Security Best Practices](https://developer.wordpress.org/plugins/security/)
 - [Semgrep Documentation](https://semgrep.dev/docs/)
 - [OWASP Top Ten](https://owasp.org/www-project-top-ten/)
+
+## Support
 
 ## License
 

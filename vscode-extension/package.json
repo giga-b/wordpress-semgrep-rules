@@ -1,0 +1,180 @@
+{
+  "name": "wordpress-semgrep-security",
+  "displayName": "WordPress Semgrep Security",
+  "description": "Real-time WordPress security scanning with Semgrep",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.74.0"
+  },
+  "categories": [
+    "Other",
+    "Security"
+  ],
+  "activationEvents": [
+    "onLanguage:php",
+    "onCommand:wordpress-semgrep.scanFile",
+    "onCommand:wordpress-semgrep.scanWorkspace",
+    "onCommand:wordpress-semgrep.showProblems",
+    "onCommand:wordpress-semgrep.configureRules"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "wordpress-semgrep.scanFile",
+        "title": "Scan Current File",
+        "category": "WordPress Semgrep"
+      },
+      {
+        "command": "wordpress-semgrep.scanWorkspace",
+        "title": "Scan Workspace",
+        "category": "WordPress Semgrep"
+      },
+      {
+        "command": "wordpress-semgrep.showProblems",
+        "title": "Show Security Problems",
+        "category": "WordPress Semgrep"
+      },
+      {
+        "command": "wordpress-semgrep.configureRules",
+        "title": "Configure Security Rules",
+        "category": "WordPress Semgrep"
+      },
+      {
+        "command": "wordpress-semgrep.installSemgrep",
+        "title": "Install Semgrep",
+        "category": "WordPress Semgrep"
+      }
+    ],
+    "configuration": {
+      "title": "WordPress Semgrep Security",
+      "properties": {
+        "wordpressSemgrep.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable WordPress Semgrep security scanning"
+        },
+        "wordpressSemgrep.autoScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan files on save"
+        },
+        "wordpressSemgrep.configPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to Semgrep configuration file"
+        },
+        "wordpressSemgrep.rulesPath": {
+          "type": "string",
+          "default": "",
+          "description": "Path to custom Semgrep rules directory"
+        },
+        "wordpressSemgrep.severity": {
+          "type": "string",
+          "enum": ["error", "warning", "info"],
+          "default": "warning",
+          "description": "Minimum severity level to display"
+        },
+        "wordpressSemgrep.maxProblems": {
+          "type": "number",
+          "default": 100,
+          "description": "Maximum number of problems to display"
+        },
+        "wordpressSemgrep.timeout": {
+          "type": "number",
+          "default": 30,
+          "description": "Scan timeout in seconds"
+        }
+      }
+    },
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "wordpress-semgrep.scanFile",
+          "when": "resourceLangId == php"
+        },
+        {
+          "command": "wordpress-semgrep.scanWorkspace",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "wordpress-semgrep.showProblems"
+        },
+        {
+          "command": "wordpress-semgrep.configureRules"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "wordpress-semgrep.scanFile",
+          "when": "resourceLangId == php",
+          "group": "navigation"
+        }
+      ]
+    },
+    "views": {
+      "problems": [
+        {
+          "id": "wordpress-semgrep-problems",
+          "name": "WordPress Security Issues"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "wordpress-semgrep",
+          "title": "WordPress Security",
+          "icon": "resources/icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "wordpress-semgrep": [
+        {
+          "id": "wordpress-semgrep-problems",
+          "name": "Security Issues",
+          "when": "wordpressSemgrep.enabled"
+        },
+        {
+          "id": "wordpress-semgrep-status",
+          "name": "Status",
+          "when": "wordpressSemgrep.enabled"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js",
+    "package": "echo 'Extension compiled successfully. Use vsce package to create VSIX file.'"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.74.0",
+    "@types/node": "16.x",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
+    "@typescript-eslint/parser": "^5.42.0",
+    "eslint": "^8.26.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "axios": "^1.4.0"
+  },
+  "publisher": "wordpress-semgrep",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wordpress-semgrep/vscode-extension.git"
+  },
+  "keywords": [
+    "wordpress",
+    "security",
+    "semgrep",
+    "static-analysis",
+    "php"
+  ],
+  "license": "MIT"
+}
