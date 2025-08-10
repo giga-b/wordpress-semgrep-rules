@@ -37,9 +37,11 @@ rules:
       cwe: "CWE-287"
     patterns:
       - pattern: |
-          'permission_callback' => function($request) {
-            return true;
-          }
+          register_rest_route($namespace, $route, array(
+            'permission_callback' => function($request) {
+              return true;
+            }
+          ));
 
   # REST API Input Validation Rules
   - id: wordpress.rest-api.missing-input-validation
