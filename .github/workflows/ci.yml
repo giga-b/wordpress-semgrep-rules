@@ -46,7 +46,7 @@ jobs:
         done
     
     - name: Upload test results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: test-results-${{ matrix.config }}-${{ matrix.python-version }}
         path: |
@@ -75,7 +75,7 @@ jobs:
         semgrep scan --config=configs/strict.yaml . --exclude="tests/" --exclude=".git/" --json > security-scan-results.json
     
     - name: Upload security results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-scan-results
         path: security-scan-results.json
