@@ -89,6 +89,153 @@ npm run compile
 
 For detailed extension documentation, see [vscode-extension/README.md](vscode-extension/README.md).
 
+## 🚀 Cursor Extension
+
+**Enhanced WordPress security scanning with AI-powered quick fixes for Cursor IDE!**
+
+![PressGuard Cursor Extension Icon](dashboard/icon-128.png)
+
+PressGuard includes an advanced Cursor extension that provides all VS Code features plus AI-enhanced capabilities specifically designed for Cursor's intelligent development environment.
+
+### 🎯 Why Choose the Cursor Extension?
+
+The Cursor extension is an **enhanced version** of the VS Code extension with additional features specifically designed for Cursor's AI-powered development environment:
+
+#### **🚀 Advanced Features (Beyond VS Code)**
+- **🔧 Quick Fixes**: One-click automatic security fixes with intelligent suggestions
+- **🎨 Enhanced UI**: Better visual design with emoji-enhanced commands and improved UX
+- **📝 Inline Diagnostics**: Security issues displayed directly in the editor for immediate feedback
+- **🤖 AI Integration**: Optimized to work seamlessly with Cursor's AI capabilities
+- **⚡ Context-aware Suggestions**: Intelligent fix recommendations based on issue type and code context
+
+#### **🛡️ WordPress Security Excellence**
+- **Real-time Security Scanning**: Scan your WordPress code as you type
+- **Comprehensive Rule Coverage**: 15+ specialized WordPress security rules
+- **Automatic Semgrep Detection**: Installs Semgrep if not present
+- **Performance Optimization**: Fast scanning with minimal overhead
+
+### 📦 Installation
+
+#### Option 1: Build from Source (Recommended for Cursor)
+```bash
+# Clone the repository
+git clone https://github.com/giga-b/wordpress-semgrep-rules.git
+cd wordpress-semgrep-rules
+
+# Navigate to Cursor extension
+cd cursor-extension
+
+# Install dependencies
+npm install
+
+# Build the extension
+npm run compile
+
+# Install in Cursor IDE
+# (Follow Cursor's extension installation process)
+```
+
+#### Option 2: Development Mode
+```bash
+# For development and testing
+cd cursor-extension
+npm install
+npm run watch  # For continuous compilation
+```
+
+### 🚀 Quick Start with Cursor Extension
+
+1. **Install the extension** using the build process above
+2. **Open a WordPress plugin or theme project** in Cursor
+3. **Automatic detection**: The extension will detect WordPress files and Semgrep installation
+4. **Real-time scanning**: Security issues will be highlighted as you code
+5. **Use enhanced commands**: Access commands via `Ctrl+Shift+P` and search "WordPress Security"
+
+### 📋 Enhanced Command Palette
+
+| Command | Shortcut | Description |
+|---------|----------|-------------|
+| 🔒 Scan Current File | `Ctrl+Shift+S` | Scan the currently open PHP file |
+| 🔒 Scan Workspace | - | Scan all PHP files in the workspace |
+| 🔍 Show Security Problems | - | Open the security problems panel |
+| 🔧 Apply Quick Fix | `Ctrl+Shift+F` | Apply quick fix at cursor position |
+| ⚙️ Configure Security Rules | - | Open configuration dialog |
+| 📦 Install/Update Semgrep | - | Install or update Semgrep automatically |
+
+### 🎨 Advanced Configuration
+
+The Cursor extension offers more granular configuration options:
+
+```json
+{
+  "wordpressSemgrepCursor.enabled": true,
+  "wordpressSemgrepCursor.autoScan": true,
+  "wordpressSemgrepCursor.showInline": true,
+  "wordpressSemgrepCursor.quickFixEnabled": true,
+  "wordpressSemgrepCursor.configPath": "",
+  "wordpressSemgrepCursor.rulesPath": "",
+  "wordpressSemgrepCursor.severity": "WARNING",
+  "wordpressSemgrepCursor.maxProblems": 100,
+  "wordpressSemgrepCursor.timeout": 30000
+}
+```
+
+#### **Advanced Settings Explained**
+- **`showInline`**: Display security issues inline in the editor for immediate feedback
+- **`quickFixEnabled`**: Enable automatic quick fixes with one-click application
+- **`timeout`**: More granular timeout control (milliseconds vs seconds)
+- **`severity`**: Enhanced severity levels with better categorization
+
+### 🔧 Quick Fix Capabilities
+
+The Cursor extension provides intelligent automatic fixes for common WordPress security issues:
+
+#### **🔐 Authentication & Authorization**
+- **Missing Nonce Verification**: Automatically add `wp_verify_nonce()` checks
+- **Insufficient Capability Checks**: Add proper `current_user_can()` validation
+- **Improper User Role Validation**: Implement correct role checking
+
+#### **🛡️ Input Validation & Sanitization**
+- **Unsanitized User Input**: Apply appropriate WordPress sanitization functions
+- **Missing Input Validation**: Add proper validation logic
+- **Improper Data Sanitization**: Replace unsafe sanitization with secure alternatives
+
+#### **💉 SQL Injection Prevention**
+- **Direct SQL Queries**: Convert to prepared statements
+- **Missing Prepared Statements**: Add `$wpdb->prepare()` calls
+- **Unsafe Database Operations**: Implement secure database patterns
+
+#### **🌐 Cross-Site Scripting (XSS)**
+- **Unescaped Output**: Add proper escaping functions
+- **Missing Output Sanitization**: Apply `esc_html()`, `esc_attr()`, etc.
+- **Improper Output Handling**: Implement secure output patterns
+
+### 🎯 Enhanced User Experience
+
+#### **Visual Improvements**
+- **Emoji-enhanced Commands**: Easy-to-identify command names with icons
+- **Better Status Dashboard**: Real-time status with enhanced visual feedback
+- **Improved Problem Panel**: Hierarchical display with better organization
+- **Inline Diagnostics**: Security issues shown directly in code for immediate awareness
+
+#### **AI Integration Benefits**
+- **Context-aware Suggestions**: Fixes tailored to your specific code context
+- **Intelligent Recommendations**: AI-powered suggestions for best practices
+- **Seamless Workflow**: Integration with Cursor's AI features for enhanced productivity
+
+### 🔄 Migration from VS Code Extension
+
+If you're already using the VS Code extension and want to upgrade to the Cursor version:
+
+1. **Install the Cursor extension** using the build process above
+2. **Transfer your settings** from VS Code to Cursor configuration
+3. **Enable advanced features** like inline diagnostics and quick fixes
+4. **Enjoy enhanced functionality** with AI-powered suggestions
+
+### 📚 Documentation
+
+For detailed Cursor extension documentation, see [cursor-extension/README.md](cursor-extension/README.md).
+
 ## 🚀 Dashboard Access
 
 PressGuard includes interactive dashboards for monitoring security scans:
