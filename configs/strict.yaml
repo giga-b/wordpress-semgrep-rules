@@ -1,13 +1,8 @@
 # WordPress Strict Security Configuration
 # Comprehensive security rules for thorough security audits
-# Includes all security rules with maximum coverage
 
 rules:
-  # ============================================================================
-  # NONCE VERIFICATION RULES
-  # ============================================================================
-  
-  # Critical nonce verification issues
+  # Nonce verification
   - id: wordpress.nonce.missing-verification
     languages: [php]
     message: "Nonce verification is missing. Use wp_verify_nonce() to verify the nonce before processing form data."
@@ -27,50 +22,7 @@ rules:
             }
           }
 
-  - id: wordpress.nonce.ajax-missing
-    languages: [php]
-    message: "AJAX request missing nonce verification. Use check_ajax_referer() or wp_verify_nonce()."
-    severity: ERROR
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            $data = $_POST['data'];
-          }
-      - pattern-not: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            check_ajax_referer('my_nonce_action', 'nonce');
-            $data = $_POST['data'];
-          }
-
-  # ============================================================================
-  # CAPABILITY CHECK RULES
-  # ============================================================================
-  
-  # Critical capability check issues
-  - id: wordpress.capability.missing-check
-    languages: [php]
-    message: "Missing capability check. Use current_user_can() to verify user permissions before performing sensitive operations."
-    severity: ERROR
-    metadata:
-      category: "capability-checks"
-      cwe: "CWE-285"
-    patterns:
-      - pattern: |
-          if (isset($_POST['delete_user'])) {
-            wp_delete_user($user_id);
-          }
-      - pattern-not: |
-          if (isset($_POST['delete_user'])) {
-            if (current_user_can('delete_users')) {
-              wp_delete_user($user_id);
-            }
-          }
-
+  # Capability checks
   - id: wordpress.capability.missing-admin-check
     languages: [php]
     message: "Missing admin capability check. Use current_user_can('manage_options') for admin-only operations."
@@ -90,11 +42,7 @@ rules:
             }
           }
 
-  # ============================================================================
-  # SANITIZATION RULES
-  # ============================================================================
-  
-  # Critical sanitization issues
+  # Sanitization
   - id: wordpress.sanitization.missing-input
     languages: [php]
     message: "User input not sanitized. Use appropriate WordPress sanitization functions before using user data."
@@ -110,26 +58,7 @@ rules:
           $data = sanitize_text_field($_POST['user_input']);
           echo $data;
 
-  - id: wordpress.sanitization.unsafe-output
-    languages: [php]
-    message: "Unsafe output without escaping. Use esc_html(), esc_attr(), or wp_kses_post() for safe output."
-    severity: ERROR
-    metadata:
-      category: "sanitization"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $user_data = $_POST['content'];
-          echo $user_data;
-      - pattern-not: |
-          $user_data = $_POST['content'];
-          echo esc_html($user_data);
-
-  # ============================================================================
-  # XSS PREVENTION RULES
-  # ============================================================================
-  
-  # Critical XSS prevention issues
+  # XSS prevention
   - id: wordpress.xss.direct-output
     languages: [php]
     message: "Direct output of user input without escaping. Use esc_html(), esc_attr(), or wp_kses_post()."
@@ -143,11 +72,7 @@ rules:
       - pattern-not: |
           echo esc_html($_POST['data']);
 
-  # ============================================================================
-  # SQL INJECTION RULES
-  # ============================================================================
-  
-  # Critical SQL injection issues
+  # SQL injection
   - id: wordpress.sql.direct-query
     languages: [php]
     message: "Direct SQL query with user input. Use $wpdb->prepare() or prepared statements."
@@ -162,53 +87,3 @@ rules:
       - pattern-not: |
           $query = $wpdb->prepare("SELECT * FROM wp_posts WHERE ID = %d", $_GET['id']);
           $result = $wpdb->get_results($query);
-
-  # ============================================================================
-  # AJAX SECURITY RULES
-  # ============================================================================
-  
-  # Critical AJAX security issues
-  - id: wordpress.ajax.missing-nonce
-    languages: [php]
-    message: "AJAX handler missing nonce verification. Use check_ajax_referer() for security."
-    severity: ERROR
-    metadata:
-      category: "ajax-security"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            $data = $_POST['data'];
-          }
-      - pattern-not: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            check_ajax_referer('my_nonce_action', 'nonce');
-            $data = $_POST['data'];
-          }
-
-  # ============================================================================
-  # REST API SECURITY RULES
-  # ============================================================================
-  
-  # Critical REST API security issues
-  - id: wordpress.rest.missing-permission
-    languages: [php]
-    message: "REST API endpoint missing permission check. Use current_user_can() or register_rest_route with permission_callback."
-    severity: ERROR
-    metadata:
-      category: "rest-api-security"
-      cwe: "CWE-285"
-    patterns:
-      - pattern: |
-          register_rest_route('my-plugin/v1', '/data', array(
-            'methods' => 'GET',
-            'callback' => 'my_rest_callback'
-          ));
-      - pattern-not: |
-          register_rest_route('my-plugin/v1', '/data', array(
-            'methods' => 'GET',
-            'callback' => 'my_rest_callback',
-            'permission_callback' => 'my_permission_check'
-          ));
