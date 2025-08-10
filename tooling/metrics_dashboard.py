@@ -462,15 +462,20 @@ class DashboardGenerator:
         
     def _generate_false_positive_chart(self, trends: Dict[str, Any]):
         """Generate false positive trends chart"""
-        if not trends.get('dates'):
-            return
-            
         plt.figure(figsize=(12, 6))
-        plt.plot(trends['dates'], trends['false_positive_rate'], marker='o', color='red')
-        plt.title('False Positive Rate Over Time')
-        plt.xlabel('Date')
-        plt.ylabel('False Positive Rate')
-        plt.xticks(rotation=45)
+        
+        if not trends.get('dates'):
+            # Create placeholder chart when no data is available
+            plt.text(0.5, 0.5, 'No false positive trend data available\nRun more tests to generate trend data', 
+                    ha='center', va='center', transform=plt.gca().transAxes, fontsize=14)
+            plt.title('False Positive Rate Over Time')
+        else:
+            plt.plot(trends['dates'], trends['false_positive_rate'], marker='o', color='red')
+            plt.title('False Positive Rate Over Time')
+            plt.xlabel('Date')
+            plt.ylabel('False Positive Rate')
+            plt.xticks(rotation=45)
+        
         plt.tight_layout()
         plt.savefig(self.output_dir / "false_positive_trends.png", dpi=300, bbox_inches='tight')
         plt.close()
