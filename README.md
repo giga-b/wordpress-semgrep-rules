@@ -29,11 +29,11 @@ PressGuard provides powerful dashboards for monitoring security scan results and
 
 ### User Dashboard
 ![PressGuard User Dashboard](dashboard/user-dashboard.png)
-*Interactive security scan results with detailed findings, fix suggestions, and export capabilities*
+*Real dashboard screenshot showing interactive security scan results with detailed findings, fix suggestions, and export capabilities*
 
 ### Admin Dashboard  
 ![PressGuard Admin Dashboard](dashboard/admin-dashboard.png)
-*Comprehensive metrics dashboard showing scan performance, rule effectiveness, and trend analysis*
+*Real dashboard screenshot showing comprehensive metrics dashboard with scan performance, rule effectiveness, and trend analysis*
 
 ## Quick Start
 
@@ -42,6 +42,50 @@ PressGuard provides powerful dashboards for monitoring security scan results and
 > **⚠️ Security Notice**: Before using the auto-fix system, please review our [Security Considerations](docs/SECURITY-CONSIDERATIONS.md) guide.
 
 > **🔄 CI/CD Status**: GitHub Actions workflows are configured for automated security scanning. The workflow uses the latest `actions/upload-artifact@v4` to avoid deprecation warnings.
+
+## 🔌 VS Code Extension
+
+**Get real-time WordPress security scanning directly in VS Code!**
+
+PressGuard includes a comprehensive VS Code extension that provides:
+- **Real-time Security Scanning**: Scan your WordPress code as you type
+- **Inline Diagnostics**: See security issues highlighted directly in your code
+- **Quick Fixes**: Apply suggested fixes with a single click
+- **Custom Rules**: Use WordPress-specific security rules
+- **Performance Metrics**: Track scan performance and rule effectiveness
+
+### 📦 Installation
+
+#### Option 1: Install from VSIX (Recommended)
+1. Download the extension: [`wordpress-semgrep-security-1.0.0.vsix`](vscode-extension/wordpress-semgrep-security-1.0.0.vsix)
+2. In VS Code, go to **Extensions** (Ctrl+Shift+X)
+3. Click the **...** menu and select **Install from VSIX...**
+4. Select the downloaded `.vsix` file
+5. Restart VS Code
+
+#### Option 2: Build from Source
+```bash
+cd vscode-extension
+npm install
+npm run compile
+# Then install the generated .vsix file
+```
+
+### 🚀 Quick Start with VS Code Extension
+1. Install the extension using one of the methods above
+2. Open a WordPress plugin or theme project
+3. The extension will automatically detect WordPress files
+4. Security issues will be highlighted in real-time
+5. Use Ctrl+Shift+P and search "WordPress Semgrep" for commands
+
+### 📋 Extension Features
+- **Automatic Semgrep Detection**: Installs Semgrep if not present
+- **WordPress Rule Sets**: Pre-configured WordPress security rules
+- **Custom Configurations**: Support for custom rule configurations
+- **Performance Optimization**: Fast scanning with minimal overhead
+- **Integration**: Works seamlessly with existing VS Code workflows
+
+For detailed extension documentation, see [vscode-extension/README.md](vscode-extension/README.md).
 
 ## 🚀 Dashboard Access
 
@@ -257,6 +301,7 @@ This repository has been organized for better maintainability:
 ### 📸 Dashboard Images
 - Real dashboard screenshots showing actual scan results and metrics
 - Screenshots can be updated using the provided automation script
+- Images show live data from actual security scans
 
 ## Support
 
