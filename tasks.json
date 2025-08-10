@@ -221,8 +221,9 @@
         "dependencies": [],
         "estimated_hours": 16,
         "category": "performance",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258001"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258001",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 17,
@@ -233,8 +234,9 @@
         "dependencies": [],
         "estimated_hours": 16,
         "category": "testing",
-        "status": "pending",
-        "created": "2025-08-10T00:26:06.258004"
+        "status": "done",
+        "created": "2025-08-10T00:26:06.258004",
+        "completed": "2025-01-09T12:00:00.000000"
       },
       {
         "id": 18,

@@ -181,8 +181,7 @@ rules:
   # SQL INJECTION PREVENTION
   # ============================================================================
   
-  # Include comprehensive SQL injection rules
-  - include: "../packs/wp-core-security/sql-injection.yaml"
+  # SQL injection rules are included via the include section at the top
 
   # ============================================================================
   # XSS PREVENTION
@@ -345,8 +344,7 @@ rules:
   # AJAX SECURITY
   # ============================================================================
   
-  # Include comprehensive AJAX security rules
-  - include: "../packs/wp-core-security/ajax-security.yaml"
+  # AJAX security rules are included via the include section at the top
   
   # Basic AJAX security patterns (for backward compatibility)
   - id: wordpress.ajax.unsafe-response

@@ -1,4 +1,21 @@
-rules:
+# WordPress Plugin Development Configuration
+# Comprehensive security rules for WordPress plugin development
+# Includes experimental rules for advanced security analysis
+
+include:
   - packs/wp-core-security/
   - packs/wp-core-quality/
   - packs/experimental/
+
+# Performance optimization settings
+exclude:
+  - "**/node_modules/**"
+  - "**/vendor/**"
+  - "**/tests/**"
+  - "**/*.min.js"
+  - "**/*.min.css"
+
+# Rule-specific exclusions for performance
+rule-filters:
+  - exclude: "wordpress.performance.*"
+  - exclude: "wordpress.quality.*"

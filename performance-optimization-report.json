@@ -1,0 +1,329 @@
+{
+  "timestamp": "2025-08-10 04:03:15",
+  "rule_analysis": [
+    {
+      "file": "packs\\experimental\\advanced-obfuscation-rules.yaml",
+      "rule_count": 30,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 30,
+      "file_size_kb": 7.0576171875
+    },
+    {
+      "file": "packs\\experimental\\advanced-security-rules.yaml",
+      "rule_count": 10,
+      "complex_patterns": 8,
+      "taint_rules": 0,
+      "complexity_score": 26,
+      "file_size_kb": 4.236328125
+    },
+    {
+      "file": "packs\\experimental\\comprehensive-security-rules.yaml",
+      "rule_count": 10,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 10,
+      "file_size_kb": 2.9326171875
+    },
+    {
+      "file": "packs\\experimental\\simple-advanced-rules.yaml",
+      "rule_count": 8,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 8,
+      "file_size_kb": 2.197265625
+    },
+    {
+      "file": "packs\\experimental\\sql-injection-taint-rules.yaml",
+      "rule_count": 54,
+      "complex_patterns": 11,
+      "taint_rules": 0,
+      "complexity_score": 76,
+      "file_size_kb": 24.79296875
+    },
+    {
+      "file": "packs\\experimental\\taint-analysis-framework.yaml",
+      "rule_count": 45,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 45,
+      "file_size_kb": 17.3330078125
+    },
+    {
+      "file": "packs\\experimental\\vx2-specific-rules.yaml",
+      "rule_count": 10,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 10,
+      "file_size_kb": 2.0029296875
+    },
+    {
+      "file": "packs\\experimental\\xss-taint-rules.yaml",
+      "rule_count": 43,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 43,
+      "file_size_kb": 17.9267578125
+    },
+    {
+      "file": "packs\\wp-core-security\\ajax-security.yaml",
+      "rule_count": 15,
+      "complex_patterns": 0,
+      "taint_rules": 0,
+      "complexity_score": 15,
+      "file_size_kb": 12.916015625
+    },
+    {
+      "file": "packs\\wp-core-security\\capability-checks.yaml",
+      "rule_count": 20,
+      "complex_patterns": 20,
+      "taint_rules": 0,
+      "complexity_score": 60,
+      "file_size_kb": 12.8701171875
+    },
+    {
+      "file": "packs\\wp-core-security\\nonce-verification.yaml",
+      "rule_count": 10,
+      "complex_patterns": 10,
+      "taint_rules": 0,
+      "complexity_score": 30,
+      "file_size_kb": 5.8984375
+    },
+    {
+      "file": "packs\\wp-core-security\\rest-api-security.yaml",
+      "rule_count": 15,
+      "complex_patterns": 15,
+      "taint_rules": 0,
+      "complexity_score": 45,
+      "file_size_kb": 9.0546875
+    },
+    {
+      "file": "packs\\wp-core-security\\sanitization-functions.yaml",
+      "rule_count": 26,
+      "complex_patterns": 26,
+      "taint_rules": 0,
+      "complexity_score": 78,
+      "file_size_kb": 15.0751953125
+    },
+    {
+      "file": "packs\\wp-core-security\\sql-injection.yaml",
+      "rule_count": 39,
+      "complex_patterns": 39,
+      "taint_rules": 0,
+      "complexity_score": 117,
+      "file_size_kb": 20.0927734375
+    },
+    {
+      "file": "packs\\wp-core-security\\xss-prevention.yaml",
+      "rule_count": 24,
+      "complex_patterns": 24,
+      "taint_rules": 0,
+      "complexity_score": 72,
+      "file_size_kb": 21.939453125
+    }
+  ],
+  "performance_tests": [
+    {
+      "config": "configs/basic.yaml",
+      "scan_time": 3.784046173095703,
+      "success": true,
+      "results": {
+        "version": "1.131.0",
+        "results": [
+          {
+            "check_id": "configs.wordpress.capability.missing-admin-check",
+            "path": "tests\\vulnerable-examples\\capability-vulnerable.php",
+            "start": {
+              "line": 16,
+              "col": 5,
+              "offset": 466
+            },
+            "end": {
+              "line": 18,
+              "col": 6,
+              "offset": 597
+            },
+            "extra": {
+              "message": "Missing admin capability check. Use current_user_can('manage_options') for admin-only operations.",
+              "metadata": {
+                "category": "capability-checks",
+                "cwe": "CWE-285"
+              },
+              "severity": "ERROR",
+              "fingerprint": "requires login",
+              "lines": "requires login",
+              "validation_state": "NO_VALIDATOR",
+              "engine_kind": "OSS"
+            }
+          },
+          {
+            "check_id": "configs.wordpress.sanitization.missing-input",
+            "path": "tests\\vulnerable-examples\\sanitization-vulnerable.php",
+            "start": {
+              "line": 10,
+              "col": 5,
+              "offset": 284
+            },
+            "end": {
+              "line": 11,
+              "col": 16,
+              "offset": 330
+            },
+            "extra": {
+              "message": "User input not sanitized. Use appropriate WordPress sanitization functions before using user data.",
+              "metadata": {
+                "category": "sanitization-functions",
+                "cwe": "CWE-79"
+              },
+              "severity": "ERROR",
+              "fingerprint": "requires login",
+              "lines": "requires login",
+              "validation_state": "NO_VALIDATOR",
+              "engine_kind": "OSS"
+            }
+          },
+          {
+            "check_id": "configs.wordpress.sanitization.unsafe-output",
+            "path": "tests\\vulnerable-examples\\sanitization-vulnerable.php",
+            "start": {
+              "line": 43,
+              "col": 5,
+              "offset": 1336
+            },
+            "end": {
+              "line": 44,
+              "col": 21,
+              "offset": 1389
+            },
+            "extra": {
+              "message": "Unsafe output without escaping. Use esc_html(), esc_attr(), or wp_kses_post() for safe output.",
+              "metadata": {
+                "category": "sanitization-functions",
+                "cwe": "CWE-79"
+              },
+              "severity": "ERROR",
+              "fingerprint": "requires login",
+              "lines": "requires login",
+              "validation_state": "NO_VALIDATOR",
+              "engine_kind": "OSS"
+            }
+          }
+        ],
+        "errors": [],
+        "paths": {
+          "scanned": [
+            "tests\\safe-examples\\ajax-safe.php",
+            "tests\\safe-examples\\capability-safe.php",
+            "tests\\safe-examples\\nonce-safe.php",
+            "tests\\safe-examples\\rest-api-safe.php",
+            "tests\\safe-examples\\sanitization-safe.php",
+            "tests\\safe-examples\\sql-injection-taint-safe.php",
+            "tests\\safe-examples\\sql-safe.php",
+            "tests\\safe-examples\\taint-analysis-safe.php",
+            "tests\\safe-examples\\xss-safe.php",
+            "tests\\safe-examples\\xss-taint-safe.php",
+            "tests\\vulnerable-examples\\ajax-vulnerable.php",
+            "tests\\vulnerable-examples\\capability-vulnerable.php",
+            "tests\\vulnerable-examples\\file-operation-vulnerable.php",
+            "tests\\vulnerable-examples\\nonce-vulnerable.php",
+            "tests\\vulnerable-examples\\rest-api-vulnerable.php",
+            "tests\\vulnerable-examples\\sanitization-vulnerable.php",
+            "tests\\vulnerable-examples\\sql-injection-taint-vulnerable.php",
+            "tests\\vulnerable-examples\\sql-injection-vulnerable.php",
+            "tests\\vulnerable-examples\\taint-analysis-vulnerable.php",
+            "tests\\vulnerable-examples\\xss-taint-vulnerable.php",
+            "tests\\vulnerable-examples\\xss-vulnerable.php"
+          ]
+        },
+        "time": {
+          "rules": [],
+          "rules_parse_time": 0.030098915100097656,
+          "profiling_times": {
+            "config_time": 0.38989758491516113,
+            "core_time": 0.6203241348266602,
+            "ignores_time": 4.363059997558594e-05,
+            "total_time": 1.0105915069580078
+          },
+          "parsing_time": {
+            "total_time": 0.13126826286315918,
+            "per_file_time": {
+              "mean": 0.006250869660150436,
+              "std_dev": 4.7879094736107814e-05
+            },
+            "very_slow_stats": {
+              "time_ratio": 0.0,
+              "count_ratio": 0.0
+            },
+            "very_slow_files": []
+          },
+          "scanning_time": {
+            "total_time": 0.2528655529022217,
+            "per_file_time": {
+              "mean": 0.012041216804867699,
+              "std_dev": 8.198258688144401e-05
+            },
+            "very_slow_stats": {
+              "time_ratio": 0.0,
+              "count_ratio": 0.0
+            },
+            "very_slow_files": []
+          },
+          "matching_time": {
+            "total_time": 0.10310482978820801,
+            "per_file_and_rule_time": {
+              "mean": 0.0007417613653827914,
+              "std_dev": 5.077529555931341e-07
+            },
+            "very_slow_stats": {
+              "time_ratio": 0.0,
+              "count_ratio": 0.0
+            },
+            "very_slow_rules_on_files": []
+          },
+          "tainting_time": {
+            "total_time": 0.0,
+            "per_def_and_rule_time": {
+              "mean": 0.0,
+              "std_dev": 0.0
+            },
+            "very_slow_stats": {
+              "time_ratio": 0.0,
+              "count_ratio": 0.0
+            },
+            "very_slow_rules_on_defs": []
+          },
+          "targets": [],
+          "total_bytes": 0,
+          "max_memory_bytes": 103100928
+        },
+        "engine_requested": "OSS",
+        "skipped_rules": []
+      },
+      "files_scanned": 21,
+      "findings": 3,
+      "rules_run": 3,
+      "memory_usage": 98.32470703125
+    },
+    {
+      "config": "configs/strict.yaml",
+      "scan_time": 2.2895290851593018,
+      "success": false,
+      "error": "[00.08][WARNING](ca-certs): Ignored 1 trust anchors.\nC:\\Users\\mobet\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\opentelemetry\\instrumentation\\dependencies.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  from pkg_resources import (\n"
+    },
+    {
+      "config": "configs/plugin-development.yaml",
+      "scan_time": 2.8293495178222656,
+      "success": false,
+      "error": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nC:\\Users\\mobet\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\opentelemetry\\instrumentation\\dependencies.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  from pkg_resources import (\n"
+    }
+  ],
+  "recommendations": [
+    "Found 5 high-complexity rule files that may impact performance",
+    "Consider using rule-filters to exclude non-critical rules for faster scanning",
+    "Implement incremental scanning for changed files only",
+    "Use exclude patterns to skip irrelevant directories",
+    "Consider parallel processing for large codebases",
+    "Optimize complex regex patterns in rules",
+    "Use taint analysis sparingly as it's computationally expensive"
+  ]
+}

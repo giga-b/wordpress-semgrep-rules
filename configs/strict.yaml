@@ -1,5 +1,21 @@
-rules:
+# WordPress Strict Security Configuration
+# Comprehensive security rules for thorough security audits
+# Includes all security rules with maximum coverage
+
+include:
   - packs/wp-core-security/
   - packs/wp-core-quality/
-  - packs/php-security.yaml
-  - packs/javascript-security.yaml
+  - packs/experimental/
+
+# Performance optimization settings
+exclude:
+  - "**/node_modules/**"
+  - "**/vendor/**"
+  - "**/*.min.js"
+  - "**/*.min.css"
+
+# Enable all rule categories
+rule-filters:
+  - include: "wordpress.security.*"
+  - include: "wordpress.quality.*"
+  - include: "wordpress.performance.*"

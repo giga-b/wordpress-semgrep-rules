@@ -1,0 +1,76 @@
+# WordPress Optimized Configuration
+# Generated for target scan time: 30 seconds
+
+include:
+  # Essential security rules only
+  - packs/wp-core-security/nonce-verification.yaml
+  - packs/wp-core-security/capability-checks.yaml
+  - packs/wp-core-security/sanitization-functions.yaml
+
+# Comprehensive exclusions for performance
+exclude:
+  - "**/node_modules/**"
+  - "**/vendor/**"
+  - "**/tests/**"
+  - "**/*.min.*"
+  - "**/wp-admin/**"
+  - "**/wp-includes/**"
+  - "**/wp-content/uploads/**"
+  - "**/wp-content/cache/**"
+  - "**/wp-content/backup*/**"
+  - "**/wp-content/blogs.dir/**"
+  - "**/wp-content/upgrade/**"
+  - "**/wp-content/mu-plugins/**"
+  - "**/wp-content/plugins/hello.php"
+  - "**/wp-content/themes/twenty*/**"
+
+# Performance-focused rule filters
+rule-filters:
+  - exclude: "wordpress.performance.*"
+  - exclude: "wordpress.quality.*"
+  - exclude: "wordpress.xss.*"
+  - exclude: "wordpress.sql.*"
+  - exclude: "wordpress.ajax.*"
+  - exclude: "wordpress.rest-api.*"
+
+# Essential rules for fast scanning
+rules:
+  # Critical nonce verification only
+  - id: wordpress.nonce.missing-verification
+    languages: [php]
+    message: "Nonce verification is missing. Use wp_verify_nonce() to verify the nonce before processing form data."
+    severity: ERROR
+    metadata:
+      category: "nonce-verification"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          if (isset($_POST['submit'])) {
+            $data = $_POST['data'];
+          }
+      - pattern-not: |
+          if (isset($_POST['submit'])) {
+            if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
+              $data = $_POST['data'];
+            }
+          }
+
+  # Critical capability check only
+  - id: wordpress.capability.missing-admin-check
+    languages: [php]
+    message: "Missing admin capability check. Use current_user_can('manage_options') for admin-only operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['update_settings'])) {
+            update_option('sensitive_setting', $_POST['value']);
+          }
+      - pattern-not: |
+          if (isset($_POST['update_settings'])) {
+            if (current_user_can('manage_options')) {
+              update_option('sensitive_setting', sanitize_text_field($_POST['value']));
+            }
+          }

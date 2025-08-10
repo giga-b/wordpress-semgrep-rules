@@ -1,0 +1,46 @@
+# WordPress Performance Optimized Configuration
+# Optimized for fast scanning with essential security rules only
+# Target: <30 second scan time for typical WordPress plugin
+
+include:
+  - packs/wp-core-security/nonce-verification.yaml
+  - packs/wp-core-security/capability-checks.yaml
+  - packs/wp-core-security/sanitization-functions.yaml
+
+# Performance optimization settings
+exclude:
+  - "**/node_modules/**"
+  - "**/vendor/**"
+  - "**/tests/**"
+  - "**/*.min.js"
+  - "**/*.min.css"
+  - "**/*.min.php"
+  - "**/wp-admin/**"
+  - "**/wp-includes/**"
+  - "**/wp-content/uploads/**"
+  - "**/wp-content/cache/**"
+  - "**/wp-content/backup-db/**"
+  - "**/wp-content/backups/**"
+  - "**/wp-content/blogs.dir/**"
+  - "**/wp-content/upgrade/**"
+  - "**/wp-content/uploads/**"
+  - "**/wp-content/mu-plugins/**"
+  - "**/wp-content/plugins/hello.php"
+  - "**/wp-content/themes/twentytwentyone/**"
+  - "**/wp-content/themes/twentytwentytwo/**"
+  - "**/wp-content/themes/twentytwentythree/**"
+
+# Rule-specific optimizations
+rule-filters:
+  - exclude: "wordpress.performance.*"
+  - exclude: "wordpress.quality.*"
+  - exclude: "wordpress.xss.*"  # Exclude complex XSS rules for speed
+  - exclude: "wordpress.sql.*"  # Exclude complex SQL injection rules for speed
+
+# Semgrep performance settings
+semgrep:
+  max-memory: 1000
+  timeout: 30
+  jobs: 4
+  skip-unknown-extensions: true
+  use-git-ignore: true
