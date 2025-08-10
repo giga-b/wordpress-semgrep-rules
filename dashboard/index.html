@@ -115,6 +115,39 @@
         .status-good { background-color: #28a745; }
         .status-warning { background-color: #ffc107; }
         .status-poor { background-color: #dc3545; }
+        .export-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e1e5e9;
+            text-align: center;
+        }
+        .export-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .export-section p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .export-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .export-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .export-btn:hover {
+            background: #5a6fd8;
+        }
         .footer {
             background: #f8f9fa;
             padding: 20px 30px;
@@ -364,10 +397,276 @@
             </table>
         </div>
         
+        <div class="export-section">
+            <h2>Export Dashboard Data</h2>
+            <p>Download the dashboard data in various formats for reporting and analysis.</p>
+            <div class="export-buttons">
+                <button class="export-btn" onclick="exportDashboard('json')">Export as JSON</button>
+                <button class="export-btn" onclick="exportDashboard('csv')">Export as CSV</button>
+                <button class="export-btn" onclick="exportDashboard('html')">Export as HTML</button>
+            </div>
+        </div>
+        
         <div class="footer">
             <p>Generated on 2025-08-10T15:58:09.511225 | WordPress Semgrep Rules Dashboard</p>
         </div>
     </div>
+
+    <script>
+        // Dashboard data for export functionality
+        const dashboardData = {
+            timestamp: new Date().toISOString(),
+            metrics: {
+                totalScans: 618,
+                totalFindings: 2688,
+                totalFalsePositives: 398,
+                overallPrecision: 0.852,
+                overallRecall: 0.90,
+                overallF1Score: 0.875,
+                avgScanTime: 3.29,
+                totalScanTime: 2034.82
+            },
+            ruleMetrics: [
+                {
+                    ruleName: "Nonce Verification",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.45
+                },
+                {
+                    ruleName: "Capability Checks",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.28
+                },
+                {
+                    ruleName: "Sanitization Functions",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.32
+                },
+                {
+                    ruleName: "Sql Injection",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.34
+                }
+            ],
+            packMetrics: [
+                {
+                    packName: "experimental",
+                    totalRules: 8,
+                    activeRules: 8,
+                    performanceScore: 79.2,
+                    falsePositiveRate: 0.149,
+                    avgScanTime: 163.60,
+                    lastUpdated: "2025-08-10T05:25:47.998955"
+                },
+                {
+                    packName: "wp-core-security",
+                    totalRules: 7,
+                    activeRules: 7,
+                    performanceScore: 75.5,
+                    falsePositiveRate: 0.149,
+                    avgScanTime: 297.71,
+                    lastUpdated: "2025-08-10T05:25:47.998955"
+                }
+            ]
+        };
+
+        function exportDashboard(format) {
+            let content = '';
+            let filename = '';
+            let mimeType = '';
+            
+            switch(format) {
+                case 'json':
+                    content = JSON.stringify(dashboardData, null, 2);
+                    filename = `wordpress-semgrep-dashboard-${new Date().toISOString().split('T')[0]}.json`;
+                    mimeType = 'application/json';
+                    break;
+                    
+                case 'csv':
+                    content = generateDashboardCSV();
+                    filename = `wordpress-semgrep-dashboard-${new Date().toISOString().split('T')[0]}.csv`;
+                    mimeType = 'text/csv';
+                    break;
+                    
+                case 'html':
+                    content = generateDashboardHTMLReport();
+                    filename = `wordpress-semgrep-dashboard-${new Date().toISOString().split('T')[0]}.html`;
+                    mimeType = 'text/html';
+                    break;
+            }
+            
+            // Create and download the file
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        function generateDashboardCSV() {
+            let csv = 'Metric,Value\n';
+            
+            // Add metrics
+            csv += `Total Scans,${dashboardData.metrics.totalScans}\n`;
+            csv += `Total Findings,${dashboardData.metrics.totalFindings}\n`;
+            csv += `Total False Positives,${dashboardData.metrics.totalFalsePositives}\n`;
+            csv += `Overall Precision,${(dashboardData.metrics.overallPrecision * 100).toFixed(1)}%\n`;
+            csv += `Overall Recall,${(dashboardData.metrics.overallRecall * 100).toFixed(1)}%\n`;
+            csv += `F1 Score,${dashboardData.metrics.overallF1Score.toFixed(3)}\n`;
+            csv += `Average Scan Time,${dashboardData.metrics.avgScanTime}s\n`;
+            csv += `Total Scan Time,${dashboardData.metrics.totalScanTime}s\n\n`;
+            
+            // Add rule metrics
+            csv += 'Rule Name,Pack,F1 Score,Precision,Recall,Total Runs,Avg Duration\n';
+            dashboardData.ruleMetrics.forEach(rule => {
+                csv += `"${rule.ruleName}","${rule.pack}",${rule.f1Score},${(rule.precision * 100).toFixed(1)}%,${(rule.recall * 100).toFixed(1)}%,${rule.totalRuns},${rule.avgDuration}s\n`;
+            });
+            
+            csv += '\n';
+            
+            // Add pack metrics
+            csv += 'Pack Name,Total Rules,Active Rules,Performance Score,False Positive Rate,Avg Scan Time,Last Updated\n';
+            dashboardData.packMetrics.forEach(pack => {
+                csv += `"${pack.packName}",${pack.totalRules},${pack.activeRules},${pack.performanceScore},${(pack.falsePositiveRate * 100).toFixed(1)}%,${pack.avgScanTime}s,"${pack.lastUpdated}"\n`;
+            });
+            
+            return csv;
+        }
+        
+        function generateDashboardHTMLReport() {
+            return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress Semgrep Dashboard Report - ${new Date().toLocaleDateString()}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #667eea; color: white; padding: 20px; border-radius: 8px; }
+        .metrics { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .metric-card { background: white; padding: 15px; border-radius: 5px; text-align: center; }
+        .metric-value { font-size: 1.5em; font-weight: bold; color: #667eea; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .section { margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>WordPress Semgrep Rules Dashboard Report</h1>
+        <p>Generated on: ${new Date().toLocaleString()}</p>
+    </div>
+    
+    <div class="section">
+        <h2>Overall Metrics</h2>
+        <div class="metrics">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">${dashboardData.metrics.totalScans}</div>
+                    <div>Total Scans</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${dashboardData.metrics.totalFindings}</div>
+                    <div>Total Findings</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${(dashboardData.metrics.overallPrecision * 100).toFixed(1)}%</div>
+                    <div>Overall Precision</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${dashboardData.metrics.overallF1Score.toFixed(3)}</div>
+                    <div>F1 Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Rule Performance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rule Name</th>
+                    <th>Pack</th>
+                    <th>F1 Score</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>Total Runs</th>
+                    <th>Avg Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dashboardData.ruleMetrics.map(rule => `
+                    <tr>
+                        <td>${rule.ruleName}</td>
+                        <td>${rule.pack}</td>
+                        <td>${rule.f1Score}</td>
+                        <td>${(rule.precision * 100).toFixed(1)}%</td>
+                        <td>${(rule.recall * 100).toFixed(1)}%</td>
+                        <td>${rule.totalRuns}</td>
+                        <td>${rule.avgDuration}s</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h2>Pack Performance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pack Name</th>
+                    <th>Total Rules</th>
+                    <th>Active Rules</th>
+                    <th>Performance Score</th>
+                    <th>False Positive Rate</th>
+                    <th>Avg Scan Time</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dashboardData.packMetrics.map(pack => `
+                    <tr>
+                        <td>${pack.packName}</td>
+                        <td>${pack.totalRules}</td>
+                        <td>${pack.activeRules}</td>
+                        <td>${pack.performanceScore}</td>
+                        <td>${(pack.falsePositiveRate * 100).toFixed(1)}%</td>
+                        <td>${pack.avgScanTime}s</td>
+                        <td>${pack.lastUpdated}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>`;
+        }
+    </script>
 </body>
 </html>
         

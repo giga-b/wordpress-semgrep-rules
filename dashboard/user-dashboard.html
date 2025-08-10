@@ -393,8 +393,103 @@
         }
 
         function exportResults(format) {
-            // In a real implementation, this would generate and download the file
-            alert(`Exporting results as ${format.toUpperCase()}...\nThis would download a file with your scan results.`);
+            let content = '';
+            let filename = '';
+            let mimeType = '';
+            
+            switch(format) {
+                case 'json':
+                    content = JSON.stringify(scanResults, null, 2);
+                    filename = `wordpress-semgrep-scan-results-${new Date().toISOString().split('T')[0]}.json`;
+                    mimeType = 'application/json';
+                    break;
+                    
+                case 'csv':
+                    content = generateCSV();
+                    filename = `wordpress-semgrep-scan-results-${new Date().toISOString().split('T')[0]}.csv`;
+                    mimeType = 'text/csv';
+                    break;
+                    
+                case 'html':
+                    content = generateHTMLReport();
+                    filename = `wordpress-semgrep-scan-results-${new Date().toISOString().split('T')[0]}.html`;
+                    mimeType = 'text/html';
+                    break;
+            }
+            
+            // Create and download the file
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        function generateCSV() {
+            let csv = 'Rule Name,Severity,File,Line,Column,Message\n';
+            
+            scanResults.findings.forEach(finding => {
+                csv += `"${finding.ruleName}","${finding.severity}","${finding.file}","${finding.line}","${finding.column}","${finding.message}"\n`;
+            });
+            
+            return csv;
+        }
+        
+        function generateHTMLReport() {
+            return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WordPress Semgrep Scan Results - ${new Date().toLocaleDateString()}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #667eea; color: white; padding: 20px; border-radius: 8px; }
+        .finding { border: 1px solid #ddd; margin: 10px 0; padding: 15px; border-radius: 5px; }
+        .severity-error { border-left: 5px solid #dc3545; }
+        .severity-warning { border-left: 5px solid #ffc107; }
+        .severity-info { border-left: 5px solid #17a2b8; }
+        .code { background: #f8f9fa; padding: 10px; border-radius: 3px; font-family: monospace; }
+        .fix { background: #d4edda; padding: 10px; border-radius: 3px; margin-top: 10px; }
+        .summary { background: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>WordPress Semgrep Security Scan Results</h1>
+        <p>Generated on: ${new Date().toLocaleString()}</p>
+    </div>
+    
+    <div class="summary">
+        <h2>Scan Summary</h2>
+        <p><strong>Total Findings:</strong> ${scanResults.totalFindings}</p>
+        <p><strong>Files Scanned:</strong> ${scanResults.filesScanned}</p>
+        <p><strong>Critical Issues:</strong> ${scanResults.criticalIssues}</p>
+        <p><strong>Scan Duration:</strong> ${scanResults.scanTime}s</p>
+    </div>
+    
+    <h2>Security Findings</h2>
+    ${scanResults.findings.map(finding => `
+        <div class="finding severity-${finding.severity.toLowerCase()}">
+            <h3>${finding.ruleName}</h3>
+            <p><strong>Severity:</strong> ${finding.severity}</p>
+            <p><strong>File:</strong> ${finding.file}:${finding.line}:${finding.column}</p>
+            <p><strong>Message:</strong> ${finding.message}</p>
+            <div class="code">${finding.code}</div>
+            <div class="fix">
+                <strong>How to Fix:</strong><br>
+                ${finding.fix}<br>
+                <div class="code">${finding.fixCode}</div>
+            </div>
+        </div>
+    `).join('')}
+</body>
+</html>`;
         }
 
         // Initialize the dashboard
