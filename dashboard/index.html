@@ -4,7 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordPress Semgrep Rules - Metrics Dashboard</title>
+    <title>PressGuard - Metrics Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -160,8 +162,9 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>WordPress Semgrep Rules</h1>
-            <p>Metrics Dashboard - 2025-08-10T15:58:09.511225</p>
+            <h1>PressGuard Admin Dashboard</h1>
+            <h2 style="margin: 10px 0; font-size: 1.6em; font-weight: normal; opacity: 0.9;">WordPress Semgrep Rules</h2>
+            <h3 style="margin: 10px 0 0 0; font-size: 1.2em; font-weight: normal; opacity: 0.9;">Metrics Dashboard - All Scans</h3>
         </div>
         
         <div class="metrics-grid">
@@ -408,7 +411,7 @@
         </div>
         
         <div class="footer">
-            <p>Generated on 2025-08-10T15:58:09.511225 | WordPress Semgrep Rules Dashboard</p>
+            <p>Generated on 2025-08-10T15:58:09.511225 | PressGuard Dashboard</p>
         </div>
     </div>
 
@@ -494,19 +497,19 @@
             switch(format) {
                 case 'json':
                     content = JSON.stringify(dashboardData, null, 2);
-                    filename = `wordpress-semgrep-dashboard-${new Date().toISOString().split('T')[0]}.json`;
+                    filename = `pressguard-dashboard-${new Date().toISOString().split('T')[0]}.json`;
                     mimeType = 'application/json';
                     break;
                     
                 case 'csv':
                     content = generateDashboardCSV();
-                    filename = `wordpress-semgrep-dashboard-${new Date().toISOString().split('T')[0]}.csv`;
+                    filename = `pressguard-dashboard-${new Date().toISOString().split('T')[0]}.csv`;
                     mimeType = 'text/csv';
                     break;
                     
                 case 'html':
                     content = generateDashboardHTMLReport();
-                    filename = `wordpress-semgrep-dashboard-${new Date().toISOString().split('T')[0]}.html`;
+                    filename = `pressguard-dashboard-${new Date().toISOString().split('T')[0]}.html`;
                     mimeType = 'text/html';
                     break;
             }
@@ -560,7 +563,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WordPress Semgrep Dashboard Report - ${new Date().toLocaleDateString()}</title>
+    <title>PressGuard Dashboard Report - ${new Date().toLocaleDateString()}</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; }
         .header { background: #667eea; color: white; padding: 20px; border-radius: 8px; }
@@ -576,7 +579,7 @@
 </head>
 <body>
     <div class="header">
-        <h1>WordPress Semgrep Rules Dashboard Report</h1>
+        <h1>PressGuard Dashboard Report</h1>
         <p>Generated on: ${new Date().toLocaleString()}</p>
     </div>
     

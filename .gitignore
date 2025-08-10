@@ -48,9 +48,28 @@ Thumbs.db
 .semgrep/
 semgrep.log
 
-# Test results
+# Test results and development files
 test-results-*.json
 scan-results-*.json
+tasks.json
+*.db
+metrics.db
+
+# Performance test results
+performance-*.json
+optimized-*-results.json
+test-*.json
+safe-test-results.json
+semgrep-results.json
+
+# Development summaries
+*-SUMMARY.md
+*-IMPLEMENTATION-SUMMARY.md
+
+# Temporary files
+*.tmp
+*.temp
+*.log
 
 # Temporary files
 *.tmp

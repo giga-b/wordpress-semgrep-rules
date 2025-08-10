@@ -282,5 +282,5 @@ Remember: **Security is a process, not a product**. Regular review, testing, and
 
 ---
 
-**Last Updated**: January 9, 2025  
-**Next Review**: April 9, 2025
+**Last Updated**: August 10, 2025  
+**Next Review**: November 10, 2025

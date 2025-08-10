@@ -1,3 +1,3 @@
-# This is a placeholder favicon file
-# In a real implementation, this would be a proper .ico file
-# For now, this prevents the 404 error in the server logs
+# This is a placeholder for a favicon.ico file
+# In a real implementation, this would be a binary .ico file
+# For now, I'll create a simple SVG that can be converted to .ico
