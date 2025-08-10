@@ -1,0 +1,284 @@
+rules:
+  # REST API Authentication Rules
+  - id: wordpress.rest-api.missing-authentication
+    languages: [php]
+    message: "REST API endpoint missing proper authentication. Use a proper permission_callback function."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-287"
+      references:
+        - "https://developer.wordpress.org/rest-api/extending-the-rest-api/adding-custom-endpoints/#permissions-callback"
+    patterns:
+      - pattern: |
+          register_rest_route($namespace, $route, array(
+            'methods' => $methods,
+            'callback' => $callback,
+            'permission_callback' => '__return_true'
+          ));
+      - pattern: |
+          register_rest_route($namespace, $route, array(
+            'methods' => $methods,
+            'callback' => $callback,
+            'permission_callback' => function() { return true; }
+          ));
+      - pattern: |
+          register_rest_route($namespace, $route, array(
+            'methods' => $methods,
+            'callback' => $callback
+          ));
+
+  - id: wordpress.rest-api.weak-authentication
+    languages: [php]
+    message: "REST API endpoint has weak authentication. Use proper capability checks or nonce verification."
+    severity: WARNING
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-287"
+    patterns:
+      - pattern: |
+          'permission_callback' => function($request) {
+            return true;
+          }
+
+  # REST API Input Validation Rules
+  - id: wordpress.rest-api.missing-input-validation
+    languages: [php]
+    message: "REST API endpoint missing input validation. Validate and sanitize all input parameters."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-20"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            return $param;
+          }
+
+  - id: wordpress.rest-api.direct-param-output
+    languages: [php]
+    message: "REST API endpoint directly outputs user input. Sanitize and validate all output."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            echo $param;
+          }
+      - pattern: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            print $param;
+          }
+      - pattern: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            return array('data' => $param);
+          }
+
+  # REST API Nonce Verification Rules
+  - id: wordpress.rest-api.missing-nonce
+    languages: [php]
+    message: "REST API endpoint missing nonce verification for state-changing operations."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          register_rest_route($NAMESPACE, '/$ENDPOINT', array(
+            'methods' => 'POST',
+            'callback' => $CALLBACK,
+            'permission_callback' => function($request) {
+              return current_user_can('$CAPABILITY');
+            }
+          ));
+
+  # REST API SQL Injection Prevention
+  - id: wordpress.rest-api.sql-injection-risk
+    languages: [php]
+    message: "REST API endpoint may be vulnerable to SQL injection. Use prepared statements."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-89"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            global $wpdb;
+            $param = $request->get_param('$PARAM');
+            $result = $wpdb->get_results("SELECT * FROM $wpdb->posts WHERE post_title = '$param'");
+            return $result;
+          }
+      - pattern: |
+          function $FUNC($request) {
+            global $wpdb;
+            $param = $request->get_param('$PARAM');
+            $result = $wpdb->query("UPDATE $wpdb->posts SET post_title = '$param' WHERE ID = 1");
+            return $result;
+          }
+
+  # REST API File Upload Security
+  - id: wordpress.rest-api.unsafe-file-upload
+    languages: [php]
+    message: "REST API endpoint has unsafe file upload handling. Validate file types and use proper upload functions."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-434"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $file = $_FILES['file'];
+            move_uploaded_file($file['tmp_name'], '/path/to/upload/' . $file['name']);
+            return 'File uploaded';
+          }
+
+
+  # REST API Rate Limiting
+  - id: wordpress.rest-api.missing-rate-limiting
+    languages: [php]
+    message: "REST API endpoint missing rate limiting. Implement rate limiting for public endpoints."
+    severity: WARNING
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-770"
+    patterns:
+      - pattern: |
+          register_rest_route($namespace, '/public/$endpoint', array(
+            'methods' => 'GET',
+            'callback' => $callback,
+            'permission_callback' => '__return_true'
+          ));
+
+
+  # REST API CORS Security
+  - id: wordpress.rest-api.unsafe-cors
+    languages: [php]
+    message: "REST API endpoint has unsafe CORS configuration. Restrict origins and methods."
+    severity: WARNING
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-942"
+    patterns:
+      - pattern: |
+          add_action('rest_api_init', function() {
+            header('Access-Control-Allow-Origin: *');
+            header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
+          });
+      - pattern-not: |
+          add_action('rest_api_init', function() {
+            $allowed_origins = array('https://trusted-site.com');
+            $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+            if (in_array($origin, $allowed_origins)) {
+              header('Access-Control-Allow-Origin: ' . $origin);
+            }
+          });
+
+  # REST API Error Information Disclosure
+  - id: wordpress.rest-api.error-disclosure
+    languages: [php]
+    message: "REST API endpoint may disclose sensitive information in error responses."
+    severity: WARNING
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-209"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            try {
+              $result = some_operation();
+              return $result;
+            } catch (Exception $e) {
+              return array('error' => $e->getMessage(), 'file' => $e->getFile(), 'line' => $e->getLine());
+            }
+          }
+
+
+  # REST API Sensitive Data Exposure
+  - id: wordpress.rest-api.sensitive-data-exposure
+    languages: [php]
+    message: "REST API endpoint may expose sensitive data. Filter sensitive information from responses."
+    severity: WARNING
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-200"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $user = get_user_by('id', $request->get_param('user_id'));
+            return array(
+              'id' => $user->ID,
+              'user_login' => $user->user_login,
+              'user_pass' => $user->user_pass,
+              'user_email' => $user->user_email
+            );
+          }
+
+
+  # REST API Method Validation
+  - id: wordpress.rest-api.unsafe-methods
+    languages: [php]
+    message: "REST API endpoint allows unsafe HTTP methods. Restrict methods to only what's necessary."
+    severity: WARNING
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-650"
+    patterns:
+      - pattern: |
+          register_rest_route($namespace, '/$endpoint', array(
+            'methods' => 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
+            'callback' => $callback
+          ));
+
+
+  # REST API Namespace Security
+  - id: wordpress.rest-api.weak-namespace
+    languages: [php]
+    message: "REST API namespace is too generic. Use a specific, unique namespace for your plugin/theme."
+    severity: INFO
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-200"
+    patterns:
+      - pattern: register_rest_route('api/v1', $route, $args)
+      - pattern: register_rest_route('rest/v1', $route, $args)
+      - pattern: register_rest_route('wp/v1', $route, $args)
+
+
+  # REST API Parameter Sanitization
+  - id: wordpress.rest-api.missing-sanitization
+    languages: [php]
+    message: "REST API endpoint missing proper sanitization. Sanitize all user input before processing."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-20"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            $result = process_data($param);
+            return $result;
+          }
+
+
+  # REST API Response Headers
+  - id: wordpress.rest-api.missing-security-headers
+    languages: [php]
+    message: "REST API endpoint missing security headers. Add appropriate security headers to responses."
+    severity: INFO
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-693"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $data = get_data();
+            return $data;
+          }
+

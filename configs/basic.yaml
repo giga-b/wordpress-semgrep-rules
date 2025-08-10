@@ -228,9 +228,9 @@ rules:
       cwe: "CWE-79"
     patterns:
       - pattern: |
-          <input value="<?php echo $_POST['value']; ?>">
+          echo "<input value=\"" . $_POST['value'] . "\">";
       - pattern-not: |
-          <input value="<?php echo esc_attr($_POST['value']); ?>">
+          echo "<input value=\"" . esc_attr($_POST['value']) . "\">";
 
   # ============================================================================
   # FILE OPERATION SECURITY
@@ -269,44 +269,93 @@ rules:
   # REST API SECURITY
   # ============================================================================
   
-  - id: wordpress.rest-api.missing-permission
+  - id: wordpress.rest-api.missing-authentication
     languages: [php]
-    message: "REST API endpoint missing permission callback. Always implement permission_callback."
+    message: "REST API endpoint missing proper authentication. Use a proper permission_callback function."
     severity: ERROR
     metadata:
-      category: "rest-api"
-      cwe: "CWE-285"
+      category: "rest-api-security"
+      cwe: "CWE-287"
     patterns:
       - pattern: |
-          register_rest_route('my-plugin/v1', '/data', array(
-            'methods' => 'GET',
-            'callback' => 'my_callback'
+          register_rest_route($namespace, $route, array(
+            'methods' => $methods,
+            'callback' => $callback,
+            'permission_callback' => '__return_true'
           ));
-      - pattern-not: |
-          register_rest_route('my-plugin/v1', '/data', array(
-            'methods' => 'GET',
-            'callback' => 'my_callback',
-            'permission_callback' => 'my_permission_check'
+      - pattern: |
+          register_rest_route($namespace, $route, array(
+            'methods' => $methods,
+            'callback' => $callback
           ));
 
-  - id: wordpress.rest-api.unsafe-callback
+  - id: wordpress.rest-api.missing-input-validation
     languages: [php]
-    message: "REST API callback using unsanitized request data. Sanitize all input parameters."
+    message: "REST API endpoint missing input validation. Validate and sanitize all input parameters."
     severity: ERROR
     metadata:
-      category: "rest-api"
+      category: "rest-api-security"
+      cwe: "CWE-20"
+    patterns:
+      - pattern: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            return $param;
+          }
+      - pattern-not: |
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            if (empty($param) || !is_string($param)) {
+              return new WP_Error('invalid_param', 'Invalid parameter', array('status' => 400));
+            }
+            $param = sanitize_text_field($param);
+            return $param;
+          }
+
+  - id: wordpress.rest-api.direct-param-output
+    languages: [php]
+    message: "REST API endpoint directly outputs user input. Sanitize and validate all output."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
       cwe: "CWE-79"
     patterns:
       - pattern: |
-          function my_rest_callback($request) {
-            $param = $request->get_param('param');
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
             echo $param;
           }
       - pattern-not: |
-          function my_rest_callback($request) {
-            $param = sanitize_text_field($request->get_param('param'));
-            echo esc_html($param);
+          function $FUNC($request) {
+            $param = $request->get_param('$PARAM');
+            $param = sanitize_text_field($param);
+            return array('data' => $param);
           }
+
+  - id: wordpress.rest-api.missing-nonce
+    languages: [php]
+    message: "REST API endpoint missing nonce verification for state-changing operations."
+    severity: ERROR
+    metadata:
+      category: "rest-api-security"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          register_rest_route($namespace, '/$endpoint', array(
+            'methods' => 'POST',
+            'callback' => $callback,
+            'permission_callback' => function($request) {
+              return current_user_can('$capability');
+            }
+          ));
+      - pattern-not: |
+          register_rest_route($namespace, '/$endpoint', array(
+            'methods' => 'POST',
+            'callback' => $callback,
+            'permission_callback' => function($request) {
+              return current_user_can('$capability') && wp_verify_nonce($request->get_header('X-WP-Nonce'), 'wp_rest');
+            }
+          ));
 
   # ============================================================================
   # AJAX SECURITY
