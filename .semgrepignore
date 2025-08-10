@@ -1,0 +1,7 @@
+# Ignore test files from security scanning
+# tests/vulnerable-examples/
+# tests/safe-examples/
+
+# Keep test files for rule testing
+!tests/vulnerable-examples/
+!tests/safe-examples/
