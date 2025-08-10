@@ -249,14 +249,14 @@ This repository has been organized for better maintainability:
 - **`.gitignore`**: Updated to exclude development files and temporary results
 
 ### 🧹 Cleaned Up Files
-- Removed development tracking files (`tasks.json`, `metrics.db`)
+- Removed development tracking files and internal documentation
 - Moved performance and test results to organized folders
 - Fixed bogus dates in documentation files
 - Updated GitHub Actions to use latest artifact upload version
 
 ### 📸 Dashboard Images
-- Generated placeholder dashboard images for documentation
-- Actual screenshots can be captured using the provided automation script
+- Real dashboard screenshots showing actual scan results and metrics
+- Screenshots can be updated using the provided automation script
 
 ## Support
 

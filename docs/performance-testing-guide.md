@@ -349,8 +349,8 @@ Set up automated performance monitoring:
 ## Support and Resources
 
 ### Documentation
-- [PRD Document](PRD-WordPress-Semgrep-Rules-Development.md)
-- [Development Guide](DEVELOPMENT-GUIDE.md)
+- [Project Documentation](README.md)
+- [Contributing Guide](../CONTRIBUTING.md)
 - [Performance Optimization Summary](../PERFORMANCE-OPTIMIZATION-SUMMARY.md)
 
 ### Tools and Scripts

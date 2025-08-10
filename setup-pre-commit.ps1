@@ -168,6 +168,6 @@ Write-Host ""
 Write-Host "📚 Documentation:" -ForegroundColor Cyan
 Write-Host "   • Pre-commit: https://pre-commit.com/" -ForegroundColor White
 Write-Host "   • Semgrep: https://semgrep.dev/docs/" -ForegroundColor White
-Write-Host "   • Project docs: docs/DEVELOPMENT-GUIDE.md" -ForegroundColor White
+Write-Host "   • Project docs: docs/README.md" -ForegroundColor White
 Write-Host ""
 Write-Host "✅ Setup complete! Pre-commit hooks will now run automatically on each commit." -ForegroundColor Green

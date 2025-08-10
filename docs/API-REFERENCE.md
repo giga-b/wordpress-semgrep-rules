@@ -1331,7 +1331,7 @@ except Exception as e:
 
 This API reference provides comprehensive documentation for all interfaces and tools available in the WordPress Semgrep Rules project. Use this reference to integrate the security scanning capabilities into your development workflows, CI/CD pipelines, and custom applications.
 
-For additional examples and use cases, refer to the [Production User Guide](PRODUCTION-USER-GUIDE.md) and [Development Guide](DEVELOPMENT-GUIDE.md).
+For additional examples and use cases, refer to the [Production User Guide](PRODUCTION-USER-GUIDE.md) and [Contributing Guide](../CONTRIBUTING.md).
 
 ## Appendix
 

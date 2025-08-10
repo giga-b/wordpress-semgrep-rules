@@ -7,7 +7,7 @@ contact_links:
     url: https://github.com/your-org/wordpress-semgrep-rules/discussions
     about: 💭 Ask questions and share ideas with the community
   - name: 🔧 Rule Development Guide
-    url: https://github.com/your-org/wordpress-semgrep-rules/blob/main/docs/DEVELOPMENT-GUIDE.md
+    url: https://github.com/your-org/wordpress-semgrep-rules/blob/main/README.md
     about: 🛠️ Learn how to develop and contribute rules
   - name: 🧪 Testing Guide
     url: https://github.com/your-org/wordpress-semgrep-rules/blob/main/docs/automated-testing-guide.md

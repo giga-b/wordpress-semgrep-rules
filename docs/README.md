@@ -5,8 +5,8 @@ Welcome to the comprehensive documentation for the WordPress Semgrep Security Ru
 ## 📚 Documentation Index
 
 ### Core Documentation
-- **[Product Requirements Document](PRD-WordPress-Semgrep-Rules-Development.md)** - Complete project overview, requirements, and specifications
-- **[Development Guide](DEVELOPMENT-GUIDE.md)** - Guide for developers contributing to the project
+- **[Project Overview](../README.md)** - Complete project overview and specifications
+- **[Contributing Guide](../CONTRIBUTING.md)** - Guide for developers contributing to the project
 
 ### Security Rule Documentation
 - **[Nonce Verification Rules](nonce-verification-rules.md)** - Comprehensive guide to nonce security patterns
@@ -160,7 +160,7 @@ Each rule includes:
 ## 📞 Support
 
 ### Getting Help
-- Check the [Development Guide](DEVELOPMENT-GUIDE.md) for technical details
+- Check the [Contributing Guide](../CONTRIBUTING.md) for technical details
 - Review rule-specific documentation for detailed explanations
 - Search existing GitHub Issues for similar problems
 
