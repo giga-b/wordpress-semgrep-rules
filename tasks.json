@@ -157,7 +157,7 @@
         ],
         "estimated_hours": 16,
         "category": "rules",
-        "status": "pending",
+        "status": "done",
         "created": "2025-08-10T00:26:06.257988"
       },
       {
@@ -171,7 +171,7 @@
         ],
         "estimated_hours": 16,
         "category": "rules",
-        "status": "pending",
+        "status": "in-progress",
         "created": "2025-08-10T00:26:06.257991"
       },
       {
