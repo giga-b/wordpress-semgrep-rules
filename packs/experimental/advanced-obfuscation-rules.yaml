@@ -5,35 +5,35 @@ rules:
     severity: ERROR
     languages: [php]
     pattern: |
-      error_log("... Token: " . $...);
+      error_log("... Token: " . $VAR);
     
   - id: php-token-leakage-debug-header
     message: "Token leakage via debug headers"
     severity: ERROR
     languages: [php]
     pattern: |
-      header('X-Debug-...: ' . $...);
+      header('X-Debug-...: ' . $VAR);
     
   - id: php-token-leakage-admin-notice
     message: "Token leakage via admin notices"
     severity: ERROR
     languages: [php]
     pattern: |
-      echo '<p>... Token: ' . esc_html($...) . '</p>';
+      echo '<p>... Token: ' . esc_html($VAR) . '</p>';
     
   - id: php-token-leakage-api-response
     message: "Token leakage via API response"
     severity: ERROR
     languages: [php]
     pattern: |
-      'api_token' => $...,
+      'api_token' => $VAR,
     
   - id: php-token-leakage-trigger-error
     message: "Token leakage via trigger_error"
     severity: ERROR
     languages: [php]
     pattern: |
-      trigger_error("... key: " . $..., E_USER_NOTICE);
+      trigger_error("... key: " . $VAR, E_USER_NOTICE);
     
   # Nonce Confusion Patterns
   - id: php-nonce-confusion-wrong-action
@@ -41,35 +41,35 @@ rules:
     severity: ERROR
     languages: [php]
     pattern: |
-      if (wp_verify_nonce($..., 'other_plugin_action')) {
+      if (wp_verify_nonce($VAR, 'other_plugin_action')) {
     
   - id: php-nonce-confusion-global-action
     message: "Nonce confusion - global action"
     severity: ERROR
     languages: [php]
     pattern: |
-      if (wp_verify_nonce($..., 'global_action')) {
+      if (wp_verify_nonce($VAR, 'global_action')) {
     
   - id: php-nonce-confusion-admin-ajax
     message: "Nonce confusion - admin action in AJAX"
     severity: ERROR
     languages: [php]
     pattern: |
-      if (wp_verify_nonce($..., 'admin_action') && current_user_can('manage_options')) {
+      if (wp_verify_nonce($VAR, 'admin_action') && current_user_can('manage_options')) {
     
   - id: php-nonce-confusion-options-page
     message: "Nonce confusion - options page nonce"
     severity: ERROR
     languages: [php]
     pattern: |
-      if (wp_verify_nonce($..., 'options-general.php')) {
+      if (wp_verify_nonce($VAR, 'options-general.php')) {
     
   - id: php-nonce-confusion-plugin-settings
     message: "Nonce confusion - plugin settings nonce"
     severity: ERROR
     languages: [php]
     pattern: |
-      if (wp_verify_nonce($..., 'plugin_settings')) {
+      if (wp_verify_nonce($VAR, 'plugin_settings')) {
     
   # Subtle Deserialization via Global Handlers
   - id: php-deserialization-header-processor
@@ -77,7 +77,7 @@ rules:
     severity: ERROR
     languages: [php]
     pattern: |
-      $data = maybe_unserialize($custom_header);
+      $data = maybe_unserialize($VAR);
       if (is_object($data) && method_exists($data, 'process')) {
     
   - id: php-deserialization-content-processor
@@ -85,7 +85,7 @@ rules:
     severity: ERROR
     languages: [php]
     pattern: |
-      $data = maybe_unserialize(base64_decode($encoded_data));
+      $data = maybe_unserialize(base64_decode($VAR));
       if (is_array($data) && isset($data['inject'])) {
     
   - id: php-deserialization-footer-processor
@@ -93,7 +93,7 @@ rules:
     severity: ERROR
     languages: [php]
     pattern: |
-      $data = maybe_unserialize($stored_data);
+      $data = maybe_unserialize($VAR);
       if (is_object($data) && property_exists($data, 'script')) {
     
   - id: php-deserialization-global-data

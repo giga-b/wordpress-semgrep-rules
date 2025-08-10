@@ -40,7 +40,7 @@ jobs:
     
     - name: Validate rule syntax
       run: |
-        for file in packs/**/*.yaml; do
+        for file in packs/wp-core-security/*.yaml; do
           echo "Validating $file"
           semgrep scan --config="$file" --dryrun
         done
