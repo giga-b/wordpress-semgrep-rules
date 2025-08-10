@@ -1,0 +1,440 @@
+rules:
+  # AJAX Security Rules for WordPress
+  
+  # 1. Missing Nonce Verification in AJAX Handlers
+  - id: wp-ajax-missing-nonce-verification
+    message: "AJAX handler missing nonce verification - potential CSRF vulnerability"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = $_POST['$FIELD'];
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        check_ajax_referer('$NONCE', '$FIELD');
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-352"
+      references:
+        - "https://developer.wordpress.org/plugins/security/nonces/"
+        - "https://codex.wordpress.org/Function_Reference/check_ajax_referer"
+
+  # 2. AJAX Handler Without Capability Check
+  - id: wp-ajax-missing-capability-check
+    message: "AJAX handler missing capability check - potential authorization bypass"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = $_POST['$FIELD'];
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        if (!current_user_can('$CAPABILITY')) {
+          wp_die('Unauthorized');
+        }
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-285"
+      references:
+        - "https://developer.wordpress.org/plugins/security/checking-user-capabilities/"
+
+  # 3. Direct Output of AJAX Data (XSS)
+  - id: wp-ajax-direct-output-xss
+    message: "Direct output of AJAX data without sanitization - XSS vulnerability"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = $_POST['$FIELD'];
+        echo $DATA;
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = $_POST['$FIELD'];
+        echo esc_html($DATA);
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-79"
+      references:
+        - "https://developer.wordpress.org/plugins/security/securing-output/"
+
+  # 4. AJAX Handler with Weak Nonce Verification
+  - id: wp-ajax-weak-nonce-verification
+    message: "AJAX handler with weak nonce verification - use specific nonce action"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        check_ajax_referer('nonce', '$FIELD');
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        check_ajax_referer('$SPECIFIC_ACTION', '$FIELD');
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-352"
+      references:
+        - "https://developer.wordpress.org/plugins/security/nonces/"
+
+  # 5. AJAX Handler Missing Input Sanitization
+  - id: wp-ajax-missing-input-sanitization
+    message: "AJAX handler missing input sanitization - potential injection vulnerability"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = $_POST['$FIELD'];
+        $RESULT = some_function($DATA);
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = sanitize_text_field($_POST['$FIELD']);
+        $RESULT = some_function($DATA);
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-20"
+      references:
+        - "https://developer.wordpress.org/plugins/security/data-sanitization-escaping/"
+
+  # 6. AJAX Handler with SQL Injection Risk
+  - id: wp-ajax-sql-injection-risk
+    message: "AJAX handler with potential SQL injection - use prepared statements"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        global $wpdb;
+        ...
+        $DATA = $_POST['$FIELD'];
+        $RESULT = $wpdb->get_results("SELECT * FROM $TABLE WHERE field = '$DATA'");
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        global $wpdb;
+        ...
+        $DATA = sanitize_text_field($_POST['$FIELD']);
+        $RESULT = $wpdb->get_results($wpdb->prepare("SELECT * FROM $TABLE WHERE field = %s", $DATA));
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-89"
+      references:
+        - "https://developer.wordpress.org/plugins/security/data-validation/"
+
+  # 7. AJAX Handler with File Upload Vulnerability
+  - id: wp-ajax-unsafe-file-upload
+    message: "AJAX handler with unsafe file upload - missing validation and sanitization"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $FILE = $_FILES['$FIELD'];
+        move_uploaded_file($FILE['tmp_name'], $FILE['name']);
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $FILE = $_FILES['$FIELD'];
+        $UPLOAD = wp_handle_upload($FILE, array('test_form' => false));
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-434"
+      references:
+        - "https://developer.wordpress.org/plugins/security/file-uploads/"
+
+  # 8. AJAX Handler with Sensitive Data Exposure
+  - id: wp-ajax-sensitive-data-exposure
+    message: "AJAX handler exposing sensitive data without proper authorization"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $USER = get_user_by('id', $_POST['user_id']);
+        echo json_encode(array(
+          'password' => $USER->user_pass,
+          'email' => $USER->user_email
+        ));
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        if (!current_user_can('manage_users')) {
+          wp_die('Unauthorized');
+        }
+        $USER = get_user_by('id', intval($_POST['user_id']));
+        echo json_encode(array(
+          'id' => $USER->ID,
+          'email' => $USER->user_email
+        ));
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-200"
+      references:
+        - "https://developer.wordpress.org/plugins/security/data-validation/"
+
+  # 9. AJAX Handler with Missing Error Handling
+  - id: wp-ajax-missing-error-handling
+    message: "AJAX handler missing proper error handling - potential information disclosure"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $RESULT = some_operation($_POST['$FIELD']);
+        echo $RESULT;
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        try {
+          $RESULT = some_operation($_POST['$FIELD']);
+          wp_send_json_success($RESULT);
+        } catch (Exception $e) {
+          wp_send_json_error('Operation failed');
+        }
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-209"
+      references:
+        - "https://developer.wordpress.org/plugins/security/error-handling/"
+
+  # 10. AJAX Handler with Insecure Direct Object Reference
+  - id: wp-ajax-insecure-direct-object-reference
+    message: "AJAX handler with insecure direct object reference - missing ownership validation"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $POST_ID = $_POST['post_id'];
+        $POST = get_post($POST_ID);
+        echo json_encode($POST);
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $POST_ID = intval($_POST['post_id']);
+        $POST = get_post($POST_ID);
+        if (!$POST || $POST->post_author != get_current_user_id()) {
+          wp_die('Unauthorized');
+        }
+        echo json_encode($POST);
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-639"
+      references:
+        - "https://developer.wordpress.org/plugins/security/data-validation/"
+
+  # 11. AJAX Handler with Missing Rate Limiting
+  - id: wp-ajax-missing-rate-limiting
+    message: "AJAX handler missing rate limiting - potential abuse vulnerability"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $RESULT = expensive_operation($_POST['$FIELD']);
+        echo json_encode($RESULT);
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $USER_ID = get_current_user_id();
+        $RATE_KEY = "rate_limit_$USER_ID";
+        if (get_transient($RATE_KEY)) {
+          wp_die('Rate limit exceeded');
+        }
+        set_transient($RATE_KEY, true, 60);
+        $RESULT = expensive_operation($_POST['$FIELD']);
+        echo json_encode($RESULT);
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-770"
+      references:
+        - "https://developer.wordpress.org/plugins/security/rate-limiting/"
+
+  # 12. AJAX Handler with Unsafe JSON Response
+  - id: wp-ajax-unsafe-json-response
+    message: "AJAX handler with unsafe JSON response - use wp_send_json functions"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $RESULT = array('data' => $_POST['$FIELD']);
+        echo json_encode($RESULT);
+        wp_die();
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $RESULT = array('data' => sanitize_text_field($_POST['$FIELD']));
+        wp_send_json_success($RESULT);
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-79"
+      references:
+        - "https://developer.wordpress.org/plugins/security/securing-output/"
+
+  # 13. AJAX Handler with Missing CSRF Protection for Non-Logged Users
+  - id: wp-ajax-missing-csrf-protection
+    message: "AJAX handler for non-logged users missing CSRF protection"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_nopriv_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $DATA = $_POST['$FIELD'];
+        process_data($DATA);
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_nopriv_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        check_ajax_referer('$NONCE', '$FIELD');
+        $DATA = sanitize_text_field($_POST['$FIELD']);
+        process_data($DATA);
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-352"
+      references:
+        - "https://developer.wordpress.org/plugins/security/nonces/"
+
+  # 14. AJAX Handler with Unsafe Redirect
+  - id: wp-ajax-unsafe-redirect
+    message: "AJAX handler with unsafe redirect - potential open redirect vulnerability"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $URL = $_POST['redirect_url'];
+        wp_redirect($URL);
+        exit;
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $URL = esc_url_raw($_POST['redirect_url']);
+        if (wp_http_validate_url($URL)) {
+          wp_redirect($URL);
+          exit;
+        }
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-601"
+      references:
+        - "https://developer.wordpress.org/plugins/security/data-validation/"
+
+  # 15. AJAX Handler with Missing Content-Type Validation
+  - id: wp-ajax-missing-content-type-validation
+    message: "AJAX handler missing content-type validation for file uploads"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $FILE = $_FILES['$FIELD'];
+        $UPLOAD = wp_handle_upload($FILE, array('test_form' => false));
+        ...
+      }
+    pattern-not: |
+      add_action('wp_ajax_$ACTION', '$HANDLER');
+      function $HANDLER() {
+        ...
+        $FILE = $_FILES['$FIELD'];
+        $ALLOWED_TYPES = array('image/jpeg', 'image/png', 'image/gif');
+        if (!in_array($FILE['type'], $ALLOWED_TYPES)) {
+          wp_die('Invalid file type');
+        }
+        $UPLOAD = wp_handle_upload($FILE, array('test_form' => false));
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      cwe: "CWE-434"
+      references:
+        - "https://developer.wordpress.org/plugins/security/file-uploads/"

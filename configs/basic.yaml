@@ -361,6 +361,10 @@ rules:
   # AJAX SECURITY
   # ============================================================================
   
+  # Include comprehensive AJAX security rules
+  - include: "../packs/wp-core-security/ajax-security.yaml"
+  
+  # Basic AJAX security patterns (for backward compatibility)
   - id: wordpress.ajax.unsafe-response
     languages: [php]
     message: "AJAX response using unsanitized data. Sanitize all data before sending response."
