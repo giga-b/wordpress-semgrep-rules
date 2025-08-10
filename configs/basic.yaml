@@ -1,21 +1,13 @@
 # WordPress Core Security Rules - Basic Configuration
-# These rules cover essential WordPress security patterns
+# Essential security rules for WordPress development with minimal false positives
+# Optimized for CI/CD integration and fast scanning performance
 
 rules:
-  - id: wordpress.nonce.insecure-creation
-    languages: [php]
-    message: "Nonce created with predictable or empty action. Use a specific, unique action name."
-    severity: WARNING
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: wp_create_nonce("")
-      - pattern: wp_create_nonce("action")
-      - pattern: wp_create_nonce("nonce")
-      - pattern: wp_create_nonce("token")
-      - pattern: wp_create_nonce($variable)
-
+  # ============================================================================
+  # NONCE VERIFICATION RULES
+  # ============================================================================
+  
+  # Critical nonce verification issues
   - id: wordpress.nonce.missing-verification
     languages: [php]
     message: "Nonce verification is missing. Use wp_verify_nonce() to verify the nonce before processing form data."
@@ -35,18 +27,320 @@ rules:
             }
           }
 
-  - id: wordpress.nonce.weak-verification
+  - id: wordpress.nonce.ajax-missing
     languages: [php]
-    message: "Nonce verification is weak. Check the return value of wp_verify_nonce() explicitly."
-    severity: WARNING
+    message: "AJAX request missing nonce verification. Use check_ajax_referer() or wp_verify_nonce()."
+    severity: ERROR
     metadata:
       category: "nonce-verification"
       cwe: "CWE-352"
     patterns:
       - pattern: |
-          wp_verify_nonce($_POST['_wpnonce'], 'action_name');
-          $data = $_POST['data'];
+          add_action('wp_ajax_my_action', 'my_ajax_handler');
+          function my_ajax_handler() {
+            $data = $_POST['data'];
+          }
       - pattern-not: |
-          if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
+          add_action('wp_ajax_my_action', 'my_ajax_handler');
+          function my_ajax_handler() {
+            check_ajax_referer('my_nonce_action', 'nonce');
+            $data = $_POST['data'];
+          }
+
+  # ============================================================================
+  # CAPABILITY CHECK RULES
+  # ============================================================================
+  
+  # Critical capability check issues
+  - id: wordpress.capability.missing-check
+    languages: [php]
+    message: "Missing capability check. Use current_user_can() to verify user permissions before performing sensitive operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['delete_user'])) {
+            wp_delete_user($user_id);
+          }
+      - pattern-not: |
+          if (isset($_POST['delete_user'])) {
+            if (current_user_can('delete_users')) {
+              wp_delete_user($user_id);
+            }
+          }
+
+  - id: wordpress.capability.missing-admin-check
+    languages: [php]
+    message: "Missing admin capability check. Use current_user_can('manage_options') for admin-only operations."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          if (isset($_POST['update_settings'])) {
+            update_option('sensitive_setting', $_POST['value']);
+          }
+      - pattern-not: |
+          if (isset($_POST['update_settings'])) {
+            if (current_user_can('manage_options')) {
+              update_option('sensitive_setting', sanitize_text_field($_POST['value']));
+            }
+          }
+
+  - id: wordpress.capability.ajax-missing
+    languages: [php]
+    message: "AJAX handler missing capability check. Verify user permissions in AJAX callbacks."
+    severity: ERROR
+    metadata:
+      category: "capability-checks"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          add_action('wp_ajax_admin_action', 'admin_ajax_handler');
+          function admin_ajax_handler() {
+            update_option('setting', $_POST['value']);
+          }
+      - pattern-not: |
+          add_action('wp_ajax_admin_action', 'admin_ajax_handler');
+          function admin_ajax_handler() {
+            if (current_user_can('manage_options')) {
+              update_option('setting', sanitize_text_field($_POST['value']));
+            }
+          }
+
+  # ============================================================================
+  # SANITIZATION RULES
+  # ============================================================================
+  
+  # Critical sanitization issues
+  - id: wordpress.sanitization.missing-input
+    languages: [php]
+    message: "User input not sanitized. Use appropriate WordPress sanitization functions before using user data."
+    severity: ERROR
+    metadata:
+      category: "sanitization-functions"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          $data = $_POST['user_input'];
+          echo $data;
+      - pattern-not: |
+          $data = sanitize_text_field($_POST['user_input']);
+          echo $data;
+      - pattern-not: |
+          $data = wp_kses_post($_POST['user_input']);
+          echo $data;
+      - pattern-not: |
+          $data = esc_html($_POST['user_input']);
+          echo $data;
+
+  - id: wordpress.sanitization.unsafe-db-query
+    languages: [php]
+    message: "Database query with unsanitized input. Use $wpdb->prepare() for safe database operations."
+    severity: ERROR
+    metadata:
+      category: "sanitization-functions"
+      cwe: "CWE-89"
+    patterns:
+      - pattern: |
+          $user_input = $_POST['search'];
+          $wpdb->query("SELECT * FROM posts WHERE title LIKE '%$user_input%'");
+      - pattern-not: |
+          $user_input = sanitize_text_field($_POST['search']);
+          $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", '%' . $wpdb->esc_like($user_input) . '%');
+
+  - id: wordpress.sanitization.unsafe-output
+    languages: [php]
+    message: "Unsafe output without escaping. Use esc_html(), esc_attr(), or wp_kses_post() for safe output."
+    severity: ERROR
+    metadata:
+      category: "sanitization-functions"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          $user_data = $_POST['content'];
+          echo $user_data;
+      - pattern-not: |
+          $user_data = wp_kses_post($_POST['content']);
+          echo $user_data;
+      - pattern-not: |
+          $user_data = esc_html($_POST['content']);
+          echo $user_data;
+
+  # ============================================================================
+  # SQL INJECTION PREVENTION
+  # ============================================================================
+  
+  - id: wordpress.sql-injection.direct-query
+    languages: [php]
+    message: "Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection."
+    severity: ERROR
+    metadata:
+      category: "sql-injection"
+      cwe: "CWE-89"
+    patterns:
+      - pattern: |
+          $wpdb->query("SELECT * FROM $wpdb->posts WHERE ID = " . $_GET['id']);
+      - pattern-not: |
+          $wpdb->prepare("SELECT * FROM $wpdb->posts WHERE ID = %d", $_GET['id']);
+
+  - id: wordpress.sql-injection.unsafe-insert
+    languages: [php]
+    message: "Unsafe database insert with user input. Use $wpdb->prepare() for safe inserts."
+    severity: ERROR
+    metadata:
+      category: "sql-injection"
+      cwe: "CWE-89"
+    patterns:
+      - pattern: |
+          $wpdb->query("INSERT INTO posts (title, content) VALUES ('$title', '$content')");
+      - pattern-not: |
+          $wpdb->prepare("INSERT INTO posts (title, content) VALUES (%s, %s)", $title, $content);
+
+  # ============================================================================
+  # XSS PREVENTION
+  # ============================================================================
+  
+  - id: wordpress.xss.unsafe-echo
+    languages: [php]
+    message: "Unsafe echo of user input. Use esc_html(), esc_attr(), or wp_kses_post() to prevent XSS."
+    severity: ERROR
+    metadata:
+      category: "xss"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          echo $_POST['user_input'];
+      - pattern-not: |
+          echo esc_html($_POST['user_input']);
+      - pattern-not: |
+          echo wp_kses_post($_POST['user_input']);
+
+  - id: wordpress.xss.unsafe-attribute
+    languages: [php]
+    message: "Unsafe HTML attribute output. Use esc_attr() to prevent XSS in attributes."
+    severity: ERROR
+    metadata:
+      category: "xss"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          <input value="<?php echo $_POST['value']; ?>">
+      - pattern-not: |
+          <input value="<?php echo esc_attr($_POST['value']); ?>">
+
+  # ============================================================================
+  # FILE OPERATION SECURITY
+  # ============================================================================
+  
+  - id: wordpress.file-operation.unsafe-path
+    languages: [php]
+    message: "Unsafe file operation with user input. Validate and sanitize file paths."
+    severity: ERROR
+    metadata:
+      category: "file-operations"
+      cwe: "CWE-22"
+    patterns:
+      - pattern: |
+          include($_GET['file']);
+      - pattern-not: |
+          $file = sanitize_text_field($_GET['file']);
+          if (file_exists($file) && strpos($file, 'safe_directory') === 0) {
+            include($file);
+          }
+
+  - id: wordpress.file-operation.unsafe-upload
+    languages: [php]
+    message: "Unsafe file upload handling. Use wp_handle_upload() and validate file types."
+    severity: ERROR
+    metadata:
+      category: "file-operations"
+      cwe: "CWE-434"
+    patterns:
+      - pattern: |
+          move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+      - pattern-not: |
+          $upload = wp_handle_upload($_FILES['file'], array('test_form' => false));
+
+  # ============================================================================
+  # REST API SECURITY
+  # ============================================================================
+  
+  - id: wordpress.rest-api.missing-permission
+    languages: [php]
+    message: "REST API endpoint missing permission callback. Always implement permission_callback."
+    severity: ERROR
+    metadata:
+      category: "rest-api"
+      cwe: "CWE-285"
+    patterns:
+      - pattern: |
+          register_rest_route('my-plugin/v1', '/data', array(
+            'methods' => 'GET',
+            'callback' => 'my_callback'
+          ));
+      - pattern-not: |
+          register_rest_route('my-plugin/v1', '/data', array(
+            'methods' => 'GET',
+            'callback' => 'my_callback',
+            'permission_callback' => 'my_permission_check'
+          ));
+
+  - id: wordpress.rest-api.unsafe-callback
+    languages: [php]
+    message: "REST API callback using unsanitized request data. Sanitize all input parameters."
+    severity: ERROR
+    metadata:
+      category: "rest-api"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          function my_rest_callback($request) {
+            $param = $request->get_param('param');
+            echo $param;
+          }
+      - pattern-not: |
+          function my_rest_callback($request) {
+            $param = sanitize_text_field($request->get_param('param'));
+            echo esc_html($param);
+          }
+
+  # ============================================================================
+  # AJAX SECURITY
+  # ============================================================================
+  
+  - id: wordpress.ajax.unsafe-response
+    languages: [php]
+    message: "AJAX response using unsanitized data. Sanitize all data before sending response."
+    severity: ERROR
+    metadata:
+      category: "ajax"
+      cwe: "CWE-79"
+    patterns:
+      - pattern: |
+          wp_send_json_success($_POST['data']);
+      - pattern-not: |
+          wp_send_json_success(sanitize_text_field($_POST['data']));
+
+  - id: wordpress.ajax.missing-nonce
+    languages: [php]
+    message: "AJAX handler missing nonce verification. Use check_ajax_referer() for security."
+    severity: ERROR
+    metadata:
+      category: "ajax"
+      cwe: "CWE-352"
+    patterns:
+      - pattern: |
+          add_action('wp_ajax_my_action', 'my_ajax_handler');
+          function my_ajax_handler() {
+            $data = $_POST['data'];
+          }
+      - pattern-not: |
+          add_action('wp_ajax_my_action', 'my_ajax_handler');
+          function my_ajax_handler() {
+            check_ajax_referer('my_action_nonce', 'nonce');
             $data = $_POST['data'];
           }
