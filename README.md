@@ -1,6 +1,6 @@
 # WordPress Semgrep Security Rules
 
-[![CI](https://github.com/your-username/wordpress-semgrep-rules/workflows/CI/badge.svg)](https://github.com/your-username/wordpress-semgrep-rules/actions)
+[![CI](https://github.com/giga-b/wordpress-semgrep-rules/workflows/CI/badge.svg)](https://github.com/giga-b/wordpress-semgrep-rules/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Semgrep](https://img.shields.io/badge/Semgrep-1.45.0+-blue.svg)](https://semgrep.dev/)
 
@@ -97,8 +97,8 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 
 ## Issues and Feature Requests
 
-- [Bug Reports](https://github.com/your-username/wordpress-semgrep-rules/issues/new?template=bug_report.md)
-- [Feature Requests](https://github.com/your-username/wordpress-semgrep-rules/issues/new?template=feature_request.md)
+- [Bug Reports](https://github.com/giga-b/wordpress-semgrep-rules/issues/new?template=bug_report.md)
+- [Feature Requests](https://github.com/giga-b/wordpress-semgrep-rules/issues/new?template=feature_request.md)
 
 ## Integration
 
