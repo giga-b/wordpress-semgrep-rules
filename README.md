@@ -47,6 +47,8 @@ PressGuard provides powerful dashboards for monitoring security scan results and
 
 **Get real-time WordPress security scanning directly in VS Code!**
 
+![PressGuard VS Code Extension Icon](dashboard/icon-128.png)
+
 PressGuard includes a comprehensive VS Code extension that provides:
 - **Real-time Security Scanning**: Scan your WordPress code as you type
 - **Inline Diagnostics**: See security issues highlighted directly in your code
