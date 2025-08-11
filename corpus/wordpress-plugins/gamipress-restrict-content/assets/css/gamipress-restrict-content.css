@@ -1,0 +1,21 @@
+.gamipress-restrict-content-limiter {
+    position: relative;
+
+    min-height: 100px;
+    margin-top: -100px;
+    margin-bottom: 1em;
+
+    background: transparent;
+    background: -webkit-linear-gradient(transparent, #fff);
+    background: -o-linear-gradient(transparent, #fff);
+    background: -moz-linear-gradient(transparent, #fff);
+    background: linear-gradient(transparent, #fff);
+}
+
+.gamipress-restrict-content-unlock-post-with-points-confirm-button,
+.gamipress-restrict-content-unlock-post-with-points-cancel-button,
+.gamipress-restrict-content-unlock-content-with-points-confirm-button,
+.gamipress-restrict-content-unlock-content-with-points-cancel-button {
+    display: inline-block;
+    margin-right: 10px;
+}

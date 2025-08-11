@@ -1,0 +1,617 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GamiPress Time-based Rewards\n"
+"Report-Msgid-Bugs-To: https://gamipress.com/\n"
+"POT-Creation-Date: 2020-05-05 09:49+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: GamiPress (https://gamipress.com/)\n"
+"Language-Team: GamiPress <contact@gamipress.com>\n"
+"X-Generator: Poedit 2.3\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: libraries\n"
+
+#: gamipress-time-based-rewards.php:165
+#, php-format
+msgid "GamiPress - Time-based Rewards requires %s (%s or higher) in order to work. Please install and activate it."
+msgstr ""
+
+#: includes/admin.php:40 includes/admin.php:62 includes/admin.php:210
+#: includes/admin.php:414 includes/post-types.php:71 includes/shortcodes.php:25
+#: includes/triggers.php:22
+msgid "Time-based Rewards"
+msgstr ""
+
+#: includes/admin.php:68
+msgid "Thousands separator"
+msgstr ""
+
+#: includes/admin.php:69
+msgid "The symbol (usually , or .) to separate thousands (used on rewards quantities)."
+msgstr ""
+
+#: includes/admin.php:75 includes/admin.php:250
+msgid "Claim Button Text"
+msgstr ""
+
+#: includes/admin.php:76
+msgid "Set the default claim button text (by default: \"Claim\"). You can override this option on each time-based reward."
+msgstr ""
+
+#: includes/admin.php:78 templates/single-time-based-reward.php:90
+#: templates/time-based-reward.php:144
+msgid "Claim"
+msgstr ""
+
+#: includes/admin.php:81 includes/admin.php:255
+msgid "Next Reward Text"
+msgstr ""
+
+#: includes/admin.php:82
+msgid "Set the default next reward text (by default: \"Next reward in:\"). You can override this option on each time-based reward."
+msgstr ""
+
+#: includes/admin.php:84 templates/single-time-based-reward.php:64
+#: templates/time-based-reward.php:118
+msgid "Next reward in:"
+msgstr ""
+
+#: includes/admin.php:87 includes/admin.php:260
+msgid "Guest Message"
+msgstr ""
+
+#: includes/admin.php:88
+msgid "Set the default text for visitors commonly recommending to log in to claim the reward (by default: \"Log in to claim\"). You can override this option on each time-based reward."
+msgstr ""
+
+#: includes/admin.php:93 templates/single-time-based-reward.php:116
+#: templates/time-based-reward.php:170
+msgid "Log in to claim"
+msgstr ""
+
+#: includes/admin.php:96 includes/admin.php:268
+msgid "Pop-up Content"
+msgstr ""
+
+#: includes/admin.php:97
+msgid "Set the default pop-up content (displayed when user claims a time-based reward). You can override this option on each time-based reward. Available tags:"
+msgstr ""
+
+#: includes/admin.php:103 templates/rewards-popup.php:29
+msgid "<h2>Congratulations {user}!</h2>"
+msgstr ""
+
+#: includes/admin.php:104 templates/rewards-popup.php:30
+msgid "You got:"
+msgstr ""
+
+#: includes/admin.php:108 includes/admin.php:277
+msgid "No Rewards Content"
+msgstr ""
+
+#: includes/admin.php:109
+msgid "Set the default pop-up content when there is no rewards available (displayed when user claims a time-based reward). You can override this option on each time-based reward. Available tags:"
+msgstr ""
+
+#: includes/admin.php:115 templates/rewards-popup.php:41
+msgid "<h2>Sorry {user}</h2>"
+msgstr ""
+
+#: includes/admin.php:116 templates/rewards-popup.php:42
+msgid "There are no rewards available to earn"
+msgstr ""
+
+#: includes/admin.php:119 includes/admin.php:286
+msgid "Pop-up Button Text"
+msgstr ""
+
+#: includes/admin.php:120
+msgid "Set the default pop-up button text (by default: \"Ok!\"). You can override this option on each time-based reward."
+msgstr ""
+
+#: includes/admin.php:122 templates/rewards-popup.php:71
+msgid "Ok!"
+msgstr ""
+
+#: includes/admin.php:128
+msgid "Time-based Reward Post Type"
+msgstr ""
+
+#: includes/admin.php:129
+msgid "From this settings you can modify the default configuration of the time-based reward post type."
+msgstr ""
+
+#: includes/admin.php:133
+msgid "Slug"
+msgstr ""
+
+#: includes/admin.php:139
+msgid "Public"
+msgstr ""
+
+#: includes/admin.php:140
+msgid "Check this option if you want to allow to your visitors access to a time-based reward as a page. Not checking this option will make time-based reward just visible through shortcodes or widgets."
+msgstr ""
+
+#: includes/admin.php:145
+msgid "Supports"
+msgstr ""
+
+#: includes/admin.php:146
+msgid "Check the features you want to add to the time-based reward post type."
+msgstr ""
+
+#: includes/admin.php:150
+msgid "Title"
+msgstr ""
+
+#: includes/admin.php:151
+msgid "Editor"
+msgstr ""
+
+#: includes/admin.php:152
+msgid "Author"
+msgstr ""
+
+#: includes/admin.php:153
+msgid "Thumbnail"
+msgstr ""
+
+#: includes/admin.php:153
+msgid "Featured Image"
+msgstr ""
+
+#: includes/admin.php:154
+msgid "Excerpt"
+msgstr ""
+
+#: includes/admin.php:155
+msgid "Trackbacks"
+msgstr ""
+
+#: includes/admin.php:156
+msgid "Custom Fields"
+msgstr ""
+
+#: includes/admin.php:157
+msgid "Comments"
+msgstr ""
+
+#: includes/admin.php:158
+msgid "Revisions"
+msgstr ""
+
+#: includes/admin.php:159
+msgid "Page Attributes"
+msgstr ""
+
+#: includes/admin.php:160
+msgid "Post Formats"
+msgstr ""
+
+#: includes/admin.php:168
+msgid "General"
+msgstr ""
+
+#: includes/admin.php:181
+msgid "Post Type"
+msgstr ""
+
+#: includes/admin.php:213
+msgid "License"
+msgstr ""
+
+#: includes/admin.php:239
+msgid "Configuration"
+msgstr ""
+
+#: includes/admin.php:243
+msgid "Recurrence"
+msgstr ""
+
+#: includes/admin.php:244
+msgid "Set the recurrence time in which the user can get this reward again."
+msgstr ""
+
+#: includes/admin.php:245
+msgid "<strong>Note:</strong> This field defines how much time an user needs to wait to earn it again, not defines an specific hour, for example, setting this field to 2:30:00 means that you want to allow to claim it every 2 hours and 30 minutes."
+msgstr ""
+
+#: includes/admin.php:246
+msgid "<strong>Note:</strong> First time is based on the time-based reward publication date."
+msgstr ""
+
+#: includes/admin.php:251
+msgid "Set the claim button text. Leave blank to use the text setup on settings."
+msgstr ""
+
+#: includes/admin.php:256
+msgid "Set the next reward text. Leave blank to use the text setup on settings."
+msgstr ""
+
+#: includes/admin.php:261
+msgid "Set the text for visitors commonly recommending to log in to claim the reward. Leave blank to use the text setup on settings."
+msgstr ""
+
+#: includes/admin.php:269
+msgid "Set the pop-up content (displayed when user claims a time-based reward). Leave blank to use the text setup on settings. Available tags:"
+msgstr ""
+
+#: includes/admin.php:278
+msgid "Set the pop-up content when there is no rewards available (displayed when user claims a time-based reward). Leave blank to use the text setup on settings. Available tags:"
+msgstr ""
+
+#: includes/admin.php:287
+msgid "Set the pop-up button text. Leave blank to use the text setup on settings."
+msgstr ""
+
+#: includes/admin.php:297 includes/content-filters.php:88 includes/logs.php:77
+#: includes/logs.php:122
+msgid "Rewards"
+msgstr ""
+
+#: includes/admin.php:302
+msgid "Available tags for the label field:"
+msgstr ""
+
+#: includes/admin.php:305
+msgid "Reward {#}"
+msgstr ""
+
+#: includes/admin.php:306
+msgid "Add Reward"
+msgstr ""
+
+#: includes/admin.php:307
+msgid "Remove Reward"
+msgstr ""
+
+#: includes/admin.php:311
+msgid "Reward Type"
+msgstr ""
+
+#: includes/admin.php:316
+msgid "Always included"
+msgstr ""
+
+#: includes/admin.php:321
+msgid "Min"
+msgstr ""
+
+#: includes/admin.php:330
+msgid "Max"
+msgstr ""
+
+#: includes/admin.php:339 includes/template-functions.php:88
+msgid "Achievement"
+msgstr ""
+
+#: includes/admin.php:344
+msgid "Select an achievement"
+msgstr ""
+
+#: includes/admin.php:349
+msgid "Rank"
+msgstr ""
+
+#: includes/admin.php:350
+msgid "<strong>Note:</strong> Ranks only can be awarded 1 time, for that there isn't min and max fields."
+msgstr ""
+
+#: includes/admin.php:351
+msgid "<strong>Note:</strong> If user is on a higher priority rank never will be downgrade to a lower rank."
+msgstr ""
+
+#: includes/admin.php:356
+msgid "Select a rank"
+msgstr ""
+
+#: includes/admin.php:361
+msgid "Achievement Type"
+msgstr ""
+
+#: includes/admin.php:362
+msgid "Choose the achievement type you want to allow as a random achievement reward. By default, all."
+msgstr ""
+
+#: includes/admin.php:368 includes/logs.php:83 includes/logs.php:128
+msgid "Label"
+msgstr ""
+
+#: includes/admin.php:381
+msgid "Time-based Reward Shortcode"
+msgstr ""
+
+#: includes/admin.php:385
+msgid "Place this shortcode anywhere to display this time-based reward."
+msgstr ""
+
+#: includes/admin.php:463 includes/template-functions.php:109
+msgid "Random Achievement"
+msgstr ""
+
+#: includes/ajax-functions.php:32
+msgid "Time-based reward not found."
+msgstr ""
+
+#: includes/ajax-functions.php:36
+msgid "Invalid time-based reward."
+msgstr ""
+
+#: includes/ajax-functions.php:42
+msgid "You are not allowed to perform this action."
+msgstr ""
+
+#: includes/ajax-functions.php:46
+msgid "You are not allowed to claim this yet."
+msgstr ""
+
+#: includes/ajax-functions.php:151
+#, php-format
+msgid "{user} got {points} {points_type} for claim \"%s\""
+msgstr ""
+
+#: includes/content-filters.php:118
+msgid "(always included)"
+msgstr ""
+
+#: includes/logs.php:22
+msgid "Time-based Reward Claim"
+msgstr ""
+
+#: includes/logs.php:48
+#, php-format
+msgid "{user} claimed \"%s\""
+msgstr ""
+
+#: includes/logs.php:78 includes/logs.php:123
+msgid "Rewards user got on claim this time-based reward."
+msgstr ""
+
+#: includes/post-types.php:32
+msgid "Add New"
+msgstr ""
+
+#: includes/post-types.php:33
+#, php-format
+msgid "Add New %s"
+msgstr ""
+
+#: includes/post-types.php:34
+#, php-format
+msgid "Edit %s"
+msgstr ""
+
+#: includes/post-types.php:35
+#, php-format
+msgid "New %s"
+msgstr ""
+
+#: includes/post-types.php:37
+#, php-format
+msgid "View %s"
+msgstr ""
+
+#: includes/post-types.php:38
+#, php-format
+msgid "Search %s"
+msgstr ""
+
+#: includes/post-types.php:39
+#, php-format
+msgid "No %s found"
+msgstr ""
+
+#: includes/post-types.php:40
+#, php-format
+msgid "No %s found in Trash"
+msgstr ""
+
+#: includes/post-types.php:70
+#: includes/shortcodes/gamipress_time_based_reward.php:25
+msgid "Time-based Reward"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:18
+msgid "Single Time-based Reward"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:19
+msgid "Render the desired time-based reward."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:26
+msgid "The time-based reward to render."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:27
+msgid "The ID of the time-based reward to render."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:32
+msgid "Select a time-based reward"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:38
+msgid "Show Title"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:39
+msgid "Display the time-based reward title."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:45
+msgid "Show Link"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:46
+msgid "Add a link on title to the time-based reward page."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:52
+msgid "Show Thumbnail"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:53
+msgid "Display the time-based reward featured image."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:59
+msgid "Show Excerpt"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:60
+msgid "Display the time-based reward short description."
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:66
+msgid "Show Rewards"
+msgstr ""
+
+#: includes/shortcodes/gamipress_time_based_reward.php:67
+msgid "Display a list with the possible rewards."
+msgstr ""
+
+#: includes/template-functions.php:41
+msgid "Amount awarded to the user."
+msgstr ""
+
+#: includes/template-functions.php:42
+msgid "Label of the element type earned. Singular or plural is based on the amount."
+msgstr ""
+
+#: includes/template-functions.php:43
+msgid "Featured image of the element earned."
+msgstr ""
+
+#: includes/template-functions.php:44
+msgid "Title of the element earned. Only for achievements and ranks."
+msgstr ""
+
+#: includes/template-functions.php:45
+msgid "Singular label of the element type earned."
+msgstr ""
+
+#: includes/template-functions.php:46
+msgid "Plural label of the element type earned."
+msgstr ""
+
+#: includes/template-functions.php:89
+msgid "Achievements"
+msgstr ""
+
+#: includes/template-functions.php:111
+#, php-format
+msgid "Random %s"
+msgstr ""
+
+#: includes/template-functions.php:294
+msgid "User display name."
+msgstr ""
+
+#: includes/template-functions.php:295
+msgid "User first name."
+msgstr ""
+
+#: includes/template-functions.php:296
+msgid "User last name."
+msgstr ""
+
+#: includes/template-functions.php:297
+msgid "User ID (useful for shortcodes that user ID can be passed as attribute)."
+msgstr ""
+
+#: includes/template-functions.php:299
+msgid "The time-based reward ID (useful for shortcodes that time-based reward ID can be passed as attribute)."
+msgstr ""
+
+#: includes/template-functions.php:300
+msgid "The time-based reward title."
+msgstr ""
+
+#: includes/template-functions.php:301
+msgid "URL to the time-based reward."
+msgstr ""
+
+#: includes/template-functions.php:302
+msgid "Link to the time-based reward."
+msgstr ""
+
+#: includes/template-functions.php:303
+msgid "The time-based reward featured image."
+msgstr ""
+
+#: includes/template-functions.php:304
+msgid "The time-based reward excerpt."
+msgstr ""
+
+#: includes/template-functions.php:305
+msgid "The time-based reward content."
+msgstr ""
+
+#: includes/template-functions.php:307
+msgid "List of rewards user earned."
+msgstr ""
+
+#: includes/triggers.php:25
+msgid "Claim any time-based reward"
+msgstr ""
+
+#: includes/triggers.php:26
+msgid "Claim a specific time-based reward"
+msgstr ""
+
+#: includes/triggers.php:28
+msgid "Earn any reward of any type on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:29
+msgid "Earn points on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:30
+msgid "Earn points of a specific type on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:31
+msgid "Earn an achievement on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:32
+msgid "Earn a specific achievement on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:33
+msgid "Earn a rank on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:34
+msgid "Earn a specific rank on claim a time-based reward"
+msgstr ""
+
+#: includes/triggers.php:74
+#, php-format
+msgid "Claim the %s time-based reward"
+msgstr ""
+
+#: includes/triggers.php:76 includes/triggers.php:77 includes/triggers.php:78
+#, php-format
+msgid "Earn %s on claim a time-based reward"
+msgstr ""
+
+#: includes/widgets/time-based-reward-widget.php:24
+msgid "GamiPress: Time-based Reward"
+msgstr ""
+
+#: includes/widgets/time-based-reward-widget.php:25
+msgid "Render a desired rewards calendar."
+msgstr ""
