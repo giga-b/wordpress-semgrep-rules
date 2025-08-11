@@ -105,3 +105,7 @@ wp-content/plugins/hello.php
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Voxel theme files with sensitive data
+corpus/wordpress-themes/voxel/app/vendor/stripe/README.md
+corpus/wordpress-themes/voxel/app/vendor/stripe/CHANGELOG.md
