@@ -1,0 +1,55 @@
+rules:
+  # Nonce Creation Detection
+  # This rule detects nonce creation patterns for cross-file analysis
+  
+  - id: wordpress.nonce.creation-wp-create-nonce
+    message: "Nonce creation using wp_create_nonce detected: $CREATE_ACTION"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_create_nonce('$CREATE_ACTION')
+    metadata:
+      category: "nonce-verification"
+      technology: ["wordpress"]
+      description: |
+        Detects nonce creation using wp_create_nonce().
+        Used for cross-file analysis to identify nonce creation patterns.
+    
+  - id: wordpress.nonce.creation-wp-nonce-field
+    message: "Nonce field creation using wp_nonce_field detected: $CREATE_ACTION"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_nonce_field('$CREATE_ACTION')
+    metadata:
+      category: "nonce-verification"
+      technology: ["wordpress"]
+      description: |
+        Detects nonce field creation using wp_nonce_field().
+        Used for cross-file analysis to identify nonce field generation.
+    
+  - id: wordpress.nonce.creation-wp-nonce-url
+    message: "Nonce URL creation using wp_nonce_url detected: $CREATE_ACTION"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_nonce_url('$URL', '$CREATE_ACTION')
+    metadata:
+      category: "nonce-verification"
+      technology: ["wordpress"]
+      description: |
+        Detects nonce URL creation using wp_nonce_url().
+        Used for cross-file analysis to identify nonce URL generation.
+    
+  - id: wordpress.nonce.creation-wp-nonce-ays
+    message: "Nonce AYS creation using wp_nonce_ays detected: $CREATE_ACTION"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      wp_nonce_ays('$CREATE_ACTION')
+    metadata:
+      category: "nonce-verification"
+      technology: ["wordpress"]
+      description: |
+        Detects nonce AYS (Are You Sure) creation using wp_nonce_ays().
+        Used for cross-file analysis to identify nonce AYS generation.

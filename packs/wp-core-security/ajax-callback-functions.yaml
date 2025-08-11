@@ -1,0 +1,46 @@
+rules:
+  # AJAX Callback Function Detection
+  # This rule detects WordPress AJAX callback functions for cross-file analysis
+  
+  - id: wordpress.ajax.callback-function-detection
+    message: "AJAX callback function detected: $FUNCTION_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      function $FUNCTION_NAME() {
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      technology: ["wordpress"]
+      description: |
+        Detects WordPress AJAX callback functions. Used for cross-file analysis to identify
+        functions that handle AJAX requests and may require security checks.
+    
+  - id: wordpress.ajax.callback-function-with-params
+    message: "AJAX callback function with parameters detected: $FUNCTION_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      function $FUNCTION_NAME($PARAMS) {
+        ...
+      }
+    metadata:
+      category: "ajax-security"
+      technology: ["wordpress"]
+      description: |
+        Detects WordPress AJAX callback functions that accept parameters.
+        These functions may process user input and require proper validation.
+    
+  - id: wordpress.ajax.callback-function-array-style
+    message: "AJAX callback function (array style) detected: $FUNCTION_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      add_action('wp_ajax_$ACTION', array($OBJECT, '$FUNCTION_NAME'));
+    metadata:
+      category: "ajax-security"
+      technology: ["wordpress"]
+      description: |
+        Detects WordPress AJAX callback functions registered using array syntax.
+        Used for cross-file analysis to identify object method callbacks.

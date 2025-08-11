@@ -1,0 +1,201 @@
+rules:
+  # Callback Function Tracing
+  # This rule detects and traces callback functions for cross-file analysis
+  
+  # Standard function definition
+  - id: wordpress.callback.function-definition
+    message: "Function definition detected: $FUNCTION_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      function $FUNCTION_NAME() {
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects standard function definitions. Used for cross-file analysis to trace
+        callback functions and their security implementations.
+    
+  # Function definition with parameters
+  - id: wordpress.callback.function-definition-params
+    message: "Function definition with parameters detected: $FUNCTION_NAME($PARAMS)"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      function $FUNCTION_NAME($PARAMS) {
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects function definitions with parameters. Used for cross-file analysis
+        to trace callback functions that accept input parameters.
+    
+  # Class method definition
+  - id: wordpress.callback.class-method-definition
+    message: "Class method definition detected: $CLASS_NAME::$METHOD_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      class $CLASS_NAME {
+        ...
+        function $METHOD_NAME() {
+          ...
+        }
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects class method definitions. Used for cross-file analysis to trace
+        object method callbacks and their security implementations.
+    
+  # Class method definition with parameters
+  - id: wordpress.callback.class-method-definition-params
+    message: "Class method definition with parameters detected: $CLASS_NAME::$METHOD_NAME($PARAMS)"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      class $CLASS_NAME {
+        ...
+        function $METHOD_NAME($PARAMS) {
+          ...
+        }
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects class method definitions with parameters. Used for cross-file analysis
+        to trace object method callbacks that accept input parameters.
+    
+  # Public class method definition
+  - id: wordpress.callback.public-class-method-definition
+    message: "Public class method definition detected: $CLASS_NAME::public $METHOD_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      class $CLASS_NAME {
+        ...
+        public function $METHOD_NAME() {
+          ...
+        }
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects public class method definitions. Used for cross-file analysis to trace
+        public object method callbacks.
+    
+  # Private class method definition
+  - id: wordpress.callback.private-class-method-definition
+    message: "Private class method definition detected: $CLASS_NAME::private $METHOD_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      class $CLASS_NAME {
+        ...
+        private function $METHOD_NAME() {
+          ...
+        }
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects private class method definitions. Used for cross-file analysis to trace
+        private object method callbacks.
+    
+  # Protected class method definition
+  - id: wordpress.callback.protected-class-method-definition
+    message: "Protected class method definition detected: $CLASS_NAME::protected $METHOD_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      class $CLASS_NAME {
+        ...
+        protected function $METHOD_NAME() {
+          ...
+        }
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects protected class method definitions. Used for cross-file analysis to trace
+        protected object method callbacks.
+    
+  # Static class method definition
+  - id: wordpress.callback.static-class-method-definition
+    message: "Static class method definition detected: $CLASS_NAME::static $METHOD_NAME"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      class $CLASS_NAME {
+        ...
+        static function $METHOD_NAME() {
+          ...
+        }
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects static class method definitions. Used for cross-file analysis to trace
+        static object method callbacks.
+    
+  # Anonymous function definition
+  - id: wordpress.callback.anonymous-function-definition
+    message: "Anonymous function definition detected"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      function() {
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects anonymous function definitions. Used for cross-file analysis to trace
+        anonymous function callbacks.
+    
+  # Anonymous function definition with parameters
+  - id: wordpress.callback.anonymous-function-definition-params
+    message: "Anonymous function definition with parameters detected: ($PARAMS)"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      function($PARAMS) {
+        ...
+      }
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects anonymous function definitions with parameters. Used for cross-file analysis
+        to trace anonymous function callbacks that accept input parameters.
+    
+  # Arrow function definition (PHP 7.4+)
+  - id: wordpress.callback.arrow-function-definition
+    message: "Arrow function definition detected"
+    severity: INFO
+    languages: [php]
+    pattern: |
+      fn($PARAMS) => $EXPRESSION
+    metadata:
+      category: "callback-tracing"
+      technology: ["wordpress"]
+      description: |
+        Detects arrow function definitions. Used for cross-file analysis to trace
+        arrow function callbacks.

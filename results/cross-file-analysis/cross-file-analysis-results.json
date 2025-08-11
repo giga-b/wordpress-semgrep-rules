@@ -1,0 +1,56 @@
+{
+  "cross_file_nonce_analysis": {
+    "vulnerable": {
+      "scan_result": {
+        "success": false,
+        "error": "[00.18][WARNING](ca-certs): Ignored 1 trust anchors.\nsemgrep scan: unknown option '--no-ignore'.\nUsage: semgrep scan [OPTION]\u00e2\u20ac\u00a6 [TARGETS]\u00e2\u20ac\u00a6\nTry 'semgrep scan --help' for more information.\n",
+        "duration": 1.4237921237945557
+      },
+      "test_paths": [
+        "tests/vulnerable-examples/ajax-vulnerable.php",
+        "tests/vulnerable-examples/nonce-vulnerable.php"
+      ]
+    },
+    "safe": {
+      "scan_result": {
+        "success": false,
+        "error": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nsemgrep scan: unknown option '--no-ignore'.\nUsage: semgrep scan [OPTION]\u00e2\u20ac\u00a6 [TARGETS]\u00e2\u20ac\u00a6\nTry 'semgrep scan --help' for more information.\n",
+        "duration": 0.2995584011077881
+      },
+      "test_paths": [
+        "tests/safe-examples/ajax-safe.php",
+        "tests/safe-examples/nonce-safe.php"
+      ]
+    },
+    "corpus": {
+      "scan_result": {
+        "success": false,
+        "error": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nsemgrep scan: unknown option '--no-ignore'.\nUsage: semgrep scan [OPTION]\u00e2\u20ac\u00a6 [TARGETS]\u00e2\u20ac\u00a6\nTry 'semgrep scan --help' for more information.\n",
+        "duration": 0.2787294387817383
+      },
+      "test_paths": [
+        "corpus/wordpress-plugins/gamipress/includes/ajax-functions.php",
+        "corpus/wordpress-plugins/gamipress-leaderboards/includes/ajax-functions.php"
+      ]
+    }
+  },
+  "individual_rules": {
+    "ajax_action_registration": {
+      "success": false,
+      "error": "[00.06][WARNING](ca-certs): Ignored 1 trust anchors.\nsemgrep scan: unknown option '--no-ignore'.\nUsage: semgrep scan [OPTION]\u00e2\u20ac\u00a6 [TARGETS]\u00e2\u20ac\u00a6\nTry 'semgrep scan --help' for more information.\n",
+      "duration": 0.28007006645202637
+    },
+    "callback_functions": {
+      "success": false,
+      "error": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nsemgrep scan: unknown option '--no-ignore'.\nUsage: semgrep scan [OPTION]\u00e2\u20ac\u00a6 [TARGETS]\u00e2\u20ac\u00a6\nTry 'semgrep scan --help' for more information.\n",
+      "duration": 0.2748246192932129
+    },
+    "nonce_verification": {
+      "success": false,
+      "error": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nsemgrep scan: unknown option '--no-ignore'.\nUsage: semgrep scan [OPTION]\u00e2\u20ac\u00a6 [TARGETS]\u00e2\u20ac\u00a6\nTry 'semgrep scan --help' for more information.\n",
+      "duration": 0.2854733467102051
+    }
+  },
+  "performance_metrics": {},
+  "accuracy_metrics": {}
+}

@@ -109,3 +109,10 @@ wp-content/plugins/hello.php
 # Voxel theme files with sensitive data
 corpus/wordpress-themes/voxel/app/vendor/stripe/README.md
 corpus/wordpress-themes/voxel/app/vendor/stripe/CHANGELOG.md
+
+# Research
+/research
+
+# Cursor
+/.cursor
+.cursorrules
