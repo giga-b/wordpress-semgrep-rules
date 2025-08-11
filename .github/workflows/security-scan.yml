@@ -57,7 +57,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
     
     - name: Cache Semgrep installation
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-pip-semgrep-${{ env.SEMGREP_VERSION }}
@@ -283,7 +283,7 @@ jobs:
         cat performance-results.txt
     
     - name: Upload performance results
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: performance-benchmark-${{ github.run_id }}
         path: performance-results.txt
@@ -300,7 +300,7 @@ jobs:
       uses: actions/checkout@v4
     
     - name: Download scan results
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: security-scan-results-basic-${{ github.run_id }}
         path: scan-results/
@@ -335,7 +335,7 @@ jobs:
         echo "✅ Security dashboard generated"
     
     - name: Upload security dashboard
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: security-dashboard-${{ github.run_id }}
         path: security-dashboard.json
