@@ -1,0 +1,16 @@
+rules:
+  - id: wordpress.xss.unescaped-output
+    languages: [php]
+    message: "Unescaped user input in output - potential XSS vulnerability"
+    pattern: |
+      echo $_GET[$KEY]
+    pattern-not: |
+      echo esc_html($_GET[$KEY])
+    severity: ERROR
+    metadata:
+      category: "security"
+      subcategory: "xss"
+      technology: ["wordpress"]
+      references:
+        - "https://developer.wordpress.org/apis/security/data-sanitization-escaping/"
+      cwe: ["CWE-79"]

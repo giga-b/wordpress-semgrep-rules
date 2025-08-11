@@ -1,0 +1,26 @@
+rules:
+  - id: wordpress.nonce.verification
+    languages: [php]
+    message: "AJAX handler missing nonce verification - potential CSRF vulnerability"
+    pattern: |
+      add_action('wp_ajax_$ACTION', $CALLBACK)
+    pattern-not: |
+      function $CALLBACK() {
+        ...
+        wp_verify_nonce($NONCE, '$ACTION')
+        ...
+      }
+    pattern-not: |
+      function $CALLBACK() {
+        ...
+        check_ajax_referer('$ACTION')
+        ...
+      }
+    severity: ERROR
+    metadata:
+      category: "security"
+      subcategory: "csrf"
+      technology: ["wordpress"]
+      references:
+        - "https://developer.wordpress.org/plugins/security/nonces/"
+      cwe: ["CWE-352"]
