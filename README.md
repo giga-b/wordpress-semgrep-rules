@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/giga-b/wordpress-semgrep-rules/workflows/CI/badge.svg)](https://github.com/giga-b/wordpress-semgrep-rules/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Semgrep](https://img.shields.io/badge/Semgrep-1.45.0+-blue.svg)](https://semgrep.dev/)
+[![Semgrep](https://img.shields.io/badge/Semgrep-1.45.0+-blue.svg)](https://semgrep.dev/)[![Issues]](https://github.com/giga-b/wordpress-semgrep-rules/issues/new/choose)
 
 **PressGuard** is a comprehensive WordPress security scanning solution that combines the power of Semgrep static analysis with advanced dashboard analytics. Designed specifically for WordPress plugin and theme developers, it provides automated security scanning, detailed vulnerability reporting, and interactive dashboards for monitoring security posture.
 
