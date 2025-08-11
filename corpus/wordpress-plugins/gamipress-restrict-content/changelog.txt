@@ -1,0 +1,83 @@
+== Changelog ==
+
+= 1.0.9 =
+
+* **Bug Fixes**
+* Fixed points type displayed from the GamiPress: Post Restrictions block, shortcode and widget.
+* Fixed user points  balance displayed from the GamiPress: Post Restrictions block, shortcode and widget.
+* **Improvements**
+* Removed some unused variables on pattern parser.
+
+= 1.0.8 =
+
+* **New Features**
+* Full rework of restrict a portion of content feature allowing restrict by new 6 different ways.
+* Added new template tags on [gamipress_restrict_content] shortcode and GamiPress: Restrict Content block and widget.
+* New block, shortcode and widget to render a list of posts that has been restricted.
+* New block, shortcode and widget to render a list of posts that user got access.
+* Added 2 new templates.
+
+= 1.0.7 =
+
+* **New Features**
+* Full support to GamiPress Gutenberg blocks.
+
+= 1.0.6 =
+
+* **New Features**
+* Sell content feature: Posts and portions of content unlocked through expending points will award points expended to the author.
+
+= 1.0.5 =
+
+* **Improvements**
+* Added support to the new points format feature.
+* **Developer Notes**
+* Added filters to override the output of "insufficient points" message.
+* Added filters to override the output when a portion of content gets restricted through shortcode or widget.
+
+= 1.0.4 =
+
+* **New Features**
+* Added new post fields to setup replacement text for visitors.
+* Added the attribute "guest_message" to [gamipress_restrict_content] shortcode.
+* Added the field "Message For Guests" to GamiPress: Restrict Content widget.
+* **Bug Fixes**
+* Fixed tabs visibility when editing post restrictions.
+
+= 1.0.3 =
+
+* **Bug Fixes**
+* Fixed incompatibility issues with some GamiPress integrations.
+
+= 1.0.2 =
+
+* **New Features**
+* Added [gamipress_restrict_content][/gamipress_restrict_content] shortcode to restrict access to a portion of content anywhere.
+* Added GamiPress: Restrict Content widget to restrict access to a portion of content on any sidebar.
+* Added [gamipress_post_restrictions] shortcode to render post restrictions and/or access button of a desired post anywhere.
+* Added GamiPress: Post Restrictions widget to render post restrictions and/or access button of a desired post on any sidebar.
+* Added the "Unlock By" with options "Completing requirements" and "Expending points".
+* Added the ability to get access to a post by expending an amount points.
+* Added the ability to get access to a post with requirements without meet the restrictions by expending an amount points.
+* Added new activity events related to unlock access to posts and portions of content.
+* Added the ability to manually grant user roles on content restrictions.
+* Added the option to replace the full content when restrictions are enabled.
+* Added new pattern tags on content, link and image replacement texts: {points}, {points_balance} and {points_type}.
+* **Bug Fixes**
+* Fixed field visibility based on restrictions selected.
+* Performance improvements on unlocked content checks.
+* Removed custom fields libraries to use GamiPress provided ones.
+* **Improvements**
+* Improvements when replacing content to ensure successfully override it.
+* Improvements on admin area styles.
+
+= 1.0.1 =
+
+* **Bug Fixes**
+* Fixed admin column wrong parameters.
+* **Improvements**
+* Excluded GamiPress achievements and ranks from restrictions.
+
+= 1.0.0 =
+
+* Initial release.

@@ -1,0 +1,70 @@
+# **Global AI Development Rules for the PressGuard Project**
+
+These rules apply to all AI-driven development for the PressGuard project. This includes the creation of Semgrep rules, supporting scripts, and project documentation. Adherence to these guidelines is paramount for rule accuracy, performance, and maintainability.
+
+## **1\. Project Awareness & Context**
+
+* **Always consult the project PRD** (prd.md) at the start of any new task to understand the overall project goals, user personas, features, and success criteria.  
+* **Always consult TASK\_MANAGEMENT.md** before starting a new task. Refer to tasks by their **number/ID**, not by week or date. Mark tasks as \[DONE\] immediately upon completion. If new sub-tasks or TODO items are discovered, add them to TASK\_MANAGEMENT.md under a "Discovered During Work" section.  
+* **Utilize all available MCP (Model Context Protocol) servers** (e.g., Web Search, File System Access) to research vulnerability patterns, WordPress API documentation, and official Semgrep rule syntax.  
+* **Maintain consistent naming conventions** for rule IDs, file structures, and architectural patterns as established in the PRD and this document.
+
+## **2\. Rule & Script Structure**
+
+* **Prioritize Declarative YAML Rules:** Structure all security checks as declarative Semgrep YAML rules. Supporting functionality, like data collection, should be built in scripts.  
+* **Atomic & Composable Rules:** Each rule should target a single, specific vulnerability pattern. Complex logic should be broken down into multiple, composable rules rather than creating one monolithic rule.  
+* **Rule Complexity Limit:** Avoid excessive pattern clauses or overly complex pattern-inside logic within a single file. If a rule's logic becomes too difficult to read, refactor it.  
+* **Leverage Semgrep's Advanced Modes:**  
+  * Use **taint-mode** for source-to-sink analysis (e.g., for file upload and Options API rules).  
+  * Use **join-mode** for cross-file analysis required for complex checks like the Nonce Lifecycle rule.  
+* **Directory & File Naming:** Use lowercase with hyphens for directories and files. Organize rules by vulnerability class:  
+  * rules/wordpress/csrf/  
+  * rules/wordpress/file-handling/  
+  * rules/wordpress/stored-xss/  
+  * scripts/ (for corpus management and testing tools)
+
+## **3\. Semgrep Rule & Scripting Practices**
+
+* **Adhere to Semgrep Standards:** Strictly follow the official [Semgrep rule syntax and best practices](https://semgrep.dev/docs/writing-rules/overview/).  
+* **Mandatory Rule Metadata:** Every rule MUST include a complete metadata block:  
+  * **id**: Must be unique and descriptive (e.g., wordpress.csrf.missing-nonce-verification).  
+  * **category**: e.g., security.  
+  * **technology**: Must include wordpress.  
+  * **confidence**: HIGH, MEDIUM, or LOW. This directly informs which rule pack it belongs to (ci-blocking.yml vs. audit.yml).  
+  * **severity**: ERROR, WARNING, or INFO.  
+  * **cwe / owasp**: Map to relevant CWE or OWASP categories where applicable.  
+* **WordPress-Specific Logic:**  
+  * Acknowledge WordPress hooks (action and filter) as key extension points for analysis.  
+  * When writing rules for database interactions, understand the use of the $wpdb object and the requirement for prepare() statements to prevent SQL injection.  
+  * For multisite contexts, be aware of table prefixes like wp\_{blog\_id}\_.  
+* **Supporting Scripts (Python):**  
+  * Use **Python 3.9+** for all supporting scripts (e.g., corpus downloader, validation pipeline).  
+  * Manage all dependencies in a requirements.txt file.
+
+## **4\. Documentation & Explainability**
+
+* **Comprehensive Rule Documentation:**  
+  * **message field:** The message must be clear, concise, and targeted at the developer persona (David). It should explain the finding and its potential impact.  
+  * **metadata.description field:** This section must contain a detailed technical explanation of the rule's logic, intended for the security engineer (Priyanka). It should explain *how* the rule works.  
+* **Inline Comments:** Add concise inline comments to complex scripting logic, explaining *why* something is done, not just *what*.  
+* **Update Project Documentation:** After creating or significantly modifying a rule, update the relevant project documentation (README.md, prd.md) to reflect the new capability and its justification.
+
+## **5\. Testing & Reliability**
+
+* **Corpus-Driven Development:** Every new or modified rule **must** be validated against the "Attack Corpus" to measure its accuracy and performance before it is merged.  
+* **Mandatory Unit Tests:** Every rule file must contain a tests block with:  
+  * At least one true-positive test case demonstrating code that the rule should flag.  
+  * At least one true-negative test case demonstrating code that the rule should correctly ignore.  
+* **Definition of Done:** A task is not considered complete until you have confirmed that the work is completed by testing (where appropriate) and/or by reviewing all work to ensure it meets or passes all task requirements.  
+* **No Data Deletion:** Scripts created for this project, especially those interacting with the corpus or test environment, must never delete data unless explicitly designed for cleanup of temporary files. Deactivation hooks should not delete user data or tables.  
+* **Error Handling:** All supporting scripts must include robust error handling (try-catch blocks) and logging to ensure reliability.
+
+## **6\. AI Behavior Protocols**
+
+* **Clarifying Questions:** Never assume missing context about a specific WordPress function or vulnerability pattern. Always ask clarifying questions before generating a rule.  
+* **File Confirmation:** Always confirm the correct file path within the rule directory structure before creating or modifying a rule file.  
+* **No Hallucinations:** Do not invent Semgrep keys, modes, or functions that do not exist. Always refer to the official Semgrep documentation for correct syntax. Do not hallucinate WordPress functions or APIs.  
+* **Respect Existing Code:** Never delete or overwrite existing rules or scripts unless explicitly instructed to, or if it's part of a clear refactoring task from TASK\_MANAGEMENT.md.  
+* **Focused Output:** Provide the full, working YAML rule file or Python script directly. Avoid excessive conversational filler. Follow up with explanations in a separate message if necessary.  
+* **Environmental Variables:** Acknowledge environment variables but do not generate or embed sensitive API keys directly in code. Instruct the human user on how to set them up.  
+* **Git Workflow:** After each completed task (and after it passes the "Definition of Done" check), you are to stage all changes, write a git comment summarizing the work completed using HEREDOC format, commit to git, push to the appropriate GitHub branch, and then move to the next task.

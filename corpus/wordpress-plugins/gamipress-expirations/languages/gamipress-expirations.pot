@@ -1,0 +1,566 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GamiPress Expirations\n"
+"Report-Msgid-Bugs-To: https://gamipress.com/\n"
+"POT-Creation-Date: 2021-07-02 11:34+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: GamiPress (https://gamipress.com/)\n"
+"Language-Team: GamiPress <contact@gamipress.com>\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: libraries\n"
+
+#: gamipress-expirations.php:132
+msgid "The {achievement_type} {title} expires soon"
+msgstr ""
+
+#: gamipress-expirations.php:133
+msgid "The {achievement_type} {link} expires in 15 days"
+msgstr ""
+
+#: gamipress-expirations.php:134
+msgid "The {achievement_type} {title} has expired"
+msgstr ""
+
+#: gamipress-expirations.php:135
+msgid "The {achievement_type} {link} has expired, you need to complete its requirements to unlock it again"
+msgstr ""
+
+#: gamipress-expirations.php:137
+msgid "The requirement \"{label}\" of the {achievement_type} {achievement_title} expires soon"
+msgstr ""
+
+#: gamipress-expirations.php:138
+msgid "The requirement \"{label}\" of the {achievement_type} {achievement_link} expires in 15 days"
+msgstr ""
+
+#: gamipress-expirations.php:139
+msgid "The requirement \"{label}\" of the {achievement_type} {achievement_title} has expired"
+msgstr ""
+
+#: gamipress-expirations.php:140
+msgid "The requirement \"{label}\" of the {achievement_type} {achievement_link} has expired, you need to complete this requirement again"
+msgstr ""
+
+#: gamipress-expirations.php:142 gamipress-expirations.php:147
+msgid "{points} {points_label} expires soon"
+msgstr ""
+
+#: gamipress-expirations.php:143 gamipress-expirations.php:148
+msgid "{points} {points_label} for completing \"{label}\" expires in 15 days"
+msgstr ""
+
+#: gamipress-expirations.php:144 gamipress-expirations.php:149
+msgid "{points} {points_label} has expired"
+msgstr ""
+
+#: gamipress-expirations.php:145 gamipress-expirations.php:150
+msgid "{points} {points_label} for completing \"{label}\" has expired, you need to complete its requirements to unlock it again"
+msgstr ""
+
+#: gamipress-expirations.php:152
+msgid "The {rank_type} {title} expires soon"
+msgstr ""
+
+#: gamipress-expirations.php:153
+msgid "The {rank_type} {link} expires in 15 days"
+msgstr ""
+
+#: gamipress-expirations.php:154
+msgid "The {rank_type} {title} has expired"
+msgstr ""
+
+#: gamipress-expirations.php:155
+msgid "The {rank_type} {link} has expired, you need to complete its requirements to unlock it again"
+msgstr ""
+
+#: gamipress-expirations.php:157
+msgid "The requirement \"{label}\" of the {rank_type} {rank_title} expires soon"
+msgstr ""
+
+#: gamipress-expirations.php:158
+msgid "The requirement \"{label}\" of the {rank_type} {rank_link} expires in 15 days"
+msgstr ""
+
+#: gamipress-expirations.php:159
+msgid "The requirement \"{label}\" of the {rank_type} {rank_title} has expired"
+msgstr ""
+
+#: gamipress-expirations.php:160
+msgid "The requirement \"{label}\" of the {rank_type} {rank_link} has expired, you need to complete this requirement again"
+msgstr ""
+
+#: gamipress-expirations.php:215
+#, php-format
+msgid "GamiPress - Expirations requires %s (%s or higher) in order to work. Please install and activate them."
+msgstr ""
+
+#: includes/admin.php:44
+msgid "Expirations: Emails before expiration"
+msgstr ""
+
+#: includes/admin.php:50
+msgid "Send emails before"
+msgstr ""
+
+#: includes/admin.php:60
+msgid "Period"
+msgstr ""
+
+#: includes/admin.php:63 includes/admin.php:504 includes/requirements.php:54
+msgid "Days"
+msgstr ""
+
+#: includes/admin.php:64 includes/admin.php:505 includes/requirements.php:55
+msgid "Weeks"
+msgstr ""
+
+#: includes/admin.php:65 includes/admin.php:506 includes/requirements.php:56
+msgid "Months"
+msgstr ""
+
+#: includes/admin.php:66 includes/admin.php:507 includes/requirements.php:57
+msgid "Years"
+msgstr ""
+
+#: includes/admin.php:74
+msgid "Disable before expiration emails for achievements"
+msgstr ""
+
+#: includes/admin.php:75 includes/admin.php:269
+msgid "Check this option to do not email users about achievements expiration."
+msgstr ""
+
+#: includes/admin.php:80 includes/admin.php:100 includes/admin.php:120
+#: includes/admin.php:140 includes/admin.php:160 includes/admin.php:180
+#: includes/admin.php:274 includes/admin.php:294 includes/admin.php:314
+#: includes/admin.php:334 includes/admin.php:354 includes/admin.php:374
+msgid "Email subject"
+msgstr ""
+
+#: includes/admin.php:81 includes/admin.php:101 includes/admin.php:121
+#: includes/admin.php:141 includes/admin.php:161 includes/admin.php:181
+#: includes/admin.php:275 includes/admin.php:295 includes/admin.php:315
+#: includes/admin.php:335 includes/admin.php:355 includes/admin.php:375
+msgid "The email subject."
+msgstr ""
+
+#: includes/admin.php:85 includes/admin.php:105 includes/admin.php:125
+#: includes/admin.php:145 includes/admin.php:165 includes/admin.php:185
+#: includes/admin.php:279 includes/admin.php:299 includes/admin.php:319
+#: includes/admin.php:339 includes/admin.php:359 includes/admin.php:379
+msgid "Email content"
+msgstr ""
+
+#: includes/admin.php:86 includes/admin.php:106 includes/admin.php:126
+#: includes/admin.php:146 includes/admin.php:166 includes/admin.php:186
+#: includes/admin.php:280 includes/admin.php:300 includes/admin.php:320
+#: includes/admin.php:340 includes/admin.php:360 includes/admin.php:380
+msgid "The email content. Available tags:"
+msgstr ""
+
+#: includes/admin.php:94
+msgid "Disable before expiration emails for steps"
+msgstr ""
+
+#: includes/admin.php:95 includes/admin.php:289
+msgid "Check this option to do not email users about steps expiration."
+msgstr ""
+
+#: includes/admin.php:114
+msgid "Disable before expiration emails for points awards"
+msgstr ""
+
+#: includes/admin.php:115 includes/admin.php:309
+msgid "Check this option to do not notify users about points awards."
+msgstr ""
+
+#: includes/admin.php:134
+msgid "Disable before expiration emails for points deductions"
+msgstr ""
+
+#: includes/admin.php:135 includes/admin.php:329
+msgid "Check this option to do not notify users about points deductions."
+msgstr ""
+
+#: includes/admin.php:154
+msgid "Disable before expiration emails for ranks"
+msgstr ""
+
+#: includes/admin.php:155 includes/admin.php:349
+msgid "Check this option to do not notify users about ranks reached."
+msgstr ""
+
+#: includes/admin.php:174
+msgid "Disable before expiration emails for rank requirements"
+msgstr ""
+
+#: includes/admin.php:175 includes/admin.php:369
+msgid "Check this option to do not notify to users about rank requirements completed."
+msgstr ""
+
+#: includes/admin.php:195
+msgid "General"
+msgstr ""
+
+#: includes/admin.php:203 includes/admin.php:389
+msgid "Achievements"
+msgstr ""
+
+#: includes/admin.php:212 includes/admin.php:398
+msgid "Steps"
+msgstr ""
+
+#: includes/admin.php:221 includes/admin.php:407
+msgid "Points Awards"
+msgstr ""
+
+#: includes/admin.php:230 includes/admin.php:416
+msgid "Points Deducts"
+msgstr ""
+
+#: includes/admin.php:239 includes/admin.php:425
+msgid "Ranks"
+msgstr ""
+
+#: includes/admin.php:248 includes/admin.php:434
+msgid "Rank Requirements"
+msgstr ""
+
+#: includes/admin.php:262
+msgid "Expirations: Emails after expiration"
+msgstr ""
+
+#: includes/admin.php:268
+msgid "Disable after expiration emails for achievements"
+msgstr ""
+
+#: includes/admin.php:288
+msgid "Disable after expiration emails for steps"
+msgstr ""
+
+#: includes/admin.php:308
+msgid "Disable after expiration emails for points awards"
+msgstr ""
+
+#: includes/admin.php:328
+msgid "Disable after expiration emails for points deductions"
+msgstr ""
+
+#: includes/admin.php:348
+msgid "Disable after expiration emails for ranks"
+msgstr ""
+
+#: includes/admin.php:368
+msgid "Disable after expiration emails for rank requirements"
+msgstr ""
+
+#: includes/admin.php:463 includes/admin.php:474 includes/admin.php:498
+msgid "Expiration"
+msgstr ""
+
+#: includes/admin.php:502 includes/requirements.php:52 includes/scripts.php:84
+msgid "Never expires"
+msgstr ""
+
+#: includes/admin.php:503 includes/requirements.php:53
+msgid "Hours"
+msgstr ""
+
+#: includes/admin.php:508 includes/requirements.php:58 includes/scripts.php:90
+msgid "Specific date"
+msgstr ""
+
+#: includes/admin.php:512
+msgid "Amount"
+msgstr ""
+
+#: includes/admin.php:513 includes/requirements.php:72
+#, php-format
+msgid "%s later"
+msgstr ""
+
+#: includes/admin.php:524 includes/filters.php:136 includes/filters.php:182
+#: includes/filters.php:235 includes/filters.php:294 includes/filters.php:343
+msgid "Expires on"
+msgstr ""
+
+#: includes/admin.php:525
+msgid "A date in format \"year-month-day\" like 2017-07-20."
+msgstr ""
+
+#: includes/admin.php:546
+msgid "GamiPress Expirations"
+msgstr ""
+
+#: includes/admin.php:549
+msgid "License"
+msgstr ""
+
+#: includes/admin.php:573
+msgid "Expirations"
+msgstr ""
+
+#: includes/requirements.php:62
+msgid "Expires:"
+msgstr ""
+
+#: includes/requirements.php:76
+msgid "(a date in format \"year-month-day\" like 2017-07-20)"
+msgstr ""
+
+#: includes/scripts.php:85
+msgid "Hour(s)"
+msgstr ""
+
+#: includes/scripts.php:86
+msgid "Day(s)"
+msgstr ""
+
+#: includes/scripts.php:87
+msgid "Week(s)"
+msgstr ""
+
+#: includes/scripts.php:88
+msgid "Month(s)"
+msgstr ""
+
+#: includes/scripts.php:89
+msgid "Year(s)"
+msgstr ""
+
+#: includes/template-functions.php:21
+msgid "User display name."
+msgstr ""
+
+#: includes/template-functions.php:22
+msgid "User first name."
+msgstr ""
+
+#: includes/template-functions.php:23
+msgid "User last name."
+msgstr ""
+
+#: includes/template-functions.php:24
+msgid "User ID (useful for shortcodes that user ID can be passed as attribute)."
+msgstr ""
+
+#: includes/template-functions.php:73 includes/template-functions.php:210
+msgid "The achievement ID (useful for shortcodes that achievement ID can be passed as attribute)."
+msgstr ""
+
+#: includes/template-functions.php:74
+msgid "The achievement title."
+msgstr ""
+
+#: includes/template-functions.php:75
+msgid "URL to the achievement."
+msgstr ""
+
+#: includes/template-functions.php:76
+msgid "Link to the achievement with the achievement title as text."
+msgstr ""
+
+#: includes/template-functions.php:77
+msgid "The achievement featured image."
+msgstr ""
+
+#: includes/template-functions.php:78
+msgid "The achievement excerpt."
+msgstr ""
+
+#: includes/template-functions.php:79
+msgid "The achievement content."
+msgstr ""
+
+#: includes/template-functions.php:80
+msgid "The achievement steps."
+msgstr ""
+
+#: includes/template-functions.php:81
+msgid "The achievement type singular."
+msgstr ""
+
+#: includes/template-functions.php:82
+msgid "The achievement congratulations text."
+msgstr ""
+
+#: includes/template-functions.php:97 includes/template-functions.php:234
+#: includes/template-functions.php:327 includes/template-functions.php:420
+#: includes/template-functions.php:516 includes/template-functions.php:650
+msgid "Show tags"
+msgstr ""
+
+#: includes/template-functions.php:209
+msgid "The step label."
+msgstr ""
+
+#: includes/template-functions.php:211
+msgid "The step achievement title."
+msgstr ""
+
+#: includes/template-functions.php:212
+msgid "URL to the step achievement."
+msgstr ""
+
+#: includes/template-functions.php:213
+msgid "Link to the step achievement with the achievement title as text."
+msgstr ""
+
+#: includes/template-functions.php:214
+msgid "The step achievement featured image."
+msgstr ""
+
+#: includes/template-functions.php:215
+msgid "The step achievement excerpt."
+msgstr ""
+
+#: includes/template-functions.php:216
+msgid "The step achievement content."
+msgstr ""
+
+#: includes/template-functions.php:217
+msgid "The step achievement list of steps."
+msgstr ""
+
+#: includes/template-functions.php:218
+msgid "The step achievement type singular."
+msgstr ""
+
+#: includes/template-functions.php:219
+msgid "The step achievement congratulations text."
+msgstr ""
+
+#: includes/template-functions.php:306
+msgid "The points award label."
+msgstr ""
+
+#: includes/template-functions.php:307
+msgid "The amount of points earned."
+msgstr ""
+
+#: includes/template-functions.php:308
+msgid "The points award points type. Singular or plural is based on the amount of points earned."
+msgstr ""
+
+#: includes/template-functions.php:309 includes/template-functions.php:402
+msgid "The full amount of points user has been earned of this points type."
+msgstr ""
+
+#: includes/template-functions.php:310 includes/template-functions.php:403
+msgid "The user's points amount label. Singular or plural is based on the current user's points amount."
+msgstr ""
+
+#: includes/template-functions.php:311 includes/template-functions.php:404
+msgid "The points type featured image."
+msgstr ""
+
+#: includes/template-functions.php:312
+msgid "(Deprecated user {points_label} tag instead) The points award points type. Singular or plural is based on the amount of points earned."
+msgstr ""
+
+#: includes/template-functions.php:399
+msgid "The points deduct label."
+msgstr ""
+
+#: includes/template-functions.php:400
+msgid "The amount of points deducted."
+msgstr ""
+
+#: includes/template-functions.php:401
+msgid "The points deduct points type label. Singular or plural is based on the amount of points earned."
+msgstr ""
+
+#: includes/template-functions.php:405
+msgid "(Deprecated use {points_label} tag instead) The points deduct points type. Singular or plural is based on the amount of points earned."
+msgstr ""
+
+#: includes/template-functions.php:492 includes/template-functions.php:626
+msgid "The rank ID (useful for shortcodes that rank ID can be passed as attribute)."
+msgstr ""
+
+#: includes/template-functions.php:493
+msgid "The rank title."
+msgstr ""
+
+#: includes/template-functions.php:494
+msgid "URL to the rank."
+msgstr ""
+
+#: includes/template-functions.php:495
+msgid "Link to the rank with the rank title as text."
+msgstr ""
+
+#: includes/template-functions.php:496
+msgid "The rank featured image."
+msgstr ""
+
+#: includes/template-functions.php:497
+msgid "The rank excerpt."
+msgstr ""
+
+#: includes/template-functions.php:498
+msgid "The rank content."
+msgstr ""
+
+#: includes/template-functions.php:499
+msgid "The rank requirements."
+msgstr ""
+
+#: includes/template-functions.php:500
+msgid "The rank type singular."
+msgstr ""
+
+#: includes/template-functions.php:501
+msgid "The rank congratulations text."
+msgstr ""
+
+#: includes/template-functions.php:625
+msgid "The rank requirement label."
+msgstr ""
+
+#: includes/template-functions.php:627
+msgid "The requirement rank title."
+msgstr ""
+
+#: includes/template-functions.php:628
+msgid "URL to the requirement rank."
+msgstr ""
+
+#: includes/template-functions.php:629
+msgid "Link to the requirement rank with the rank title as text."
+msgstr ""
+
+#: includes/template-functions.php:630
+msgid "The requirement rank featured image."
+msgstr ""
+
+#: includes/template-functions.php:631
+msgid "The requirement rank excerpt."
+msgstr ""
+
+#: includes/template-functions.php:632
+msgid "The requirement rank content."
+msgstr ""
+
+#: includes/template-functions.php:633
+msgid "The requirement rank list of requirements."
+msgstr ""
+
+#: includes/template-functions.php:634
+msgid "The requirement rank type singular."
+msgstr ""
+
+#: includes/template-functions.php:635
+msgid "The requirement rank congratulations text."
+msgstr ""

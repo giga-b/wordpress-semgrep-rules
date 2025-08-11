@@ -1,0 +1,436 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GamiPress Coupons\n"
+"Report-Msgid-Bugs-To: https://gamipress.com/\n"
+"POT-Creation-Date: 2021-02-19 12:38+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: GamiPress (https://gamipress.com/)\n"
+"Language-Team: GamiPress <contact@gamipress.com>\n"
+"X-Generator: Poedit 2.4.2\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: libraries\n"
+
+#: gamipress-coupons.php:128
+#, php-format
+msgid "GamiPress - Coupons requires %s (%s or higher) in order to work. Please install and activate them."
+msgstr ""
+
+#: includes/admin.php:23 includes/admin.php:71 includes/custom-tables.php:27
+#: includes/custom-tables.php:34 includes/triggers.php:22
+msgid "Coupons"
+msgstr ""
+
+#: includes/admin.php:44
+msgid "GamiPress Coupons"
+msgstr ""
+
+#: includes/admin.php:47
+msgid "License"
+msgstr ""
+
+#: includes/ajax-functions.php:24 includes/ajax-functions.php:257
+#: includes/ajax-functions.php:319
+msgid "You are not allowed to perform this action."
+msgstr ""
+
+#: includes/ajax-functions.php:30
+msgid "You need to log in to redeem a coupon."
+msgstr ""
+
+#: includes/ajax-functions.php:40 includes/scripts.php:42
+msgid "Please, fill the coupon code field."
+msgstr ""
+
+#: includes/ajax-functions.php:46
+msgid "Invalid coupon code."
+msgstr ""
+
+#: includes/ajax-functions.php:55 includes/ajax-functions.php:76
+#: includes/ajax-functions.php:89
+msgid "Coupon has expired."
+msgstr ""
+
+#: includes/ajax-functions.php:65
+msgid "Coupon is not active yet"
+msgstr ""
+
+#: includes/ajax-functions.php:97
+msgid "You have already redeemed this coupon."
+msgstr ""
+
+#: includes/ajax-functions.php:140 includes/ajax-functions.php:181
+msgid "You can't redeemed this coupon."
+msgstr ""
+
+#: includes/ajax-functions.php:221
+msgid "Coupon code has been completely redeemed."
+msgstr ""
+
+#: includes/ajax-functions.php:267
+msgid "Wrong coupon ID."
+msgstr ""
+
+#: includes/ajax-functions.php:270
+msgid "Please, fill the title."
+msgstr ""
+
+#: includes/ajax-functions.php:273
+msgid "Please, fill the note."
+msgstr ""
+
+#: includes/ajax-functions.php:326
+msgid "Wrong coupon note ID."
+msgstr ""
+
+#: includes/ajax-functions.php:333
+msgid "Coupon note deleted successfully."
+msgstr ""
+
+#: includes/coupons.php:21
+msgid "Active"
+msgstr ""
+
+#: includes/coupons.php:22
+msgid "Inactive"
+msgstr ""
+
+#: includes/coupons.php:23
+msgid "Expired"
+msgstr ""
+
+#: includes/coupons.php:183
+#, php-format
+msgid "%s for redeem the coupon %s"
+msgstr ""
+
+#: includes/coupons.php:216
+#, php-format
+msgid "%d %s"
+msgstr ""
+
+#: includes/coupons.php:234 includes/coupons.php:250
+#, php-format
+msgid "%s %s"
+msgstr ""
+
+#: includes/coupons.php:263
+msgid "Coupon redemption"
+msgstr ""
+
+#: includes/coupons.php:264
+#, php-format
+msgid "%s has redeemed this coupon to earn:"
+msgstr ""
+
+#: includes/custom-tables.php:26 includes/custom-tables/coupons.php:107
+#: includes/custom-tables/coupons.php:350
+#: includes/shortcodes/gamipress_redeem_coupon.php:28
+#: includes/shortcodes/gamipress_redeem_coupon.php:63
+msgid "Coupon"
+msgstr ""
+
+#: includes/custom-tables.php:81
+msgid "Coupon Reward"
+msgstr ""
+
+#: includes/custom-tables.php:82 includes/custom-tables/coupons.php:488
+msgid "Coupon Rewards"
+msgstr ""
+
+#: includes/custom-tables.php:122
+msgid "Coupon Note"
+msgstr ""
+
+#: includes/custom-tables.php:123 includes/custom-tables/coupons.php:545
+msgid "Coupon Notes"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:108
+#: includes/custom-tables/coupons.php:358
+msgid "Code"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:109
+msgid "Max. Uses"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:110
+msgid "Date Limits"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:111
+msgid "Status"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:175
+#, php-format
+msgid "Unlimited (%d uses)"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:268
+msgid "Actions"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:297
+msgid "Are you sure you want to delete this item?\\n\\nClick \\'Cancel\\' to go back, \\'OK\\' to confirm the delete."
+msgstr ""
+
+#: includes/custom-tables/coupons.php:299
+msgid "Delete permanently"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:300
+msgid "Delete Permanently"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:307
+msgid "Save Changes"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:354
+#: includes/custom-tables/coupons.php:713
+msgid "Title"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:370
+msgid "Coupon Details"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:374
+msgid "Coupon Status"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:388
+msgid "Coupon Limits"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:392
+msgid "Start Date"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:393
+msgid "Enter the start date (leave blank to no limit by a start date). If entered, the coupon can only by redeemed after or on this date."
+msgstr ""
+
+#: includes/custom-tables/coupons.php:398
+msgid "End Date"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:399
+msgid "Enter the end date (leave blank to no limit by a end date). If entered, the coupon can only by redeemed before or on this date."
+msgstr ""
+
+#: includes/custom-tables/coupons.php:404
+msgid "Maximum Uses"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:405
+msgid "Maximum number of uses (set 0 for no maximum)."
+msgstr ""
+
+#: includes/custom-tables/coupons.php:412
+msgid "Maximum Uses Per User"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:413
+msgid "Maximum number of uses per user (set 0 for no maximum)."
+msgstr ""
+
+#: includes/custom-tables/coupons.php:429
+msgid "User Requirements"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:433
+msgid "Restrict to a group of users"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:434
+msgid "Limit the redemption of this coupon to a group of specific users."
+msgstr ""
+
+#: includes/custom-tables/coupons.php:439
+msgid "Allowed Users"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:450
+msgid "Allowed User Roles"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:460
+msgid "Excluded Users"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:470
+msgid "Excluded User Roles"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:494
+msgid "Reward {#}"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:495
+msgid "Add Reward"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:500
+msgid "Reward Type"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:506 includes/scripts.php:99
+msgid "Achievement"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:512
+msgid "Quantity"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:707
+#: includes/custom-tables/coupons.php:722
+msgid "Add Coupon Note"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:717
+msgid "Note"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:723
+msgid "Cancel"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:750
+msgid "GamiPress Bot"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:783
+msgid "Delete this coupon note"
+msgstr ""
+
+#: includes/custom-tables/coupons.php:783
+msgid "Delete"
+msgstr ""
+
+#: includes/logs.php:22
+msgid "Coupon Redemption"
+msgstr ""
+
+#: includes/logs.php:59
+#, php-format
+msgid "{user} redeemed the coupon code \"%s\""
+msgstr ""
+
+#: includes/requirements.php:74
+msgid "(0 for no minimum)"
+msgstr ""
+
+#: includes/scripts.php:100
+msgid "Rank"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:19
+msgid "Redeem Coupon"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:20
+msgid "Render a coupon redemption form."
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:25
+msgid "Label Text"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:26
+msgid "Code input label text."
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:31
+msgid "Placeholder Text"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:32
+msgid "Code input placeholder text."
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:34
+#: includes/shortcodes/gamipress_redeem_coupon.php:64
+msgid "Enter coupon code here"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:37
+msgid "Button Text"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:38
+msgid "Form button text."
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:40
+#: includes/shortcodes/gamipress_redeem_coupon.php:65
+msgid "Apply"
+msgstr ""
+
+#: includes/shortcodes/gamipress_redeem_coupon.php:73
+#, php-format
+msgid "You need to <a href=\"%s\">log in</a> to redeem a coupon."
+msgstr ""
+
+#: includes/triggers.php:23
+msgid "Redeem a coupon"
+msgstr ""
+
+#: includes/triggers.php:24
+msgid "Redeem a coupon with a minimum amount of points"
+msgstr ""
+
+#: includes/triggers.php:25
+msgid "Redeem a coupon with an achievement"
+msgstr ""
+
+#: includes/triggers.php:26
+msgid "Redeem a coupon with a specific achievement"
+msgstr ""
+
+#: includes/triggers.php:27
+msgid "Redeem a coupon with a rank"
+msgstr ""
+
+#: includes/triggers.php:28
+msgid "Redeem a coupon with a specific rank"
+msgstr ""
+
+#: includes/triggers.php:85
+#, php-format
+msgid "Redeem a coupon with a minimum of %d %s"
+msgstr ""
+
+#: includes/triggers.php:87
+#, php-format
+msgid "Redeem a coupon with any amount of %s"
+msgstr ""
+
+#: includes/triggers.php:102 includes/triggers.php:135
+#, php-format
+msgid "Redeem a coupon with any %s"
+msgstr ""
+
+#: includes/triggers.php:121 includes/triggers.php:154
+#, php-format
+msgid "Redeem a coupon with the %s %s"
+msgstr ""
+
+#: includes/widgets/redeem-coupon-widget.php:23
+msgid "GamiPress: Redeem Coupon"
+msgstr ""
+
+#: includes/widgets/redeem-coupon-widget.php:24
+msgid "Display a redeem coupon form to let users apply a coupon code."
+msgstr ""

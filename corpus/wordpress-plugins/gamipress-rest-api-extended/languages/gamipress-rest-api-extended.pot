@@ -1,0 +1,329 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GamiPress Rest API Extended\n"
+"Report-Msgid-Bugs-To: https://gamipress.com/\n"
+"POT-Creation-Date: 2022-07-26 09:58+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: GamiPress (https://gamipress.com/)\n"
+"Language-Team: GamiPress <contact@gamipress.com>\n"
+"X-Generator: Poedit 2.4.3\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: libraries\n"
+
+#: classes/class-extended-achievements-controller.php:53
+msgid "User to retrieve achievements. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:58
+msgid "User to retrieve achievements (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:63
+msgid "Achievement type's slug of achievements to retrieve. Accepts single type, array of types, \"all\" or empty for all achievement types."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:75
+msgid "User who achievement will be awarded. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:80
+msgid "User who achievement will be awarded (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:85
+msgid "Achievement that will be awarded."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:94
+msgid "User who achievement will be revoked. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:99
+msgid "User who achievement will be revoked (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:104
+msgid "Achievement that will be revoked."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:138
+#: classes/class-extended-achievements-controller.php:271
+#: classes/class-extended-achievements-controller.php:362
+#: classes/class-extended-points-controller.php:156
+#: classes/class-extended-points-controller.php:230
+#: classes/class-extended-points-controller.php:378
+#: classes/class-extended-ranks-controller.php:192
+#: classes/class-extended-ranks-controller.php:310
+#: classes/class-extended-ranks-controller.php:401
+#: classes/class-extended-ranks-controller.php:503
+#: classes/class-extended-ranks-controller.php:605
+#: classes/class-extended-requirements-controller.php:112
+#: classes/class-extended-requirements-controller.php:203
+msgid "Invalid user."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:166
+#: classes/class-extended-achievements-controller.php:196
+msgid "Invalid achievement type."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:278
+#: classes/class-extended-achievements-controller.php:369
+msgid "Invalid achievement ID."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:331
+msgid "Achievement awarded to the user successfully."
+msgstr ""
+
+#: classes/class-extended-achievements-controller.php:422
+msgid "Achievement revoked to the user successfully."
+msgstr ""
+
+#: classes/class-extended-controller.php:157
+msgid "Sorry, you are not allowed to perform this action."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:53
+msgid "User to retrieve points balance. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:58
+msgid "User to retrieve points balance (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:63
+msgid "Points type's slug of points balance to retrieve."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:73
+msgid "User who points will be awarded. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:78
+msgid "User who points will be awarded (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:83
+msgid "Points amount to award."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:88
+msgid "Points type's slug of points amount to award."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:94
+msgid "Reason describing this points award (Optional). This text will appear on this points award log entry."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:102
+msgid "User who points will be deducted. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:107
+msgid "User who points will be deducted (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:112
+msgid "Points amount to deduct."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:117
+msgid "Points type's slug of points amount to deduct."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:123
+msgid "Reason describing this points deduction (Optional). This text will appear on this points deduction log entry."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:163
+#: classes/class-extended-points-controller.php:243
+#: classes/class-extended-points-controller.php:391
+msgid "Invalid points type."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:237
+#: classes/class-extended-points-controller.php:385
+msgid "Invalid points amount."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:347
+msgid "Points awarded to the user successfully."
+msgstr ""
+
+#: classes/class-extended-points-controller.php:495
+msgid "Points deducted to the user successfully."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:62
+msgid "User to retrieve rank. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:67
+msgid "User to retrieve rank (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:72
+msgid "Rank type's slug of rank to retrieve."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:83
+msgid "User who rank will be awarded. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:88
+msgid "User who rank will be awarded (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:93
+msgid "Rank that will be awarded."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:102
+msgid "User who rank will be revoked. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:107
+msgid "User who rank will be revoked (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:112
+msgid "Rank that will be revoked."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:117
+msgid "New rank that will be assigned to the user (Optional). By default, previous rank of the same type will be assigned."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:126
+msgid "User who rank will be upgraded. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:131
+msgid "User who rank will be upgraded (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:136
+msgid "Rank type's slug of rank to upgrade."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:146
+msgid "User who rank will be downgraded. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:151
+msgid "User who rank will be downgraded (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:156
+msgid "Rank type's slug of rank to downgrade."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:199
+#: classes/class-extended-ranks-controller.php:510
+#: classes/class-extended-ranks-controller.php:612
+msgid "Invalid rank type."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:317
+#: classes/class-extended-ranks-controller.php:408
+msgid "Invalid rank ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:370
+msgid "Rank awarded to the user successfully."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:415
+msgid "Invalid new rank ID."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:472
+msgid "Rank revoked to the user successfully."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:570
+#, php-format
+msgid "User %s has been upgraded from %s to %s successfully."
+msgstr ""
+
+#: classes/class-extended-ranks-controller.php:672
+#, php-format
+msgid "User %s has been downgraded from %s to %s successfully."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:49
+msgid "User who requirement will be awarded. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:54
+msgid "User who requirement will be awarded (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:59
+msgid "Requirement that will be awarded."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:68
+msgid "User who requirement will be revoked. Accepts the user username, email or ID."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:73
+msgid "User who requirement will be revoked (deprecated, use \"user\" parameter instead)."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:78
+msgid "Requirement that will be revoked."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:119
+#: classes/class-extended-requirements-controller.php:210
+msgid "Invalid requirement ID."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:172
+msgid "Requirement awarded to the user successfully."
+msgstr ""
+
+#: classes/class-extended-requirements-controller.php:263
+msgid "Requirement revoked to the user successfully."
+msgstr ""
+
+#: gamipress-rest-api-extended.php:161
+#, php-format
+msgid "GamiPress - Rest API requires %s (%s or higher) in order to work. Please install and activate it."
+msgstr ""
+
+#: includes/admin.php:42 includes/admin.php:83 includes/admin.php:110
+msgid "Rest API Extended"
+msgstr ""
+
+#: includes/admin.php:45
+msgid "Base URL"
+msgstr ""
+
+#: includes/admin.php:46
+msgid "Setup the base URL that all endpoints of this add-on will be accesible. By default, gamipress."
+msgstr ""
+
+#: includes/admin.php:52
+msgid "Allow GET parameters"
+msgstr ""
+
+#: includes/admin.php:53
+msgid "By default, all routes accepts POST parameters only. Check this option to allow GET parameters too (useful for testing purposes)."
+msgstr ""
+
+#: includes/admin.php:86
+msgid "License"
+msgstr ""

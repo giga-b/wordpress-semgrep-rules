@@ -1,0 +1,1122 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: GamiPress Restrict Content\n"
+"Report-Msgid-Bugs-To: https://gamipress.com/\n"
+"POT-Creation-Date: 2024-09-19 12:49+0200\n"
+"PO-Revision-Date: 2017-MO-DA HO:MI+ZONE\n"
+"Last-Translator: GamiPress (https://gamipress.com/)\n"
+"Language-Team: GamiPress <contact@gamipress.com>\n"
+"Language: en_US\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.5\n"
+"X-Poedit-KeywordsList: __;_e;_x:1,2c;_ex:1,2c;_n:1,2;_nx:1,2,4c;_n_noop:1,2;_nx_noop:1,2,3c;esc_attr__;esc_html__;esc_attr_e;esc_html_e;esc_attr_x:1,2c;esc_html_x:1,2c\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-Basepath: ..\n"
+"X-Textdomain-Support: yes\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: libraries\n"
+
+#: gamipress-restrict-content.php:155
+#, php-format
+msgid "GamiPress - Restrict Content requires %s (%s or higher) in order to work. Please install and activate them."
+msgstr ""
+
+#: includes/admin.php:43
+msgid "GamiPress Restrict Content"
+msgstr ""
+
+#: includes/admin.php:46
+msgid "License"
+msgstr ""
+
+#: includes/admin.php:70 includes/admin/meta-boxes.php:196
+#: includes/shortcodes.php:30
+#: includes/shortcodes/gamipress_restrict_content.php:19
+#: includes/triggers.php:22
+msgid "Restrict Content"
+msgstr ""
+
+#: includes/admin/custom-columns.php:23
+msgid "Content Restrictions"
+msgstr ""
+
+#: includes/admin/custom-columns.php:37
+msgid "Not restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:48
+msgid "Access restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:48
+msgid "Access not restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:53
+msgid "Content restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:53
+msgid "Content not restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:58
+msgid "Links restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:58
+msgid "Links not restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:63
+msgid "Images restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:63
+msgid "Images not restricted"
+msgstr ""
+
+#: includes/admin/custom-columns.php:73
+msgid "Redirects to"
+msgstr ""
+
+#: includes/admin/custom-columns.php:76 includes/admin/meta-boxes.php:187
+msgid "WordPress error page"
+msgstr ""
+
+#: includes/admin/custom-columns.php:89 includes/admin/meta-boxes.php:206
+msgid "Until read more tag"
+msgstr ""
+
+#: includes/admin/custom-columns.php:91 includes/admin/meta-boxes.php:207
+msgid "Replace content with excerpt"
+msgstr ""
+
+#: includes/admin/custom-columns.php:93
+#, php-format
+msgid "Content (%s characters)"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:26
+msgid "Choose an achievement type"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:35
+msgid "Choose a rank type"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:46
+msgid "GamiPress - Restrict Content"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:53
+msgid "Restrict"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:54
+msgid "Check this option to restrict this post."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:59
+msgid "Unlock access by"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:60
+msgid "Choose how users can get access to this post."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:63
+msgid "Completing requirements"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:64
+msgid "Expending Points"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:68
+msgid "Allow get access expending points"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:69
+msgid "Check this option to allow users to optionally get access without completing the requirements by expending an amount of points."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:74
+msgid "Points to get access"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:75
+msgid "Amount of points needed to get access to this post."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:81
+msgid "Requirements"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:82
+msgid "Configure the requirements that users need to meet to unlock the access to this post."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:85
+msgid "Add Requirement"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:86
+msgid "Remove Requirement"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:93
+msgid "When:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:96
+msgid "Earn an amount of points"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:97
+msgid "Reach a specific rank"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:98
+msgid "Unlock a specific achievement"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:99
+msgid "Unlock any achievement of type"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:100
+msgid "Unlock all achievements of type"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:108
+msgid "Points:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:126
+msgid "Rank:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:140
+msgid "Achievement:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:151
+msgid "time(s)"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:164
+msgid "Label:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:175
+msgid "Restrict Access"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:176
+msgid "Restrict access to users that don't meet restriction requirements."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:181
+msgid "Redirect Page"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:182
+msgid "Page where users without access are sent when trying to access to this post."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:197
+msgid "Restrict content to users that don't meet restriction requirements."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:202
+msgid "Content Replacement"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:203
+msgid "Content to show to users that don't meet restriction requirements."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:208
+msgid "Trimmed content"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:209
+msgid "Full content"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:214
+msgid "Content Length"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:215
+msgid "Maximum number of letters to show to users that don't meet restriction requirements."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:224
+msgid "After Content Replacement Text"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:225
+msgid "Text to show after replaced content. Available tags:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:230
+msgid "After Content Replacement Text For Guests"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:231
+msgid "Text to show after replaced content for non logged in users. Available tags:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:239
+msgid "Restrict Links"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:240
+msgid "Restrict links to users that don't meet restriction requirements."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:245
+msgid "Links Replacement Text"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:246
+msgid "Text to replace post links. Available tags:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:251
+msgid "Links Replacement Text For Guests"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:252
+msgid "Text to replace post links for non logged in users. Available tags:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:260
+msgid "Restrict Images"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:261
+msgid "Restrict images to users that don't meet restriction requirements."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:266
+msgid "Images Replacement Text"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:267
+msgid "Text to replace post images. Available tags:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:272
+msgid "Images Replacement Text For Guests"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:273
+msgid "Text to replace post images for non logged in users. Available tags:"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:281
+#: includes/shortcodes/gamipress_hide_content_if.php:101
+#: includes/shortcodes/gamipress_restrict_content.php:113
+#: includes/shortcodes/gamipress_show_content_if.php:101
+msgid "Granted Roles"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:282
+msgid "Manually grant access to this post to users by role."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:289
+#: includes/shortcodes/gamipress_hide_content_if.php:113
+#: includes/shortcodes/gamipress_restrict_content.php:125
+#: includes/shortcodes/gamipress_show_content_if.php:113
+msgid "Granted Users"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:290
+msgid "Manually grant access to this post to the users you want."
+msgstr ""
+
+#: includes/admin/meta-boxes.php:302
+msgid "Restrictions"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:313
+msgid "Access"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:321 includes/blocks.php:76
+#: includes/blocks.php:128 includes/widgets/hide-content-if-widget.php:37
+#: includes/widgets/restrict-content-widget.php:50
+#: includes/widgets/show-content-if-widget.php:37
+msgid "Content"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:332
+msgid "Links"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:341
+msgid "Images"
+msgstr ""
+
+#: includes/admin/meta-boxes.php:350
+msgid "Users"
+msgstr ""
+
+#: includes/ajax-functions.php:28 includes/ajax-functions.php:155
+msgid "Post not found."
+msgstr ""
+
+#: includes/ajax-functions.php:34 includes/ajax-functions.php:147
+#: includes/ajax-functions.php:161
+msgid "You are not allowed to perform this action."
+msgstr ""
+
+#: includes/ajax-functions.php:38 includes/ajax-functions.php:165
+msgid "You already unlocked this."
+msgstr ""
+
+#: includes/ajax-functions.php:43 includes/ajax-functions.php:50
+#: includes/ajax-functions.php:174
+msgid "You are not allowed to unlock this."
+msgstr ""
+
+#: includes/ajax-functions.php:57 includes/ajax-functions.php:181
+#: includes/template-functions.php:205 includes/template-functions.php:260
+#: includes/template-functions.php:404 includes/template-functions.php:500
+msgid "Points"
+msgstr ""
+
+#: includes/ajax-functions.php:68 includes/ajax-functions.php:192
+#, php-format
+msgid "Insufficient %s."
+msgstr ""
+
+#: includes/ajax-functions.php:89
+#, php-format
+msgid "{user} expended {points} {points_type} to get access to \"%s\" for a new total of {total_points} {points_type}"
+msgstr ""
+
+#: includes/ajax-functions.php:99
+#, php-format
+msgid "{user} earned {points} {points_type} since %s got access to \"%s\" for a new total of {total_points} {points_type}"
+msgstr ""
+
+#: includes/ajax-functions.php:107
+#, php-format
+msgid "Congratulations! You got access to %s, redirecting..."
+msgstr ""
+
+#: includes/ajax-functions.php:215
+msgid "{user} expended {points} {points_type} to get access to a portion of content for a new total of {total_points} {points_type}"
+msgstr ""
+
+#: includes/ajax-functions.php:219
+#, php-format
+msgid "{user} expended {points} {points_type} to get access to a portion of content from \"%s\" for a new total of {total_points} {points_type}"
+msgstr ""
+
+#: includes/ajax-functions.php:232
+#, php-format
+msgid "{user} earned {points} {points_type} since %s got access to a portion of content from \"%s\" for a new total of {total_points} {points_type}"
+msgstr ""
+
+#: includes/ajax-functions.php:240
+msgid "Congratulations! You got access to this content, redirecting..."
+msgstr ""
+
+#: includes/blocks.php:77 includes/widgets/restrict-content-widget.php:51
+msgid "Content that is shown to users that have successfully unlocked this portion of content."
+msgstr ""
+
+#: includes/blocks.php:123 includes/widgets/show-content-if-widget.php:38
+msgid "Content that is shown to users that meets the condition."
+msgstr ""
+
+#: includes/blocks.php:125 includes/widgets/hide-content-if-widget.php:38
+msgid "Content that is hidden to users that meets the condition."
+msgstr ""
+
+#: includes/content-filters.php:30
+msgid "Access to this page restricted!"
+msgstr ""
+
+#: includes/if-functions.php:30
+msgid "Reaching a points balance greater than"
+msgstr ""
+
+#: includes/if-functions.php:31
+msgid "Reaching a points balance lower than"
+msgstr ""
+
+#: includes/if-functions.php:32
+#: includes/shortcodes/gamipress_restrict_content.php:38
+msgid "Unlocking achievements"
+msgstr ""
+
+#: includes/if-functions.php:33
+#: includes/shortcodes/gamipress_restrict_content.php:39
+msgid "Unlocking any achievements of type"
+msgstr ""
+
+#: includes/if-functions.php:34
+#: includes/shortcodes/gamipress_restrict_content.php:40
+msgid "Unlocking all achievements of type"
+msgstr ""
+
+#: includes/if-functions.php:35
+msgid "Reaching ranks"
+msgstr ""
+
+#: includes/logs.php:22
+msgid "Content Unlock"
+msgstr ""
+
+#: includes/logs.php:48
+#, php-format
+msgid "{user} got access to \"%s\""
+msgstr ""
+
+#: includes/logs.php:79
+msgid "{user} got access to a portion of content"
+msgstr ""
+
+#: includes/logs.php:85
+#, php-format
+msgid "{user} got access to a portion of content from \"%s\""
+msgstr ""
+
+#: includes/scripts.php:100
+msgid "Earn {points} {points_type}"
+msgstr ""
+
+#: includes/scripts.php:101
+msgid "Reach the {rank_type} {rank}"
+msgstr ""
+
+#: includes/scripts.php:102
+msgid "Unlock the {achievement_type} {achievement} {count}"
+msgstr ""
+
+#: includes/scripts.php:103
+msgid "Unlock any {achievement_type} {count}"
+msgstr ""
+
+#: includes/scripts.php:104
+msgid "Unlock all {achievement_type}"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:19
+msgid "Hide Content If"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:20
+#: includes/widgets/hide-content-if-widget.php:24
+msgid "Hide a portion of content if user meets a specific condition."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:27
+#: includes/shortcodes/gamipress_show_content_if.php:27
+msgid "Condition"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:28
+msgid "Choose the condition that user needs to meet to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:37
+#: includes/shortcodes/gamipress_restrict_content.php:49
+#: includes/shortcodes/gamipress_show_content_if.php:37
+msgid "Points Amount"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:38
+msgid "Points amount required to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:43
+#: includes/shortcodes/gamipress_restrict_content.php:55
+#: includes/shortcodes/gamipress_show_content_if.php:43
+msgid "Points Type"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:44
+msgid "The points amount points type required to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:54
+#: includes/shortcodes/gamipress_restrict_content.php:66
+#: includes/shortcodes/gamipress_show_content_if.php:54
+msgid "Achievement(s)"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:55
+msgid "The achievement(s) required to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:61
+#: includes/shortcodes/gamipress_restrict_content.php:73
+#: includes/shortcodes/gamipress_show_content_if.php:61
+msgid "Select achievements"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:67
+#: includes/shortcodes/gamipress_restrict_content.php:79
+#: includes/shortcodes/gamipress_show_content_if.php:67
+msgid "Achievement Type"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:68
+msgid "The achievement type required to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:75
+#: includes/shortcodes/gamipress_restrict_content.php:87
+#: includes/shortcodes/gamipress_show_content_if.php:75
+msgid "Achievements required"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:76
+msgid "Number of achievements required to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:85
+#: includes/shortcodes/gamipress_restrict_content.php:97
+#: includes/shortcodes/gamipress_show_content_if.php:85
+msgid "Rank(s)"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:86
+msgid "The rank(s) required to hide the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:92
+#: includes/shortcodes/gamipress_show_content_if.php:92
+msgid "Select ranks"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:102
+#: includes/shortcodes/gamipress_show_content_if.php:102
+msgid "Manually grant access to this content to users by role."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:107
+#: includes/shortcodes/gamipress_restrict_content.php:119
+#: includes/shortcodes/gamipress_show_content_if.php:107
+msgid "Select Roles"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:114
+#: includes/shortcodes/gamipress_show_content_if.php:114
+msgid "Manually grant access to this content to the users you want."
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:125
+#: includes/shortcodes/gamipress_restrict_content.php:137
+#: includes/shortcodes/gamipress_show_content_if.php:125
+msgid "Message"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:126
+msgid "Text that is shown to users that meets the condition. Available tags:"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:132
+#: includes/shortcodes/gamipress_restrict_content.php:144
+#: includes/shortcodes/gamipress_show_content_if.php:132
+msgid "Message For Guests"
+msgstr ""
+
+#: includes/shortcodes/gamipress_hide_content_if.php:133
+#: includes/shortcodes/gamipress_restrict_content.php:145
+#: includes/shortcodes/gamipress_show_content_if.php:133
+msgid "Text that is shown to non logged in users. Available tags:"
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:19
+msgid "Post Restrictions"
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:20
+msgid "Renders a desired post restrictions and/or the button to get access to users without access."
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:26
+msgid "Post ID"
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:27
+msgid "The ID of the post to render their restrictions and/or access button."
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:37
+msgid "Show After Content Text"
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:38
+msgid "Display the configured text to be shown after replaced content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:44
+msgid "Show Access Button"
+msgstr ""
+
+#: includes/shortcodes/gamipress_post_restrictions.php:45
+msgid "Display the access button."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:18
+#: includes/shortcodes/gamipress_posts_unlocked.php:18
+msgid "All"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:21
+msgid "Posts Restricted"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:22
+msgid "Renders a list of posts restricted."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:28
+#: includes/shortcodes/gamipress_posts_unlocked.php:28
+msgid "Post Types"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:29
+#: includes/shortcodes/gamipress_posts_unlocked.php:29
+msgid "Types of posts to list."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:34
+#: includes/shortcodes/gamipress_posts_unlocked.php:34
+msgid "Select the type(s)"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:40
+#: includes/shortcodes/gamipress_posts_unlocked.php:40
+msgid "Current User"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:41
+msgid "Show only posts restricted to the current logged in user."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:46
+#: includes/shortcodes/gamipress_posts_unlocked.php:46
+msgid "User"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:47
+msgid "Show only posts restricted of a specific user."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:54
+msgid "Exclude posts unlocked"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:55
+msgid "Exclude posts that user already got access."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:60
+#: includes/shortcodes/gamipress_posts_unlocked.php:54
+msgid "Order By"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:61
+#: includes/shortcodes/gamipress_posts_unlocked.php:55
+msgid "Parameter to use for sorting."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:64
+#: includes/shortcodes/gamipress_posts_unlocked.php:58
+#: includes/shortcodes/gamipress_restrict_content.php:26
+msgid "ID"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:65
+#: includes/shortcodes/gamipress_posts_unlocked.php:59
+msgid "Title"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:66
+#: includes/shortcodes/gamipress_posts_unlocked.php:60
+msgid "Menu order"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:67
+#: includes/shortcodes/gamipress_posts_unlocked.php:61
+msgid "Published date"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:68
+#: includes/shortcodes/gamipress_posts_unlocked.php:62
+msgid "Last modified date"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:69
+#: includes/shortcodes/gamipress_posts_unlocked.php:63
+msgid "Random"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:74
+#: includes/shortcodes/gamipress_posts_unlocked.php:68
+msgid "Order"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:75
+#: includes/shortcodes/gamipress_posts_unlocked.php:69
+msgid "Sort order."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:77
+#: includes/shortcodes/gamipress_posts_unlocked.php:71
+msgid "Ascending"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:77
+#: includes/shortcodes/gamipress_posts_unlocked.php:71
+msgid "Descending"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:81
+#: includes/shortcodes/gamipress_posts_unlocked.php:75
+msgid "Exclude"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_restricted.php:82
+#: includes/shortcodes/gamipress_posts_unlocked.php:76
+msgid "Comma-separated list of specific posts IDs to exclude."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_unlocked.php:21
+msgid "Posts Unlocked"
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_unlocked.php:22
+msgid "Renders a list of posts that user got access."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_unlocked.php:41
+msgid "Show only posts unlocked by the current logged in user."
+msgstr ""
+
+#: includes/shortcodes/gamipress_posts_unlocked.php:47
+msgid "Show only posts unlocked by a specific user."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:20
+msgid "Restrict a portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:27
+msgid "Identifier for this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:32
+msgid "Unlock By"
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:33
+msgid "Choose how users can get access to this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:36
+msgid "Expending points"
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:37
+msgid "Reaching a points balance"
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:41
+msgid "Reaching a rank"
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:50
+msgid "Points amount required to unlock this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:56
+msgid "The points amount points type required to unlock this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:67
+#: includes/template-functions.php:84 includes/template-functions.php:106
+msgid "The achievement(s) required to unlock this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:80
+#: includes/template-functions.php:85 includes/template-functions.php:107
+msgid "The achievement type required to unlock this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:88
+msgid "Number of achievements required to unlock this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:98
+msgid "The rank(s) required to unlock this portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:104
+msgid "Select rank"
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:114
+msgid "Manually grant access to this portion of content to users by role."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:126
+msgid "Manually grant access to this portion of content to the users you want."
+msgstr ""
+
+#: includes/shortcodes/gamipress_restrict_content.php:138
+msgid "Text that is shown to users that haven't unlocked this portion of content. Available tags:"
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:19
+msgid "Show Content If"
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:20
+msgid "Show a portion of content if user meets a specific condition."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:28
+msgid "Choose the condition that user needs to meet to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:38
+msgid "Points amount required to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:44
+msgid "The points amount points type required to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:55
+msgid "The achievement(s) required to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:68
+msgid "The achievement type required to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:76
+msgid "Number of achievements required to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:86
+msgid "The rank(s) required to show the portion of content."
+msgstr ""
+
+#: includes/shortcodes/gamipress_show_content_if.php:126
+msgid "Text that is shown to users that doesn't meets the condition. Available tags:"
+msgstr ""
+
+#: includes/template-functions.php:21
+msgid "User display name."
+msgstr ""
+
+#: includes/template-functions.php:22
+msgid "User first name."
+msgstr ""
+
+#: includes/template-functions.php:23
+msgid "User last name."
+msgstr ""
+
+#: includes/template-functions.php:24 includes/template-functions.php:60
+#: includes/template-functions.php:102
+msgid "Site name."
+msgstr ""
+
+#: includes/template-functions.php:25 includes/template-functions.php:61
+#: includes/template-functions.php:103
+msgid "Link to the site with site name as text."
+msgstr ""
+
+#: includes/template-functions.php:42
+msgid "A list with the post restrictions (already completed by the user will look as completed)."
+msgstr ""
+
+#: includes/template-functions.php:43 includes/template-functions.php:63
+msgid "The amount of points to get access."
+msgstr ""
+
+#: includes/template-functions.php:44 includes/template-functions.php:82
+msgid "The full amount of points user has earned until this date."
+msgstr ""
+
+#: includes/template-functions.php:45 includes/template-functions.php:64
+msgid "The points type label of points to get access. Singular or plural is based on the amount of points to get access."
+msgstr ""
+
+#: includes/template-functions.php:62
+msgid "A list with the post restrictions."
+msgstr ""
+
+#: includes/template-functions.php:81 includes/template-functions.php:104
+msgid "The amount of points to unlock this portion of content."
+msgstr ""
+
+#: includes/template-functions.php:83 includes/template-functions.php:105
+msgid "The points type label of points to unlock this portion of content. Singular or plural is based on the amount of points to unlock this portion of content."
+msgstr ""
+
+#: includes/template-functions.php:86 includes/template-functions.php:108
+msgid "The number of achievements required to unlock this portion of content."
+msgstr ""
+
+#: includes/template-functions.php:87 includes/template-functions.php:109
+msgid "The rank required to unlock this portion of content."
+msgstr ""
+
+#: includes/template-functions.php:204 includes/template-functions.php:259
+msgid "Point"
+msgstr ""
+
+#: includes/template-functions.php:398 includes/template-functions.php:494
+#, php-format
+msgid "Get access using %s"
+msgstr ""
+
+#: includes/template-functions.php:411 includes/template-functions.php:507
+#, php-format
+msgid "Get access using %d %s"
+msgstr ""
+
+#: includes/template-functions.php:432 includes/template-functions.php:530
+msgid "Do you want to get access?"
+msgstr ""
+
+#: includes/template-functions.php:433 includes/template-functions.php:531
+msgid "Yes"
+msgstr ""
+
+#: includes/template-functions.php:433 includes/template-functions.php:531
+msgid "No"
+msgstr ""
+
+#: includes/triggers.php:25
+msgid "Get access to a post"
+msgstr ""
+
+#: includes/triggers.php:26
+msgid "Get access to a specific post"
+msgstr ""
+
+#: includes/triggers.php:29
+msgid "Get access to a post by meeting all requirements"
+msgstr ""
+
+#: includes/triggers.php:30
+msgid "Get access to a specific post by meeting all requirements"
+msgstr ""
+
+#: includes/triggers.php:33
+msgid "Get access to a post using points"
+msgstr ""
+
+#: includes/triggers.php:34
+msgid "Get access to a specific post using points"
+msgstr ""
+
+#: includes/triggers.php:37
+msgid "Get access to a portion of content"
+msgstr ""
+
+#: includes/triggers.php:38
+msgid "Get access to a specific portion of content"
+msgstr ""
+
+#: includes/triggers.php:39
+msgid "Get access to a portion of content on a specific post"
+msgstr ""
+
+#: includes/triggers.php:40
+msgid "Get access to a specific portion of content on a specific post"
+msgstr ""
+
+#: includes/triggers.php:95
+#, php-format
+msgid "Get access to the %s portion of content"
+msgstr ""
+
+#: includes/triggers.php:99
+#, php-format
+msgid "Get access to the %s portion of content on %s"
+msgstr ""
+
+#: includes/triggers.php:119
+#, php-format
+msgid "Get access to %s"
+msgstr ""
+
+#: includes/triggers.php:120
+#, php-format
+msgid "Get access to %s by completing all requirements"
+msgstr ""
+
+#: includes/triggers.php:121
+#, php-format
+msgid "Get access to %s using points"
+msgstr ""
+
+#: includes/triggers.php:124 includes/triggers.php:125
+#, php-format
+msgid "Get access to a portion of content on %s"
+msgstr ""
+
+#: includes/widgets/hide-content-if-widget.php:23
+msgid "GamiPress: Hide Content If"
+msgstr ""
+
+#: includes/widgets/post-restrictions-widget.php:23
+msgid "GamiPress: Post Restrictions"
+msgstr ""
+
+#: includes/widgets/post-restrictions-widget.php:24
+msgid "Display a desired post restrictions and/or the button to get access to users without access."
+msgstr ""
+
+#: includes/widgets/posts-restricted-widget.php:23
+msgid "GamiPress: Posts Restricted"
+msgstr ""
+
+#: includes/widgets/posts-restricted-widget.php:24
+msgid "Display a list of posts restricted."
+msgstr ""
+
+#: includes/widgets/posts-unlocked-widget.php:23
+msgid "GamiPress: Posts Unlocked"
+msgstr ""
+
+#: includes/widgets/posts-unlocked-widget.php:24
+msgid "Display a list of posts that user got access."
+msgstr ""
+
+#: includes/widgets/restrict-content-widget.php:23
+msgid "GamiPress: Restrict Content"
+msgstr ""
+
+#: includes/widgets/restrict-content-widget.php:24
+msgid "Display a restricted portion of content."
+msgstr ""
+
+#: includes/widgets/show-content-if-widget.php:23
+msgid "GamiPress: Show Content If"
+msgstr ""
+
+#: includes/widgets/show-content-if-widget.php:24
+msgid "Display a portion of content if user meets a specific condition."
+msgstr ""
