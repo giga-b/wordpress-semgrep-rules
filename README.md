@@ -93,7 +93,7 @@ For detailed extension documentation, see [vscode-extension/README.md](vscode-ex
 
 **Enhanced WordPress security scanning with AI-powered quick fixes for Cursor IDE!**
 
-![PressGuard Cursor Extension Icon](dashboard/icon-128.png)
+![PressGuard Cursor Extension Icon](dashboard/cursor-logo.png)
 
 PressGuard includes an advanced Cursor extension that provides all VS Code features plus AI-enhanced capabilities specifically designed for Cursor's intelligent development environment.
 
