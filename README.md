@@ -2,7 +2,8 @@
 
 [![CI](https://github.com/giga-b/wordpress-semgrep-rules/workflows/CI/badge.svg)](https://github.com/giga-b/wordpress-semgrep-rules/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Semgrep](https://img.shields.io/badge/Semgrep-1.45.0+-blue.svg)](https://semgrep.dev/)[![Issues](https://camo.githubusercontent.com/28c18176103932b98c7f48e40955af602a0e201cf5a37db27a46e8948f74b2ed/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6973737565732d77656c636f6d652d677265656e3f7374796c653d666c61742d737175617265)](https://github.com/giga-b/wordpress-semgrep-rules/issues/new/choose)
+[![Semgrep](https://img.shields.io/badge/Semgrep-1.45.0+-blue.svg)](https://semgrep.dev/)
+[![Issues](https://camo.githubusercontent.com/28c18176103932b98c7f48e40955af602a0e201cf5a37db27a46e8948f74b2ed/68747470733a2f2f696d672e736869656c64732e696f2f62616467652f6973737565732d77656c636f6d652d677265656e3f7374796c653d666c61742d737175617265)](https://github.com/giga-b/wordpress-semgrep-rules/issues/new/choose)
 
 **PressGuard** is a comprehensive WordPress security scanning solution that combines the power of Semgrep static analysis with advanced dashboard analytics. Designed specifically for WordPress plugin and theme developers, it provides automated security scanning, detailed vulnerability reporting, and interactive dashboards for monitoring security posture.
 
