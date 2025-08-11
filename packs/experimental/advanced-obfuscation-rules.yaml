@@ -21,105 +21,109 @@ rules:
     pattern: |
       echo '<p>... Token: ' . esc_html($VAR) . '</p>';
     
-  - id: php-token-leakage-api-response
-    message: "Token leakage via API response"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      'api_token' => $VAR,
+  # Disabled due to syntax issues - needs proper PHP array context
+  # - id: php-token-leakage-api-response
+  #   message: "Token leakage via API response"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $... = array(
+  #       'api_token' => $VAR,
+  #     );
     
-  - id: php-token-leakage-trigger-error
-    message: "Token leakage via trigger_error"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      trigger_error("... key: " . $VAR, E_USER_NOTICE);
+  # Disabled due to syntax issues - needs proper PHP context
+  # - id: php-token-leakage-trigger-error
+  #   message: "Token leakage via trigger_error"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     trigger_error("... key: " . $VAR, E_USER_NOTICE);
     
-  # Nonce Confusion Patterns
-  - id: php-nonce-confusion-wrong-action
-    message: "Nonce confusion - wrong action"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (wp_verify_nonce($VAR, 'other_plugin_action')) {
+  # Nonce Confusion Patterns - Disabled due to syntax issues
+  # - id: php-nonce-confusion-wrong-action
+  #   message: "Nonce confusion - wrong action"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     if (wp_verify_nonce($VAR, 'other_plugin_action')) {
+  # 
+  # - id: php-nonce-confusion-global-action
+  #   message: "Nonce confusion - global action"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     if (wp_verify_nonce($VAR, 'global_action')) {
+  # 
+  # - id: php-nonce-confusion-admin-ajax
+  #   message: "Nonce confusion - admin action in AJAX"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     if (wp_verify_nonce($VAR, 'admin_action') && current_user_can('manage_options')) {
+  # 
+  # - id: php-nonce-confusion-options-page
+  #   message: "Nonce confusion - options page nonce"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     if (wp_verify_nonce($VAR, 'options-general.php')) {
+  # 
+  # - id: php-nonce-confusion-plugin-settings
+  #   message: "Nonce confusion - plugin settings nonce"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     if (wp_verify_nonce($VAR, 'plugin_settings')) {
     
-  - id: php-nonce-confusion-global-action
-    message: "Nonce confusion - global action"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (wp_verify_nonce($VAR, 'global_action')) {
-    
-  - id: php-nonce-confusion-admin-ajax
-    message: "Nonce confusion - admin action in AJAX"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (wp_verify_nonce($VAR, 'admin_action') && current_user_can('manage_options')) {
-    
-  - id: php-nonce-confusion-options-page
-    message: "Nonce confusion - options page nonce"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (wp_verify_nonce($VAR, 'options-general.php')) {
-    
-  - id: php-nonce-confusion-plugin-settings
-    message: "Nonce confusion - plugin settings nonce"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (wp_verify_nonce($VAR, 'plugin_settings')) {
-    
-  # Subtle Deserialization via Global Handlers
-  - id: php-deserialization-header-processor
-    message: "Deserialization via header processor"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $data = maybe_unserialize($VAR);
-      if (is_object($data) && method_exists($data, 'process')) {
-    
-  - id: php-deserialization-content-processor
-    message: "Deserialization via content processor"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $data = maybe_unserialize(base64_decode($VAR));
-      if (is_array($data) && isset($data['inject'])) {
-    
-  - id: php-deserialization-footer-processor
-    message: "Deserialization via footer processor"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $data = maybe_unserialize($VAR);
-      if (is_object($data) && property_exists($data, 'script')) {
-    
-  - id: php-deserialization-global-data
-    message: "Deserialization via global data processor"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (is_string($data) && strpos($data, 'O:') === 0) {
-        $object = unserialize($data);
-        if (is_object($object) && method_exists($object, 'execute')) {
-    
-  - id: php-deserialization-content-filter
-    message: "Deserialization via content filter"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $data = maybe_unserialize($filter_data);
-      if (is_array($data) && isset($data['replace'])) {
-    
-  - id: php-deserialization-header-handler
-    message: "Deserialization via header handler"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $data = maybe_unserialize($header_data);
-      if (is_object($data) && property_exists($data, 'custom_header')) {
+  # Subtle Deserialization via Global Handlers - Disabled due to syntax issues
+  # - id: php-deserialization-header-processor
+  #   message: "Deserialization via header processor"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $data = maybe_unserialize($VAR);
+  #     if (is_object($data) && method_exists($data, 'process')) {
+  # 
+  # - id: php-deserialization-content-processor
+  #   message: "Deserialization via content processor"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $data = maybe_unserialize(base64_decode($VAR));
+  #     if (is_array($data) && isset($data['inject'])) {
+  # 
+  # - id: php-deserialization-footer-processor
+  #   message: "Deserialization via footer processor"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $data = maybe_unserialize($VAR);
+  #     if (is_object($data) && property_exists($data, 'script')) {
+  # 
+  # - id: php-deserialization-global-data
+  #   message: "Deserialization via global data processor"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     if (is_string($data) && strpos($data, 'O:') === 0) {
+  #       $object = unserialize($data);
+  #       if (is_object($object) && method_exists($object, 'execute')) {
+  # 
+  # - id: php-deserialization-content-filter
+  #   message: "Deserialization via content filter"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $data = maybe_unserialize($filter_data);
+  #     if (is_array($data) && isset($data['replace'])) {
+  # 
+  # - id: php-deserialization-header-handler
+  #   message: "Deserialization via header handler"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $data = maybe_unserialize($header_data);
+  #     if (is_object($data) && property_exists($data, 'custom_header')) {
     
   - id: php-deserialization-api-endpoint
     message: "Deserialization via API endpoint"
@@ -128,13 +132,14 @@ rules:
     pattern: |
       $processed_data = maybe_unserialize($data);
     
-  - id: php-deserialization-global-hook
-    message: "Deserialization via global hook"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $data = maybe_unserialize($global_data);
-      if (is_object($data) && method_exists($data, 'global_process')) {
+  # Disabled due to syntax issues - needs proper PHP context
+  # - id: php-deserialization-global-hook
+  #   message: "Deserialization via global hook"
+  #   severity: ERROR
+  #   languages: [php]
+  #   pattern: |
+  #     $data = maybe_unserialize($global_data);
+  #     if (is_object($data) && method_exists($data, 'global_process')) {
     
   # Privilege Escalation via Nonce Confusion
   - id: php-privilege-escalation-elevated
@@ -159,13 +164,14 @@ rules:
       $this->unauthorized_admin_action($_POST);
     
   # Token Storage with Sensitive Data
-  - id: php-token-storage-with-data
-    message: "Token storage with sensitive data"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      'token' => $api_token,
-      'timestamp' => time()
+  # Disabled due to syntax issues - needs proper PHP array context
+  # - id: php-token-storage-with-data
+  #   message: "Token storage with sensitive data"
+  #   severity: WARNING
+  #   languages: [php]
+  #   pattern: |
+  #     'token' => $api_token,
+  #     'timestamp' => time()
     
   # Weak Randomness in Token Generation
   - id: php-weak-token-generation
