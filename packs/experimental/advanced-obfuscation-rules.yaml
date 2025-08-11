@@ -21,31 +21,31 @@ rules:
     pattern: |
       echo '<p>... Token: ' . esc_html($VAR) . '</p>';
     
-  # Disabled due to syntax issues - needs proper PHP array context
-  # - id: php-token-leakage-api-response
-  #   message: "Token leakage via API response"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $... = array(
-  #       'api_token' => $VAR,
-  #     );
+  - id: php-token-leakage-api-response
+    message: "Token leakage via API response"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      $config = array(
+        'api_token' => $VAR,
+      );
     
-  # Disabled due to syntax issues - needs proper PHP context
-  # - id: php-token-leakage-trigger-error
-  #   message: "Token leakage via trigger_error"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     trigger_error("... key: " . $VAR, E_USER_NOTICE);
+  - id: php-token-leakage-trigger-error
+    message: "Token leakage via trigger_error"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      trigger_error("Debug key: " . $VAR, E_USER_NOTICE);
     
-  # Nonce Confusion Patterns - Disabled due to syntax issues
-  # - id: php-nonce-confusion-wrong-action
-  #   message: "Nonce confusion - wrong action"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     if (wp_verify_nonce($VAR, 'other_plugin_action')) {
+  # Nonce Confusion Patterns
+  - id: php-nonce-confusion-wrong-action
+    message: "Nonce confusion - wrong action"
+    severity: ERROR
+    languages: [php]
+    pattern: |
+      if (wp_verify_nonce($VAR, 'other_plugin_action')) {
+        $this->process_action();
+      }
   # 
   # - id: php-nonce-confusion-global-action
   #   message: "Nonce confusion - global action"
@@ -164,14 +164,15 @@ rules:
       $this->unauthorized_admin_action($_POST);
     
   # Token Storage with Sensitive Data
-  # Disabled due to syntax issues - needs proper PHP array context
-  # - id: php-token-storage-with-data
-  #   message: "Token storage with sensitive data"
-  #   severity: WARNING
-  #   languages: [php]
-  #   pattern: |
-  #     'token' => $api_token,
-  #     'timestamp' => time()
+  - id: php-token-storage-with-data
+    message: "Token storage with sensitive data"
+    severity: WARNING
+    languages: [php]
+    pattern: |
+      $storage = array(
+        'token' => $api_token,
+        'timestamp' => time()
+      );
     
   # Weak Randomness in Token Generation
   - id: php-weak-token-generation
