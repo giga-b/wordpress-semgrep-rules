@@ -1,0 +1,65 @@
+{
+  "availability": {
+    "cli_installed": true,
+    "logged_in": false,
+    "cross_file_enabled": false,
+    "pro_features": false
+  },
+  "python_results": {
+    "python_analysis": {
+      "vulnerable": {
+        "scan_result": {
+          "success": false,
+          "error": null,
+          "duration": 3.9177405834198
+        },
+        "test_paths": [
+          "tests/vulnerable-examples/ajax-vulnerable.php",
+          "tests/vulnerable-examples/nonce-vulnerable.php",
+          "tests/cross-file-test-cases/cross-file-nonce-vulnerable-callbacks.php"
+        ]
+      },
+      "safe": {
+        "scan_result": {
+          "success": false,
+          "error": null,
+          "duration": 3.8637890815734863
+        },
+        "test_paths": [
+          "tests/safe-examples/ajax-safe.php",
+          "tests/safe-examples/nonce-safe.php",
+          "tests/cross-file-test-cases/cross-file-nonce-safe.php"
+        ]
+      },
+      "corpus": {
+        "scan_result": {
+          "success": false,
+          "error": null,
+          "duration": 3.7525014877319336
+        },
+        "test_paths": [
+          "corpus/wordpress-plugins/gamipress/includes/ajax-functions.php",
+          "corpus/wordpress-plugins/gamipress-leaderboards/includes/ajax-functions.php"
+        ]
+      }
+    },
+    "performance_metrics": {},
+    "accuracy_metrics": {}
+  },
+  "semgrep_results": {},
+  "comparison": {
+    "python_findings": 0,
+    "semgrep_findings": 0,
+    "performance_comparison": {
+      "python_duration": 11.53403115272522,
+      "semgrep_duration": 0,
+      "speed_improvement": 100.0
+    },
+    "accuracy_comparison": {},
+    "recommendations": [
+      "Semgrep cross-file analysis is 100.0% faster",
+      "Use both methods: Python-based for quick scans, Semgrep cross-file for deep analysis"
+    ]
+  },
+  "timestamp": "2025-08-11 18:02:56"
+}

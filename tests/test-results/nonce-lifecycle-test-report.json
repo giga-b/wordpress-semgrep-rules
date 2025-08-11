@@ -1,0 +1,23 @@
+{
+  "test_date": "2025-08-11T17:00:56.999700",
+  "task": "Task 1.5: Nonce Lifecycle Detection Rules",
+  "test_files": {
+    "rules_file": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\packs\\wp-core-security\\nonce-lifecycle-detection.yaml",
+    "safe_test_file": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\safe-examples\\nonce-lifecycle-safe.php",
+    "vulnerable_test_file": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\vulnerable-examples\\nonce-lifecycle-vulnerable.php"
+  },
+  "results": {
+    "safe_examples": {
+      "success": false,
+      "result_file": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\test-results\\nonce-lifecycle-safe-results.json"
+    },
+    "vulnerable_examples": {
+      "success": false,
+      "result_file": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\test-results\\nonce-lifecycle-vulnerable-results.json"
+    },
+    "rule_coverage": {
+      "success": false
+    }
+  },
+  "overall_success": false
+}

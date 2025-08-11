@@ -47,6 +47,30 @@ PressGuard provides powerful dashboards for monitoring security scan results and
 
 > **🔄 CI/CD Status**: GitHub Actions workflows are configured for automated security scanning. The workflow uses the latest `actions/upload-artifact@v4` to avoid deprecation warnings.
 
+### 🚀 Cross-File Analysis
+
+PressGuard now supports **two complementary cross-file analysis systems**:
+
+#### Option 1: Python-Based Analysis (Always Available)
+```bash
+# Run Python-based cross-file analysis
+python tests/test-cross-file-analysis.py
+
+# Test nonce lifecycle detection
+python tests/test-nonce-lifecycle-detection.py
+```
+
+#### Option 2: Semgrep Cross-File Analysis (Free for up to 10 contributors)
+```bash
+# Setup cross-file analysis
+python setup-cross-file-analysis.py
+
+# Run cross-file analysis scans
+semgrep ci --config packs/wp-core-security/nonce-lifecycle-detection.yaml
+```
+
+**📚 For detailed setup instructions, see [Cross-File Analysis Overview](docs/cross-file-analysis-overview.md)**
+
 ## 🔌 VS Code Extension
 
 **Get real-time WordPress security scanning directly in VS Code!**
