@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Semgrep](https://img.shields.io/badge/Semgrep-1.45.0+-blue.svg)](https://semgrep.dev/)
 [![Static Badge](https://img.shields.io/badge/bug%20issues-_submit-red)](https://github.com/giga-b/wordpress-semgrep-rules/issues/new/choose)
-[![Static Badge](https://img.shields.io/badge/vscode-_Exension-yellow)](https://github.com/giga-b/wordpress-semgrep-rules/raw/refs/heads/main/vscode-extension/wordpress-semgrep-security-1.0.0.vsix)
+[![Static Badge](https://img.shields.io/badge/vscode-_exension-yellow)](https://github.com/giga-b/wordpress-semgrep-rules/raw/refs/heads/main/vscode-extension/wordpress-semgrep-security-1.0.0.vsix)
 [![Static Badge](https://img.shields.io/badge/extension-cursor?logo=extension&label=cursor&labelColor=black&color=%23E8E8E8)](https://github.com/giga-b/wordpress-semgrep-rules/blob/main/cursor-extension/README.md)
 
 
