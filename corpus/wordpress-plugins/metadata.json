@@ -1,0 +1,44 @@
+{
+  "woocommerce": {
+    "slug": "woocommerce",
+    "name": "WooCommerce",
+    "version": "8.5.2",
+    "download_url": "https://downloads.wordpress.org/plugin/woocommerce.latest-stable.zip",
+    "last_updated": "2024-01-15",
+    "requires": "6.0",
+    "tested": "6.4",
+    "rating": 4.5,
+    "num_ratings": 50000,
+    "downloaded_at": "2025-08-11T11:55:50.957640",
+    "file_hash": "002b3cb8b1fcacf9836367a1ae617c87d6def0c33d16b8a79a4f81dad9894429",
+    "file_size": 17802904
+  },
+  "elementor": {
+    "slug": "elementor",
+    "name": "Elementor",
+    "version": "3.18.3",
+    "download_url": "https://downloads.wordpress.org/plugin/elementor.latest-stable.zip",
+    "last_updated": "2024-01-10",
+    "requires": "5.0",
+    "tested": "6.4",
+    "rating": 4.6,
+    "num_ratings": 45000,
+    "downloaded_at": "2025-08-11T11:55:53.666467",
+    "file_hash": "8340400234b84c7bc770aab20b84b58ad682888be7b3749aec1d4893bcf4fb48",
+    "file_size": 14891289
+  },
+  "contact-form-7": {
+    "slug": "contact-form-7",
+    "name": "Contact Form 7",
+    "version": "5.8.1",
+    "download_url": "https://downloads.wordpress.org/plugin/contact-form-7.latest-stable.zip",
+    "last_updated": "2024-01-12",
+    "requires": "5.4",
+    "tested": "6.4",
+    "rating": 4.3,
+    "num_ratings": 35000,
+    "downloaded_at": "2025-08-11T11:55:54.251867",
+    "file_hash": "92be0df1e77b226857d441406c0e34931e3078541c5fa0e8f5be34d93ec513ef",
+    "file_size": 296873
+  }
+}
