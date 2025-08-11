@@ -247,7 +247,7 @@ Access the user dashboard to view detailed security scan results:
 python serve-dashboard.py
 
 # Open in browser
-http://localhost:8000/dashboard/user-dashboard.html
+http://localhost:8080
 ```
 
 ### Admin Dashboard
@@ -257,7 +257,7 @@ Access the admin dashboard for comprehensive metrics and analytics:
 python serve-dashboard.py
 
 # Open in browser  
-http://localhost:8000/dashboard/index.html
+http://localhost:8080/admin-dashboard.html
 ```
 
 ### 📸 Capturing Dashboard Screenshots
@@ -295,8 +295,8 @@ python dashboard/capture-screenshots.py
 ```
 wordpress-semgrep-rules/
 ├── dashboard/                    # Interactive dashboards
-│   ├── user-dashboard.html      # Security scan results interface
-│   ├── index.html              # Admin metrics dashboard
+│   ├── index.html              # User dashboard (default)
+│   ├── admin-dashboard.html    # Admin metrics dashboard
 │   ├── favicon.svg             # Dashboard favicon
 │   └── capture-screenshots.py  # Dashboard screenshot automation
 ├── packs/                       # Security rule packs

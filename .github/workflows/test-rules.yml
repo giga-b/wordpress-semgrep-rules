@@ -1,0 +1,92 @@
+name: Test Security Rules
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+env:
+  SEMGREP_VERSION: "1.75.0"
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  test-rules:
+    name: Test Security Rules
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        python-version: ["3.11"]
+        config: [basic, strict, plugin-development]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install Semgrep
+      run: |
+        python -m pip install --upgrade pip
+        pip install "semgrep==${{ env.SEMGREP_VERSION }}"
+        semgrep --version
+    
+    - name: Test vulnerable examples
+      run: |
+        echo "🔍 Testing vulnerable examples with ${{ matrix.config }} config"
+        semgrep scan --config=configs/${{ matrix.config }}.yaml tests/vulnerable-examples/ --json > vulnerable-results-${{ matrix.config }}.json
+        
+        # Check that we found vulnerabilities (this is expected)
+        VULNERABILITIES=$(jq '.results | length' vulnerable-results-${{ matrix.config }}.json)
+        echo "Found $VULNERABILITIES vulnerabilities in test files (expected)"
+        
+        if [ "$VULNERABILITIES" -eq 0 ]; then
+          echo "❌ No vulnerabilities found in test files - rules may not be working correctly"
+          exit 1
+        else
+          echo "✅ Vulnerabilities correctly detected in test files"
+        fi
+    
+    - name: Test safe examples
+      run: |
+        echo "🔍 Testing safe examples with ${{ matrix.config }} config"
+        semgrep scan --config=configs/${{ matrix.config }}.yaml tests/safe-examples/ --json > safe-results-${{ matrix.config }}.json
+        
+        # Check that we found minimal or no vulnerabilities (this is expected)
+        VULNERABILITIES=$(jq '.results | length' safe-results-${{ matrix.config }}.json)
+        echo "Found $VULNERABILITIES vulnerabilities in safe examples"
+        
+        if [ "$VULNERABILITIES" -gt 5 ]; then
+          echo "⚠️ High number of vulnerabilities found in safe examples - may indicate false positives"
+        else
+          echo "✅ Safe examples correctly identified"
+        fi
+    
+    - name: Validate rule syntax
+      run: |
+        echo "🔧 Validating rule syntax..."
+        for file in packs/wp-core-security/*.yaml; do
+          echo "Validating $file"
+          semgrep scan --config="$file" --dryrun
+        done
+        
+        for file in packs/experimental/*.yaml; do
+          echo "Validating $file"
+          semgrep scan --config="$file" --dryrun
+        done
+        
+        echo "✅ All rule files validated successfully"
+    
+    - name: Upload test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.config }}-${{ matrix.python-version }}
+        path: |
+          vulnerable-results-${{ matrix.config }}.json
+          safe-results-${{ matrix.config }}.json
+        retention-days: 30

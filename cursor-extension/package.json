@@ -155,7 +155,7 @@
         {
           "id": "wordpress-semgrep-cursor",
           "title": "WordPress Security",
-          "icon": "resources/icon.svg"
+          "icon": "resources/icon-128.png"
         }
       ]
     },

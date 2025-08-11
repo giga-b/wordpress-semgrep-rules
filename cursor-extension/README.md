@@ -185,7 +185,8 @@ cursor-extension/
 │   ├── quickFixProvider.ts       # Automatic fixes
 │   └── inlineDiagnosticsProvider.ts # Inline issue display
 ├── resources/
-│   └── icon.svg                  # Extension icon
+│   ├── icon-128.png              # Extension icon (128x128)
+│   └── icon.svg                  # Extension icon (SVG)
 ├── package.json                  # Extension manifest
 └── README.md                     # This file
 ```

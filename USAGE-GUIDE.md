@@ -74,7 +74,7 @@ The extension can be configured in VS Code settings:
 
 **Use Case:** "How well are our rules performing overall?"
 
-#### 2. **User Scan Results Dashboard** (`dashboard/user-dashboard.html`)
+#### 2. **User Scan Results Dashboard** (`dashboard/index.html`)
 **For:** End users scanning their own code
 
 **Shows:**
@@ -95,8 +95,8 @@ The extension can be configured in VS Code settings:
 python serve-dashboard.py
 
 # Then open your browser to:
-# http://localhost:8080                    # Admin dashboard
-# http://localhost:8080/user-dashboard.html # User results dashboard
+# http://localhost:8080                    # User dashboard (default)
+# http://localhost:8080/admin-dashboard.html # Admin dashboard
 ```
 
 #### Option 2: Use Any Web Server
@@ -112,8 +112,8 @@ python -m http.server 8080
 
 #### Option 3: Open Directly in Browser
 Simply open these files in your web browser:
-- `dashboard/index.html` - Admin dashboard
-- `dashboard/user-dashboard.html` - User results dashboard
+- `dashboard/index.html` - User dashboard (default)
+- `dashboard/admin-dashboard.html` - Admin dashboard
 
 ### Dashboard Features
 

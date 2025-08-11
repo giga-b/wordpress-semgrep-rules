@@ -1,0 +1,675 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PressGuard - Metrics Dashboard</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        .header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 30px;
+        }
+        .metric-card {
+            background: white;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .chart-section {
+            padding: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+        .chart-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .chart-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .chart-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .table-section {
+            padding: 30px;
+            border-top: 1px solid #e1e5e9;
+        }
+        .table-section h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e1e5e9;
+        }
+        th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        .status-indicator {
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+        .status-good { background-color: #28a745; }
+        .status-warning { background-color: #ffc107; }
+        .status-poor { background-color: #dc3545; }
+        .export-section {
+            padding: 30px;
+            background: #f8f9fa;
+            border-top: 1px solid #e1e5e9;
+            text-align: center;
+        }
+        .export-section h2 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .export-section p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .export-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .export-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .export-btn:hover {
+            background: #5a6fd8;
+        }
+        .footer {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            text-align: center;
+            color: #666;
+            border-top: 1px solid #e1e5e9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>PressGuard Admin Dashboard</h1>
+            <h2 style="margin: 10px 0; font-size: 1.6em; font-weight: normal; opacity: 0.9;">WordPress Semgrep Rules</h2>
+            <h3 style="margin: 10px 0 0 0; font-size: 1.2em; font-weight: normal; opacity: 0.9;">Metrics Dashboard - All Scans</h3>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-label">Total Scans</div>
+                <div class="metric-value">1030</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Findings</div>
+                <div class="metric-value">4480</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">False Positives</div>
+                <div class="metric-value">668</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Overall Precision</div>
+                <div class="metric-value">85.1%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Overall Recall</div>
+                <div class="metric-value">90.0%</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">F1 Score</div>
+                <div class="metric-value">0.87</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Avg Scan Time</div>
+                <div class="metric-value">3.29s</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Scan Time</div>
+                <div class="metric-value">3392.7s</div>
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>Performance Trends</h2>
+            <div class="chart-container">
+                <img src="performance_trends.png" alt="Performance Trends">
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>False Positive Trends</h2>
+            <div class="chart-container">
+                <img src="false_positive_trends.png" alt="False Positive Trends">
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>Rule Performance</h2>
+            <div class="chart-container">
+                <img src="rule_performance.png" alt="Rule Performance">
+            </div>
+        </div>
+        
+        <div class="chart-section">
+            <h2>Pack Performance</h2>
+            <div class="chart-container">
+                <img src="pack_performance.png" alt="Pack Performance">
+            </div>
+        </div>
+        
+        <div class="table-section">
+            <h2>Top Performing Rules</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Rule Name</th>
+                        <th>Pack</th>
+                        <th>F1 Score</th>
+                        <th>Precision</th>
+                        <th>Recall</th>
+                        <th>Total Runs</th>
+                        <th>Avg Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>Advanced Obfuscation Rules</td>
+                        <td>experimental</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>50</td>
+                        <td>3.04s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Advanced Security Rules</td>
+                        <td>experimental</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>50</td>
+                        <td>3.12s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Ajax Security</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>90</td>
+                        <td>3.29s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Capability Checks</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>90</td>
+                        <td>3.04s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Comprehensive Security Rules</td>
+                        <td>experimental</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>50</td>
+                        <td>2.91s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Nonce Verification</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>90</td>
+                        <td>3.22s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Rest Api Security</td>
+                        <td>wp-core-security</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>90</td>
+                        <td>3.73s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Sanitization Functions</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>90</td>
+                        <td>3.32s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Simple Advanced Rules</td>
+                        <td>experimental</td>
+                        <td>0.00</td>
+                        <td>0.0%</td>
+                        <td>0.0%</td>
+                        <td>50</td>
+                        <td>3.16s</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>Sql Injection</td>
+                        <td>wp-core-security</td>
+                        <td>0.87</td>
+                        <td>85.0%</td>
+                        <td>90.0%</td>
+                        <td>90</td>
+                        <td>3.34s</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="table-section">
+            <h2>Rule Pack Performance</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Pack Name</th>
+                        <th>Total Rules</th>
+                        <th>Active Rules</th>
+                        <th>Performance Score</th>
+                        <th>False Positive Rate</th>
+                        <th>Avg Scan Time</th>
+                        <th>Last Updated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    <tr>
+                        <td>experimental</td>
+                        <td>8</td>
+                        <td>8</td>
+                        <td>
+                            <span class="status-indicator 
+                                status-warning
+                                "></span>
+                            79.2
+                        </td>
+                        <td>14.9%</td>
+                        <td>163.60s</td>
+                        <td>2025-08-10T05:25:47.998955</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>wp-core-security</td>
+                        <td>7</td>
+                        <td>7</td>
+                        <td>
+                            <span class="status-indicator 
+                                status-warning
+                                "></span>
+                            75.5
+                        </td>
+                        <td>14.9%</td>
+                        <td>297.71s</td>
+                        <td>2025-08-10T05:25:47.998955</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="export-section">
+            <h2>Export Dashboard Data</h2>
+            <p>Download the dashboard data in various formats for reporting and analysis.</p>
+            <div class="export-buttons">
+                <button class="export-btn" onclick="exportDashboard('json')">Export as JSON</button>
+                <button class="export-btn" onclick="exportDashboard('csv')">Export as CSV</button>
+                <button class="export-btn" onclick="exportDashboard('html')">Export as HTML</button>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Generated on 2025-08-10T15:58:09.511225 | PressGuard Dashboard</p>
+        </div>
+    </div>
+
+    <script>
+        // Dashboard data for export functionality
+        const dashboardData = {
+            timestamp: new Date().toISOString(),
+            metrics: {
+                totalScans: 618,
+                totalFindings: 2688,
+                totalFalsePositives: 398,
+                overallPrecision: 0.852,
+                overallRecall: 0.90,
+                overallF1Score: 0.875,
+                avgScanTime: 3.29,
+                totalScanTime: 2034.82
+            },
+            ruleMetrics: [
+                {
+                    ruleName: "Nonce Verification",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.45
+                },
+                {
+                    ruleName: "Capability Checks",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.28
+                },
+                {
+                    ruleName: "Sanitization Functions",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.32
+                },
+                {
+                    ruleName: "Sql Injection",
+                    pack: "wp-core-security",
+                    f1Score: 0.87,
+                    precision: 0.85,
+                    recall: 0.90,
+                    totalRuns: 90,
+                    avgDuration: 3.34
+                }
+            ],
+            packMetrics: [
+                {
+                    packName: "experimental",
+                    totalRules: 8,
+                    activeRules: 8,
+                    performanceScore: 79.2,
+                    falsePositiveRate: 0.149,
+                    avgScanTime: 163.60,
+                    lastUpdated: "2025-08-10T05:25:47.998955"
+                },
+                {
+                    packName: "wp-core-security",
+                    totalRules: 7,
+                    activeRules: 7,
+                    performanceScore: 75.5,
+                    falsePositiveRate: 0.149,
+                    avgScanTime: 297.71,
+                    lastUpdated: "2025-08-10T05:25:47.998955"
+                }
+            ]
+        };
+
+        function exportDashboard(format) {
+            let content = '';
+            let filename = '';
+            let mimeType = '';
+            
+            switch(format) {
+                case 'json':
+                    content = JSON.stringify(dashboardData, null, 2);
+                    filename = `pressguard-dashboard-${new Date().toISOString().split('T')[0]}.json`;
+                    mimeType = 'application/json';
+                    break;
+                    
+                case 'csv':
+                    content = generateDashboardCSV();
+                    filename = `pressguard-dashboard-${new Date().toISOString().split('T')[0]}.csv`;
+                    mimeType = 'text/csv';
+                    break;
+                    
+                case 'html':
+                    content = generateDashboardHTMLReport();
+                    filename = `pressguard-dashboard-${new Date().toISOString().split('T')[0]}.html`;
+                    mimeType = 'text/html';
+                    break;
+            }
+            
+            // Create and download the file
+            const blob = new Blob([content], { type: mimeType });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
+        function generateDashboardCSV() {
+            let csv = 'Metric,Value\n';
+            
+            // Add metrics
+            csv += `Total Scans,${dashboardData.metrics.totalScans}\n`;
+            csv += `Total Findings,${dashboardData.metrics.totalFindings}\n`;
+            csv += `Total False Positives,${dashboardData.metrics.totalFalsePositives}\n`;
+            csv += `Overall Precision,${(dashboardData.metrics.overallPrecision * 100).toFixed(1)}%\n`;
+            csv += `Overall Recall,${(dashboardData.metrics.overallRecall * 100).toFixed(1)}%\n`;
+            csv += `F1 Score,${dashboardData.metrics.overallF1Score.toFixed(3)}\n`;
+            csv += `Average Scan Time,${dashboardData.metrics.avgScanTime}s\n`;
+            csv += `Total Scan Time,${dashboardData.metrics.totalScanTime}s\n\n`;
+            
+            // Add rule metrics
+            csv += 'Rule Name,Pack,F1 Score,Precision,Recall,Total Runs,Avg Duration\n';
+            dashboardData.ruleMetrics.forEach(rule => {
+                csv += `"${rule.ruleName}","${rule.pack}",${rule.f1Score},${(rule.precision * 100).toFixed(1)}%,${(rule.recall * 100).toFixed(1)}%,${rule.totalRuns},${rule.avgDuration}s\n`;
+            });
+            
+            csv += '\n';
+            
+            // Add pack metrics
+            csv += 'Pack Name,Total Rules,Active Rules,Performance Score,False Positive Rate,Avg Scan Time,Last Updated\n';
+            dashboardData.packMetrics.forEach(pack => {
+                csv += `"${pack.packName}",${pack.totalRules},${pack.activeRules},${pack.performanceScore},${(pack.falsePositiveRate * 100).toFixed(1)}%,${pack.avgScanTime}s,"${pack.lastUpdated}"\n`;
+            });
+            
+            return csv;
+        }
+        
+        function generateDashboardHTMLReport() {
+            return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PressGuard Dashboard Report - ${new Date().toLocaleDateString()}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #667eea; color: white; padding: 20px; border-radius: 8px; }
+        .metrics { background: #e7f3ff; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; }
+        .metric-card { background: white; padding: 15px; border-radius: 5px; text-align: center; }
+        .metric-value { font-size: 1.5em; font-weight: bold; color: #667eea; }
+        table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: #f8f9fa; font-weight: bold; }
+        .section { margin: 30px 0; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>PressGuard Dashboard Report</h1>
+        <p>Generated on: ${new Date().toLocaleString()}</p>
+    </div>
+    
+    <div class="section">
+        <h2>Overall Metrics</h2>
+        <div class="metrics">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-value">${dashboardData.metrics.totalScans}</div>
+                    <div>Total Scans</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${dashboardData.metrics.totalFindings}</div>
+                    <div>Total Findings</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${(dashboardData.metrics.overallPrecision * 100).toFixed(1)}%</div>
+                    <div>Overall Precision</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">${dashboardData.metrics.overallF1Score.toFixed(3)}</div>
+                    <div>F1 Score</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="section">
+        <h2>Rule Performance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Rule Name</th>
+                    <th>Pack</th>
+                    <th>F1 Score</th>
+                    <th>Precision</th>
+                    <th>Recall</th>
+                    <th>Total Runs</th>
+                    <th>Avg Duration</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dashboardData.ruleMetrics.map(rule => `
+                    <tr>
+                        <td>${rule.ruleName}</td>
+                        <td>${rule.pack}</td>
+                        <td>${rule.f1Score}</td>
+                        <td>${(rule.precision * 100).toFixed(1)}%</td>
+                        <td>${(rule.recall * 100).toFixed(1)}%</td>
+                        <td>${rule.totalRuns}</td>
+                        <td>${rule.avgDuration}s</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+    
+    <div class="section">
+        <h2>Pack Performance</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Pack Name</th>
+                    <th>Total Rules</th>
+                    <th>Active Rules</th>
+                    <th>Performance Score</th>
+                    <th>False Positive Rate</th>
+                    <th>Avg Scan Time</th>
+                    <th>Last Updated</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${dashboardData.packMetrics.map(pack => `
+                    <tr>
+                        <td>${pack.packName}</td>
+                        <td>${pack.totalRules}</td>
+                        <td>${pack.activeRules}</td>
+                        <td>${pack.performanceScore}</td>
+                        <td>${(pack.falsePositiveRate * 100).toFixed(1)}%</td>
+                        <td>${pack.avgScanTime}s</td>
+                        <td>${pack.lastUpdated}</td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>`;
+        }
+    </script>
+</body>
+</html>
+        

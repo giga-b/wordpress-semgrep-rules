@@ -104,6 +104,9 @@ jobs:
         SCAN_OPTS="$SCAN_OPTS --exclude=node_modules/"
         SCAN_OPTS="$SCAN_OPTS --exclude=vendor/"
         SCAN_OPTS="$SCAN_OPTS --exclude=.semgrep/"
+        SCAN_OPTS="$SCAN_OPTS --exclude=tests/"
+        SCAN_OPTS="$SCAN_OPTS --exclude=cursor-extension/test-fixtures/"
+        SCAN_OPTS="$SCAN_OPTS --exclude=vscode-extension/test/"
         
         # Run the scan
         start_time=$(date +%s)
@@ -269,7 +272,7 @@ jobs:
           if [ -f "configs/$config.yaml" ]; then
             echo "Testing $config configuration..."
             start_time=$(date +%s.%N)
-            semgrep scan --config="configs/$config.yaml" --json --output=/dev/null --quiet .
+            semgrep scan --config="configs/$config.yaml" --json --output=/dev/null --quiet --exclude=tests/ --exclude=cursor-extension/test-fixtures/ --exclude=vscode-extension/test/ .
             end_time=$(date +%s.%N)
             duration=$(echo "$end_time - $start_time" | bc)
             echo "$config: ${duration}s" >> performance-results.txt

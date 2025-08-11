@@ -211,7 +211,7 @@ alerts:
 ## Dashboard Interface
 
 ### Main Dashboard Page
-The dashboard is accessible via web browser at `http://localhost:8080` (or custom port).
+The admin dashboard is accessible via web browser at `http://localhost:8080/admin-dashboard.html` (or custom port).
 
 #### Header Section
 - Project title and timestamp

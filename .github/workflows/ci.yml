@@ -72,7 +72,7 @@ jobs:
     
     - name: Security scan of rules
       run: |
-        semgrep scan --config=configs/strict.yaml . --exclude="tests/" --exclude=".git/" --json > security-scan-results.json
+        semgrep scan --config=configs/strict.yaml . --exclude="tests/" --exclude=".git/" --exclude="cursor-extension/test-fixtures/" --exclude="vscode-extension/test/" --json > security-scan-results.json
     
     - name: Upload security results
       uses: actions/upload-artifact@v4

@@ -90,7 +90,7 @@ def capture_screenshots():
     try:
         # Capture user dashboard
         print("Capturing user dashboard screenshot...")
-        driver.get("http://localhost:8000/dashboard/user-dashboard.html")
+        driver.get("http://localhost:8080")
         
         # Wait for page to load
         WebDriverWait(driver, 10).until(
@@ -103,7 +103,7 @@ def capture_screenshots():
         
         # Capture admin dashboard
         print("Capturing admin dashboard screenshot...")
-        driver.get("http://localhost:8000/dashboard/index.html")
+        driver.get("http://localhost:8080/admin-dashboard.html")
         
         # Wait for page to load
         WebDriverWait(driver, 10).until(
