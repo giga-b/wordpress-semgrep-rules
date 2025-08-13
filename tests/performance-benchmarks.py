@@ -31,7 +31,10 @@ import statistics
 from pathlib import Path
 from typing import Dict, List, Any, Optional
 from dataclasses import dataclass, asdict
-import psutil
+try:
+    import psutil  # type: ignore
+except Exception:
+    psutil = None  # Monitoring will be disabled if psutil is unavailable
 import threading
 import queue
 
@@ -40,6 +43,7 @@ class BenchmarkResult:
     """Represents a single benchmark result"""
     config_name: str
     test_path: str
+    scenario_name: str
     iteration: int
     duration: float
     memory_peak: float
@@ -54,6 +58,7 @@ class BenchmarkSummary:
     """Represents benchmark summary statistics"""
     config_name: str
     test_path: str
+    scenario_name: str
     iterations: int
     mean_duration: float
     median_duration: float
@@ -66,6 +71,9 @@ class BenchmarkSummary:
     mean_findings_count: int
     success_rate: float
     total_duration: float
+    # Added explicit averages for easier JSON consumption
+    avg_duration: float
+    avg_memory_peak: float
 
 @dataclass
 class BenchmarkReport:
@@ -90,17 +98,105 @@ class PerformanceBenchmarker:
         self.monitoring_thread = None
         self.monitoring_queue = queue.Queue()
         
+    def _get_semgrep_memory_mb(self) -> float:
+        """Return total RSS memory in MB for semgrep child processes.
+
+        Falls back to current process RSS if no semgrep child is found or psutil is unavailable.
+        """
+        if psutil is None:
+            return 0.0
+        try:
+            parent = psutil.Process()
+            total_rss = 0
+            for child in parent.children(recursive=True):
+                try:
+                    name = ''
+                    cmdline = ''
+                    try:
+                        name = (child.name() or '').lower()
+                    except Exception:
+                        pass
+                    try:
+                        cmdline = ' '.join(child.cmdline()).lower()
+                    except Exception:
+                        pass
+                    if 'semgrep' in name or 'semgrep' in cmdline:
+                        mi = child.memory_info()
+                        total_rss += getattr(mi, 'rss', 0)
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+            if total_rss == 0:
+                # Fallback to current process memory if no semgrep processes detected
+                try:
+                    mi = parent.memory_info()
+                    total_rss = getattr(mi, 'rss', 0)
+                except Exception:
+                    return 0.0
+            return float(total_rss) / 1024.0 / 1024.0
+        except Exception:
+            return 0.0
+
+    def _get_semgrep_cpu_percent(self) -> float:
+        """Return summed CPU percent for semgrep child processes.
+
+        Falls back to current process CPU percent if no semgrep child is found or psutil is unavailable.
+        Uses non-blocking sampling (interval=0.0) and relies on outer loop sleep for cadence.
+        """
+        if psutil is None:
+            return 0.0
+        try:
+            parent = psutil.Process()
+            total_percent = 0.0
+            found = False
+            for child in parent.children(recursive=True):
+                try:
+                    name = ''
+                    cmdline = ''
+                    try:
+                        name = (child.name() or '').lower()
+                    except Exception:
+                        pass
+                    try:
+                        cmdline = ' '.join(child.cmdline()).lower()
+                    except Exception:
+                        pass
+                    if 'semgrep' in name or 'semgrep' in cmdline:
+                        found = True
+                        total_percent += float(child.cpu_percent(interval=0.0))
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+            if not found:
+                try:
+                    return float(parent.cpu_percent(interval=0.0))
+                except Exception:
+                    return 0.0
+            return total_percent
+        except Exception:
+            return 0.0
+
     def _load_config(self, config_path: Optional[str] = None) -> Dict[str, Any]:
-        """Load benchmark configuration"""
+        """Load benchmark configuration and normalize paths relative to script directory"""
+        base_dir = Path(__file__).parent.resolve()
+        project_root = base_dir.parent
+
         default_config = {
             'semgrep_binary': 'semgrep',
-            'rules_path': '../packs/',
-            'tests_path': './',
-            'configs_path': '../configs/',
-            'output_path': './benchmark-results/',
+            'rules_path': str(project_root / 'packs'),
+            'tests_path': str(base_dir),
+            'configs_path': str(project_root / 'configs'),
+            'output_path': str(base_dir / 'benchmark-results'),
+            # Limit scope for performance runs to typical PHP targets and exclude heavy dirs
+            'include_globs': ['**/*.php'],
+            'exclude_paths': ['.git', 'results', 'corpus', 'node_modules', 'vendor'],
+            'jobs': 1,
+            'max_target_bytes': 5000000,
             'iterations': 5,
             'warmup_runs': 2,
             'timeout': 300,  # 5 minutes
+            'regression_thresholds': {
+                'max_duration_regression_pct': 15.0,
+                'max_memory_regression_pct': 10.0
+            },
             'benchmark_configs': [
                 'basic.yaml',
                 'strict.yaml',
@@ -111,27 +207,32 @@ class PerformanceBenchmarker:
             'test_scenarios': [
                 {
                     'name': 'small_test',
-                    'path': 'vulnerable-examples/',
+                    'path': 'vulnerable-examples',
                     'description': 'Small test files'
                 },
                 {
                     'name': 'medium_test',
-                    'path': './',
+                    'path': '.',
                     'description': 'All test files'
                 },
                 {
                     'name': 'large_test',
-                    'path': '../',
+                    'path': str(project_root),
                     'description': 'Entire project'
                 }
             ]
         }
         
         if config_path and os.path.exists(config_path):
-            with open(config_path, 'r') as f:
+            with open(config_path, 'r', encoding='utf-8') as f:
                 custom_config = json.load(f)
                 default_config.update(custom_config)
-                
+
+        # Normalize critical paths to absolute strings
+        for key in ['rules_path', 'tests_path', 'configs_path', 'output_path']:
+            if key in default_config:
+                default_config[key] = str(Path(default_config[key]).resolve())
+        
         return default_config
     
     def run_all_benchmarks(self) -> BenchmarkReport:
@@ -156,7 +257,9 @@ class PerformanceBenchmarker:
                 continue
             
             for scenario in self.config['test_scenarios']:
-                test_path = os.path.join(self.config['tests_path'], scenario['path'])
+                scenario_path = scenario['path']
+                # Allow absolute path in scenario definitions
+                test_path = scenario_path if os.path.isabs(scenario_path) else os.path.join(self.config['tests_path'], scenario_path)
                 
                 if not os.path.exists(test_path):
                     print(f"Warning: Test path not found: {test_path}")
@@ -171,20 +274,20 @@ class PerformanceBenchmarker:
     def _run_warmup(self):
         """Run warmup runs to stabilize performance"""
         warmup_config = os.path.join(self.config['configs_path'], 'basic.yaml')
-        warmup_path = os.path.join(self.config['tests_path'], 'vulnerable-examples/')
+        warmup_path = os.path.join(self.config['tests_path'], 'vulnerable-examples')
         
         for i in range(self.config['warmup_runs']):
             print(f"  Warmup run {i + 1}/{self.config['warmup_runs']}...")
-            self._run_single_benchmark('warmup', warmup_config, warmup_path, 0)
+            self._run_single_benchmark('warmup', warmup_config, warmup_path, 'warmup', 0)
     
     def _run_benchmark(self, config_name: str, config_path: str, test_path: str, scenario_name: str):
         """Run benchmark for a specific configuration and test scenario"""
         for iteration in range(self.config['iterations']):
-            result = self._run_single_benchmark(config_name, config_path, test_path, iteration)
+            result = self._run_single_benchmark(config_name, config_path, test_path, scenario_name, iteration)
             self.results.append(result)
     
     def _run_single_benchmark(self, config_name: str, config_path: str, test_path: str, 
-                            iteration: int) -> BenchmarkResult:
+                            scenario_name: str, iteration: int) -> BenchmarkResult:
         """Run a single benchmark iteration"""
         start_time = time.time()
         
@@ -194,15 +297,43 @@ class PerformanceBenchmarker:
         try:
             # Run semgrep
             cmd = [
-                self.config['semgrep_binary'],
+                self.config['semgrep_binary'], 'scan',
                 '--config', config_path,
                 '--json',
                 '--quiet',
-                test_path
             ]
+
+            # Metrics off to reduce overhead
+            cmd += ['--metrics=off']
+
+            # Apply include globs
+            for g in self.config.get('include_globs', []):
+                cmd += ['--include', g]
+
+            # Apply excludes
+            for ex in self.config.get('exclude_paths', []):
+                cmd += ['--exclude', ex]
+
+            # Constrain resource usage
+            jobs = int(self.config.get('jobs', 0) or 0)
+            if jobs > 0:
+                cmd += ['--jobs', str(jobs)]
+            mtb = int(self.config.get('max_target_bytes', 0) or 0)
+            if mtb > 0:
+                cmd += ['--max-target-bytes', str(mtb)]
+
+            # Target path last
+            cmd += [test_path]
             
-            result = subprocess.run(cmd, capture_output=True, text=True, 
-                                  timeout=self.config['timeout'])
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=self.config['tests_path'],
+                timeout=self.config['timeout'],
+                encoding='utf-8',
+                errors='replace'
+            )
             
             # Stop monitoring
             self._stop_monitoring()
@@ -212,20 +343,26 @@ class PerformanceBenchmarker:
             
             # Parse results
             if result.returncode == 0:
-                findings = json.loads(result.stdout) if result.stdout.strip() else []
-                findings_count = len(findings)
+                parsed = json.loads(result.stdout) if result.stdout.strip() else {}
+                if isinstance(parsed, dict):
+                    findings_count = len(parsed.get('results', []))
+                elif isinstance(parsed, list):
+                    findings_count = len(parsed)
+                else:
+                    findings_count = 0
                 success = True
                 error_message = None
             else:
                 findings_count = 0
                 success = False
-                error_message = result.stderr
+                error_message = result.stderr or 'Semgrep scan failed'
             
             duration = time.time() - start_time
             
             return BenchmarkResult(
                 config_name=config_name,
                 test_path=test_path,
+                scenario_name=scenario_name,
                 iteration=iteration,
                 duration=duration,
                 memory_peak=monitoring_data.get('memory_peak', 0.0),
@@ -243,6 +380,7 @@ class PerformanceBenchmarker:
             return BenchmarkResult(
                 config_name=config_name,
                 test_path=test_path,
+                scenario_name=scenario_name,
                 iteration=iteration,
                 duration=self.config['timeout'],
                 memory_peak=monitoring_data.get('memory_peak', 0.0),
@@ -258,6 +396,7 @@ class PerformanceBenchmarker:
             return BenchmarkResult(
                 config_name=config_name,
                 test_path=test_path,
+                scenario_name=scenario_name,
                 iteration=iteration,
                 duration=time.time() - start_time,
                 memory_peak=0.0,
@@ -270,6 +409,9 @@ class PerformanceBenchmarker:
     
     def _start_monitoring(self):
         """Start performance monitoring in background thread"""
+        # Only start monitoring if psutil is available
+        if psutil is None:
+            return
         self.monitoring_active = True
         self.monitoring_thread = threading.Thread(target=self._monitor_performance)
         self.monitoring_thread.daemon = True
@@ -283,19 +425,21 @@ class PerformanceBenchmarker:
     
     def _monitor_performance(self):
         """Monitor performance metrics in background thread"""
-        process = psutil.Process()
+        if psutil is None:
+            return
         memory_peak = 0.0
         cpu_samples = []
+        last_memory = 0.0
         
         while self.monitoring_active:
             try:
-                # Memory monitoring
-                memory_info = process.memory_info()
-                current_memory = memory_info.rss / 1024 / 1024  # MB
+                # Memory monitoring (sum of semgrep child processes)
+                current_memory = self._get_semgrep_memory_mb()
                 memory_peak = max(memory_peak, current_memory)
+                last_memory = current_memory
                 
                 # CPU monitoring
-                cpu_percent = process.cpu_percent(interval=0.1)
+                cpu_percent = self._get_semgrep_cpu_percent()
                 if cpu_percent > 0:
                     cpu_samples.append(cpu_percent)
                 
@@ -306,7 +450,7 @@ class PerformanceBenchmarker:
         # Store monitoring data
         self.monitoring_queue.put({
             'memory_peak': memory_peak,
-            'memory_final': current_memory if 'current_memory' in locals() else 0.0,
+            'memory_final': last_memory,
             'cpu_percent': statistics.mean(cpu_samples) if cpu_samples else 0.0
         })
     
@@ -331,7 +475,8 @@ class PerformanceBenchmarker:
         benchmark_summaries = []
         for key, results in grouped_results.items():
             config_name, test_path = key.split(':', 1)
-            summary = self._generate_summary(config_name, test_path, results)
+            scenario_name = results[0].scenario_name if results else ''
+            summary = self._generate_summary(config_name, test_path, scenario_name, results)
             benchmark_summaries.append(summary)
         
         # Generate performance rankings
@@ -352,7 +497,7 @@ class PerformanceBenchmarker:
         )
     
     def _generate_summary(self, config_name: str, test_path: str, 
-                         results: List[BenchmarkResult]) -> BenchmarkSummary:
+                         scenario_name: str, results: List[BenchmarkResult]) -> BenchmarkSummary:
         """Generate summary statistics for a group of benchmark results"""
         successful_results = [r for r in results if r.success]
         
@@ -360,6 +505,7 @@ class PerformanceBenchmarker:
             return BenchmarkSummary(
                 config_name=config_name,
                 test_path=test_path,
+                scenario_name=scenario_name,
                 iterations=len(results),
                 mean_duration=0.0,
                 median_duration=0.0,
@@ -371,7 +517,9 @@ class PerformanceBenchmarker:
                 mean_cpu_percent=0.0,
                 mean_findings_count=0,
                 success_rate=0.0,
-                total_duration=sum(r.duration for r in results)
+                total_duration=sum(r.duration for r in results),
+                avg_duration=0.0,
+                avg_memory_peak=0.0
             )
         
         durations = [r.duration for r in successful_results]
@@ -383,6 +531,7 @@ class PerformanceBenchmarker:
         return BenchmarkSummary(
             config_name=config_name,
             test_path=test_path,
+            scenario_name=scenario_name,
             iterations=len(results),
             mean_duration=statistics.mean(durations),
             median_duration=statistics.median(durations),
@@ -394,7 +543,9 @@ class PerformanceBenchmarker:
             mean_cpu_percent=statistics.mean(cpu_percents),
             mean_findings_count=statistics.mean(findings_counts),
             success_rate=len(successful_results) / len(results),
-            total_duration=sum(r.duration for r in results)
+            total_duration=sum(r.duration for r in results),
+            avg_duration=statistics.mean(durations),
+            avg_memory_peak=statistics.mean(memory_peaks)
         )
     
     def _generate_performance_rankings(self, summaries: List[BenchmarkSummary]) -> Dict[str, Any]:
@@ -472,10 +623,93 @@ class PerformanceBenchmarker:
         """Save benchmark report to file"""
         report_dict = asdict(report)
         
-        with open(output_file, 'w') as f:
+        # Ensure output directory exists
+        output_dir = os.path.dirname(output_file)
+        if output_dir:
+            os.makedirs(output_dir, exist_ok=True)
+        
+        with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(report_dict, f, indent=2)
         
         print(f"\nBenchmark report saved to: {output_file}")
+
+    def save_baseline(self, report: BenchmarkReport, baseline_file: Optional[str] = None):
+        """Save a baseline file for future regression comparisons."""
+        output_dir = self.config['output_path']
+        os.makedirs(output_dir, exist_ok=True)
+        baseline_path = baseline_file or os.path.join(output_dir, 'performance-baseline.json')
+        with open(baseline_path, 'w', encoding='utf-8') as f:
+            json.dump(asdict(report), f, indent=2)
+        print(f"Baseline saved to: {baseline_path}")
+
+    def compare_with_baseline(self, report: BenchmarkReport, baseline_file: Optional[str] = None) -> Dict[str, Any]:
+        """Compare current report with stored baseline and detect regressions."""
+        baseline_path = baseline_file or os.path.join(self.config['output_path'], 'performance-baseline.json')
+        if not os.path.exists(baseline_path):
+            return {'status': 'no_baseline', 'message': f'Baseline not found at {baseline_path}'}
+        try:
+            with open(baseline_path, 'r', encoding='utf-8') as f:
+                baseline = json.load(f)
+        except Exception as e:
+            return {'status': 'error', 'message': f'Failed to read baseline: {e}'}
+
+        thresholds = self.config.get('regression_thresholds', {})
+        max_dur_pct = thresholds.get('max_duration_regression_pct', 15.0)
+        max_mem_pct = thresholds.get('max_memory_regression_pct', 10.0)
+
+        # Index summaries by (config_name, test_path)
+        def index_summaries(summaries: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+            idx: Dict[str, Dict[str, Any]] = {}
+            for s in summaries:
+                key = f"{s['config_name']}::{s['test_path']}"
+                idx[key] = s
+            return idx
+
+        current_idx = index_summaries([asdict(s) for s in report.benchmark_summaries])
+        baseline_idx = index_summaries(baseline.get('benchmark_summaries', []))
+
+        regressions: List[Dict[str, Any]] = []
+
+        for key, base in baseline_idx.items():
+            curr = current_idx.get(key)
+            if not curr:
+                continue
+            # Duration regression
+            bdur = max(float(base.get('mean_duration', 0.0)), 0.0)
+            cdur = max(float(curr.get('mean_duration', 0.0)), 0.0)
+            dur_pct = ((cdur - bdur) / bdur * 100.0) if bdur > 0 else 0.0
+
+            # Memory regression (peak)
+            bmem = max(float(base.get('mean_memory_peak', 0.0)), 0.0)
+            cmem = max(float(curr.get('mean_memory_peak', 0.0)), 0.0)
+            mem_pct = ((cmem - bmem) / bmem * 100.0) if bmem > 0 else 0.0
+
+            reg_flags = []
+            if dur_pct > max_dur_pct:
+                reg_flags.append('duration')
+            if mem_pct > max_mem_pct:
+                reg_flags.append('memory')
+            if reg_flags:
+                config_name, test_path = key.split('::', 1)
+                regressions.append({
+                    'config_name': config_name,
+                    'test_path': test_path,
+                    'duration_baseline': bdur,
+                    'duration_current': cdur,
+                    'duration_regression_pct': dur_pct,
+                    'memory_baseline': bmem,
+                    'memory_current': cmem,
+                    'memory_regression_pct': mem_pct,
+                    'dimensions': reg_flags
+                })
+
+        status = 'regressions_found' if regressions else 'no_regressions'
+        return {
+            'status': status,
+            'thresholds': {'duration_pct': max_dur_pct, 'memory_pct': max_mem_pct},
+            'regressions': regressions,
+            'baseline_path': baseline_path
+        }
     
     def generate_html_report(self, report: BenchmarkReport, output_file: str):
         """Generate HTML benchmark report"""
@@ -485,6 +719,60 @@ class PerformanceBenchmarker:
             f.write(html_content)
         
         print(f"HTML benchmark report generated: {output_file}")
+
+    def export_csv(self, report: BenchmarkReport, output_file: str):
+        """Export benchmark summaries to CSV"""
+        import csv
+        rows = []
+        for s in report.benchmark_summaries:
+            rows.append({
+                'config_name': s.config_name,
+                'test_path': s.test_path,
+                'scenario_name': s.scenario_name,
+                'iterations': s.iterations,
+                'mean_duration': f"{s.mean_duration:.6f}",
+                'median_duration': f"{s.median_duration:.6f}",
+                'std_duration': f"{s.std_duration:.6f}",
+                'min_duration': f"{s.min_duration:.6f}",
+                'max_duration': f"{s.max_duration:.6f}",
+                'mean_memory_peak': f"{s.mean_memory_peak:.3f}",
+                'mean_memory_final': f"{s.mean_memory_final:.3f}",
+                'mean_cpu_percent': f"{s.mean_cpu_percent:.2f}",
+                'mean_findings_count': f"{s.mean_findings_count:.2f}",
+                'success_rate': f"{s.success_rate:.4f}",
+                'total_duration': f"{s.total_duration:.6f}"
+            })
+        fieldnames = list(rows[0].keys()) if rows else [
+            'config_name','test_path','scenario_name','iterations','mean_duration','median_duration','std_duration','min_duration','max_duration','mean_memory_peak','mean_memory_final','mean_cpu_percent','mean_findings_count','success_rate','total_duration']
+        with open(output_file, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for r in rows:
+                writer.writerow(r)
+        print(f"CSV benchmark report generated: {output_file}")
+
+    def export_markdown(self, report: BenchmarkReport, output_file: str):
+        """Export a concise Markdown summary report"""
+        lines = []
+        lines.append(f"# Performance Benchmark Report\n")
+        lines.append(f"- Timestamp: {report.timestamp}\n")
+        lines.append(f"- Duration: {report.duration:.2f} seconds\n")
+        lines.append(f"- Total Benchmarks: {report.total_benchmarks}\n")
+        lines.append(f"- Success Rate: {((report.successful_benchmarks / report.total_benchmarks) * 100 if report.total_benchmarks else 0):.1f}%\n")
+        lines.append("\n## Top Fastest Configurations\n")
+        for item in report.performance_rankings.get('fastest_configs', [])[:5]:
+            lines.append(f"- {item['config']} on {os.path.basename(item['test_path'])}: {item['duration']:.2f}s\n")
+        lines.append("\n## Most Memory Efficient\n")
+        for item in report.performance_rankings.get('most_memory_efficient', [])[:5]:
+            lines.append(f"- {item['config']} on {os.path.basename(item['test_path'])}: {item['memory']:.1f}MB\n")
+        lines.append("\n## Summary Table\n")
+        lines.append("| Config | Test Path | Iter | Mean Time (s) | Peak Mem (MB) | CPU (%) | Findings |\n")
+        lines.append("|---|---|---:|---:|---:|---:|---:|\n")
+        for s in report.benchmark_summaries:
+            lines.append(f"| {s.config_name} | {s.scenario_name} | {s.iterations} | {s.mean_duration:.2f} | {s.mean_memory_peak:.1f} | {s.mean_cpu_percent:.1f} | {s.mean_findings_count:.1f} |\n")
+        with open(output_file, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+        print(f"Markdown benchmark report generated: {output_file}")
     
     def _generate_html_content(self, report: BenchmarkReport) -> str:
         """Generate HTML content for the benchmark report"""
@@ -547,7 +835,7 @@ class PerformanceBenchmarker:
         """Generate HTML for a single benchmark summary"""
         return f"""
     <div class="benchmark-summary">
-        <h3>{summary.config_name} - {os.path.basename(summary.test_path)}</h3>
+        <h3>{summary.config_name} - {summary.scenario_name}</h3>
         <p>Duration: {summary.mean_duration:.2f}s ± {summary.std_duration:.2f}s (min: {summary.min_duration:.2f}s, max: {summary.max_duration:.2f}s)</p>
         <p>Memory: {summary.mean_memory_peak:.1f}MB peak, {summary.mean_memory_final:.1f}MB final</p>
         <p>CPU: {summary.mean_cpu_percent:.1f}%</p>
@@ -568,6 +856,11 @@ def main():
     parser.add_argument('--verbose', action='store_true', help='Verbose output')
     parser.add_argument('--json', action='store_true', help='Output results in JSON format')
     parser.add_argument('--html', action='store_true', help='Generate HTML report')
+    parser.add_argument('--csv', action='store_true', help='Export CSV report alongside JSON')
+    parser.add_argument('--md', action='store_true', help='Export Markdown report alongside JSON')
+    parser.add_argument('--baseline', action='store_true', help='Save current run as performance baseline and exit')
+    parser.add_argument('--compare', action='store_true', help='Compare current run against saved baseline and fail on regression')
+    parser.add_argument('--baseline-file', help='Custom baseline file path for save/compare')
     
     args = parser.parse_args()
     
@@ -579,9 +872,9 @@ def main():
         benchmarker.config['rules_path'] = args.rules
     if args.tests:
         benchmarker.config['tests_path'] = args.tests
-    if args.iterations:
+    if args.iterations is not None:
         benchmarker.config['iterations'] = args.iterations
-    if args.warmup:
+    if args.warmup is not None:
         benchmarker.config['warmup_runs'] = args.warmup
     
     # Run benchmarks
@@ -590,19 +883,50 @@ def main():
     # Output results
     output_file = args.output or 'benchmark-results/performance-benchmark-report.json'
     
-    if args.json:
-        benchmarker.save_report(report, output_file)
+    # Always save JSON report to the specified output path
+    benchmarker.save_report(report, output_file)
     
     if args.html:
         html_file = output_file.replace('.json', '.html')
         benchmarker.generate_html_report(report, html_file)
+    if args.csv:
+        csv_file = output_file.replace('.json', '.csv')
+        benchmarker.export_csv(report, csv_file)
+    if args.md:
+        md_file = output_file.replace('.json', '.md')
+        benchmarker.export_markdown(report, md_file)
     
+    # Baseline handling
+    if args.baseline:
+        benchmarker.save_baseline(report, args.baseline_file)
+        print("Baseline saved. Exiting as requested.")
+        sys.exit(0)
+
+    if args.compare:
+        comparison = benchmarker.compare_with_baseline(report, args.baseline_file)
+        if comparison.get('status') == 'no_baseline':
+            print(f"No baseline found at {comparison.get('baseline_path', args.baseline_file)}")
+            sys.exit(2)
+        if comparison.get('status') == 'error':
+            print(f"Error comparing with baseline: {comparison.get('message')}")
+            sys.exit(2)
+        regressions = comparison.get('regressions', [])
+        if regressions:
+            print("\nPerformance regressions detected:")
+            for r in regressions:
+                print(f"  {r['config_name']} on {r['test_path']}: "
+                      f"duration +{r['duration_regression_pct']:.1f}%, memory +{r['memory_regression_pct']:.1f}%")
+            sys.exit(1)
+        else:
+            print("No performance regressions detected.")
+
     # Print summary
     print(f"\nBenchmark Summary:")
     print(f"Total Benchmarks: {report.total_benchmarks}")
     print(f"Successful: {report.successful_benchmarks}")
     print(f"Failed: {report.failed_benchmarks}")
-    print(f"Success Rate: {(report.successful_benchmarks / report.total_benchmarks * 100):.1f}%")
+    success_rate = (report.successful_benchmarks / report.total_benchmarks * 100) if report.total_benchmarks else 0.0
+    print(f"Success Rate: {success_rate:.1f}%")
     print(f"Duration: {report.duration:.2f} seconds")
     
     # Print top performers

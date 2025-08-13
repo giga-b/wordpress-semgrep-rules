@@ -121,7 +121,7 @@
 **Notes**: Successfully implemented comprehensive nonce lifecycle detection rules covering creation, inclusion, verification, and expiration handling. Created 21 rules with proper categorization and severity levels. Tested against safe examples (47 findings) and vulnerable examples (84 findings) with excellent detection rates. Rules cover all major nonce security patterns including wp_create_nonce, wp_nonce_field, wp_verify_nonce, check_ajax_referer, and proper expiration handling.
 
 #### Task 1.6: Comprehensive Test Cases
-- **Status**: ⏳ Pending
+- **Status**: ⏳ In Progress
 - **Owner**: QA Engineer
 - **Effort**: 4 days
 - **Start Date**: 2025-01-XX
@@ -129,13 +129,13 @@
 - **Deliverable**: Comprehensive test suite
 
 **Subtasks:**
-- [ ] Task 1.6.1: Create nonce test cases
-- [ ] Task 1.6.2: Design XSS test scenarios
+- [x] Task 1.6.1: Create nonce test cases
+- [x] Task 1.6.2: Design XSS test scenarios
 - [ ] Task 1.6.3: Implement SQL injection tests
 - [ ] Task 1.6.4: Add file upload tests
 - [ ] Task 1.6.5: Create performance benchmarks
 
-**Progress**: 0% Complete
+**Progress**: 35% Complete
 **Notes**: Depends on Task 1.5 completion.
 
 ### Week 5-6: File Upload Security
@@ -296,7 +296,7 @@
 Integrated across `tests/advanced-testing-framework.py`, `tests/run-corpus-scans.py`, and `tests/benchmark-testing.py`. Result directories standardized.
 
 #### Task 2.5: Performance Benchmarking System
-- **Status**: ⏳ Pending
+- **Status**: ✅ COMPLETE
 - **Owner**: DevOps Engineer
 - **Effort**: 4 days
 - **Start Date**: 2025-01-XX
@@ -304,14 +304,14 @@ Integrated across `tests/advanced-testing-framework.py`, `tests/run-corpus-scans
 - **Deliverable**: Comprehensive performance testing
 
 **Subtasks:**
-- [ ] Task 2.5.1: Fix performance testing scripts
-- [ ] Task 2.5.2: Implement memory usage monitoring
-- [ ] Task 2.5.3: Add CPU usage tracking
-- [ ] Task 2.5.4: Create performance regression detection
-- [ ] Task 2.5.5: Implement performance reporting
+- [x] Task 2.5.1: Fix performance testing scripts
+- [x] Task 2.5.2: Implement memory usage monitoring
+- [x] Task 2.5.3: Add CPU usage tracking
+- [x] Task 2.5.4: Create performance regression detection
+- [x] Task 2.5.5: Implement performance reporting
 
-**Progress**: 0% Complete
-**Notes**: Current performance testing has encoding and timeout issues.
+**Progress**: 100% Complete
+**Notes**: Implemented child-process memory and CPU tracking (psutil), baseline save/compare with regression thresholds, and reporting (JSON, HTML, CSV, Markdown). Added CLI flags: `--baseline`, `--compare`, `--baseline-file`, `--csv`, `--md`, `--html`. Outputs verified in `results/performance/benchmarks/` and `results/performance/comprehensive/`.
 
 #### Task 2.6: Regression Testing Framework
 - **Status**: ⏳ Pending
@@ -322,14 +322,14 @@ Integrated across `tests/advanced-testing-framework.py`, `tests/run-corpus-scans
 - **Deliverable**: Automated regression testing
 
 **Subtasks:**
-- [ ] Task 2.6.1: Design regression testing architecture
-- [ ] Task 2.6.2: Implement baseline comparison
-- [ ] Task 2.6.3: Create change detection system
-- [ ] Task 2.6.4: Add automated alerting
-- [ ] Task 2.6.5: Test regression framework
+- [x] Task 2.6.1: Design regression testing architecture
+ - [x] Task 2.6.2: Implement baseline comparison
+ - [x] Task 2.6.3: Create change detection system
+ - [x] Task 2.6.4: Add automated alerting
+ - [x] Task 2.6.5: Test regression framework
 
-**Progress**: 0% Complete
-**Notes**: Need to implement baseline stability testing.
+ **Progress**: 100% Complete
+**Notes**: Architecture documented in `docs/REGRESSION_TESTING_ARCHITECTURE.md`. Baseline comparison, change detection, and automated alerting implemented in `tests/regression-testing.py`. Validated by saving a baseline and running strict-mode compare; reports generated in `results/regression/` and Step Summary write confirmed. Ready to wire into CI.
 
 ## Key Achievements
 
