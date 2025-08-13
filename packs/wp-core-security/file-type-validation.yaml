@@ -1,0 +1,48 @@
+rules:
+  # Warn when wp_handle_upload is used without prior allowlist validation
+  - id: wordpress.file.upload.missing-type-allowlist
+    languages: [php]
+    message: File upload without explicit type allowlist validation before wp_handle_upload
+    severity: WARNING
+    metadata:
+      category: file-operations
+      cwe: CWE-434
+      vuln_class: file_upload
+      confidence: high
+    patterns:
+      - pattern: |
+          $UPLOAD = wp_handle_upload($FILE, ...)
+      - pattern-not: |
+          $TYPE = wp_check_filetype_and_ext($FILE['tmp_name'], $FILE['name'])
+          if (in_array($TYPE['ext'], $ALLOWED, true)) {
+            $UPLOAD = wp_handle_upload($FILE, ...)
+          }
+      - pattern-not: |
+          $TYPE = wp_check_filetype($FILE['name'])
+          if (in_array($TYPE['ext'], $ALLOWED, true)) {
+            $UPLOAD = wp_handle_upload($FILE, ...)
+          }
+
+  # Error when move_uploaded_file to unsanitized/unsafe destination
+  - id: wordpress.file.upload.unsafe-move-no-sanitize
+    languages: [php]
+    message: move_uploaded_file to destination without sanitize_file_name or wp_unique_filename
+    severity: ERROR
+    metadata:
+      category: file-operations
+      cwe: CWE-434
+      vuln_class: file_upload
+      confidence: high
+    patterns:
+      - pattern: |
+          move_uploaded_file($_FILES[...]['tmp_name'], $DEST)
+      - pattern-not: |
+          move_uploaded_file($_FILES[...]['tmp_name'], sanitize_file_name(...))
+      - pattern-not: |
+          move_uploaded_file($_FILES[...]['tmp_name'], $DIR . '/' . sanitize_file_name(...))
+      - pattern-not: |
+          move_uploaded_file($_FILES[...]['tmp_name'], wp_unique_filename($UPLOADS['path'], ...))
+      - pattern-not: |
+          move_uploaded_file($_FILES[...]['tmp_name'], $UPLOADS['path'] . '/' . wp_unique_filename($UPLOADS['path'], ...))
+
+

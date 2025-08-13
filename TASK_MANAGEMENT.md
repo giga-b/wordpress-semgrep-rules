@@ -152,14 +152,14 @@
 - **Deliverable**: File upload security rules
 
 **Subtasks:**
-- [ ] Task 1.7.1: Analyze file upload patterns
+- [x] Task 1.7.1: Analyze file upload patterns
 - [ ] Task 1.7.2: Design file type validation rules
 - [ ] Task 1.7.3: Implement size limit detection
 - [ ] Task 1.7.4: Create path traversal detection
 - [ ] Task 1.7.5: Add malware scanning integration
 
 **Progress**: 0% Complete
-**Notes**: Will leverage corpus for testing file upload patterns.
+**Notes**: Analysis completed for sources/sinks/validations (type allowlist, sanitize file name, unique name, safe upload dir, is_uploaded_file), and contexts (AJAX/REST/generic). Identified gaps for type validation before wp_handle_upload and direct move.
 
 #### Task 1.8: Advanced File Upload Rules
 - **Status**: ⏳ Pending

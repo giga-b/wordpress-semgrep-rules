@@ -1,0 +1,86 @@
+rules:
+- id: wp-ajax-unsafe-file-upload-simple
+  languages: [php]
+  message: AJAX handler uses move_uploaded_file without validation
+  severity: ERROR
+  metadata:
+    category: ajax-security
+    cwe: CWE-434
+    vuln_class: file_upload
+  pattern-either:
+    - patterns:
+        - pattern: |
+            add_action('wp_ajax_$ACTION', '$HANDLER');
+        - pattern-inside: |
+            function $HANDLER(...) {
+              ...
+              $FILE = $_FILES[...];
+              move_uploaded_file($FILE['tmp_name'], $FILE['name']);
+              ...
+            }
+    - patterns:
+        - pattern: |
+            add_action('wp_ajax_$ACTION', '$HANDLER');
+        - pattern-inside: |
+            function $HANDLER(...) {
+              ...
+              move_uploaded_file($_FILES[...]['tmp_name'], $_FILES[...]['name']);
+              ...
+            }
+
+- id: wordpress.file.unsafe-upload-generic
+  languages: [php]
+  message: Unsafe file upload handling; validate type and use wp_handle_upload
+  severity: ERROR
+  metadata:
+    category: file-operations
+    cwe: CWE-434
+    vuln_class: file_upload
+  patterns:
+    - pattern: |
+        move_uploaded_file($_FILES[...]['tmp_name'], $DEST)
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], sanitize_file_name(...))
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], $DIR . '/' . sanitize_file_name(...))
+    # Restrict common safe upload APIs as destination to avoid FP
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], $UPLOAD['file'])
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], $UPLOAD['url'])
+    # Allowlist WordPress upload dir + unique filename combinations
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], $UPLOADS['path'] . '/' . sanitize_file_name(...))
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], wp_unique_filename($UPLOADS['path'], ...))
+    - pattern-not: |
+        move_uploaded_file($_FILES[...]['tmp_name'], $UPLOADS['path'] . '/' . wp_unique_filename($UPLOADS['path'], ...))
+
+- id: wordpress.file.safe-upload-patterns
+  languages: [php]
+  message: Safe file upload handling detected
+  severity: INFO
+  metadata:
+    category: file-operations
+    cwe: CWE-434
+    vuln_class: file_upload
+  pattern-either:
+    - patterns:
+        - pattern-inside: |
+            function $HANDLER(...) {
+              ...
+              $UPLOAD = wp_handle_upload(...);
+              ...
+            }
+        - pattern: |
+            $UPLOAD = wp_handle_upload(...);
+    - patterns:
+        - pattern-inside: |
+            function $HANDLER(...) {
+              ...
+              wp_handle_upload(...);
+              ...
+            }
+        - pattern: |
+            wp_handle_upload(...);
+
