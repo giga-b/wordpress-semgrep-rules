@@ -1,0 +1,6 @@
+rules:
+- id: wordpress.experimental.control.echo-any
+  message: "Control: any echo"
+  severity: INFO
+  languages: [php]
+  pattern: echo $X;

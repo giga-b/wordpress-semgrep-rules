@@ -1,134 +1,210 @@
 rules:
-  # Comprehensive AJAX Action Detection
-  # This rule detects various AJAX action registration patterns for cross-file analysis
-  
-  # Standard AJAX action registration
-  - id: wordpress.ajax.action-registration-standard
-    message: "Standard AJAX action registration: $ACTION -> $CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: |
+- id: wordpress.ajax.action-registration-standard
+  message: 'Standard AJAX action registration: $ACTION -> $CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: 'add_action(''wp_ajax_$ACTION'', ''$CALLBACK'');'
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects standard WordPress AJAX action registrations for logged-in users. Used for cross-file analysis to identify AJAX endpoints.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-nopriv
+  message: 'Nopriv AJAX action registration: $ACTION -> $CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: 'add_action(''wp_ajax_nopriv_$ACTION'', ''$CALLBACK'');'
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects WordPress AJAX action registrations for non-logged-in users. These require special security attention as they''re publicly accessible.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-both
+  message: 'AJAX action registration for both users: $ACTION -> $CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: |
       add_action('wp_ajax_$ACTION', '$CALLBACK');
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects standard WordPress AJAX action registrations for logged-in users.
-        Used for cross-file analysis to identify AJAX endpoints.
-    
-  # Nopriv AJAX action registration (non-logged-in users)
-  - id: wordpress.ajax.action-registration-nopriv
-    message: "Nopriv AJAX action registration: $ACTION -> $CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: |
       add_action('wp_ajax_nopriv_$ACTION', '$CALLBACK');
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects WordPress AJAX action registrations for non-logged-in users.
-        These require special security attention as they're publicly accessible.
-    
-  # Both logged-in and non-logged-in users
-  - id: wordpress.ajax.action-registration-both
-    message: "AJAX action registration for both users: $ACTION -> $CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_$ACTION', '$CALLBACK');
-      add_action('wp_ajax_nopriv_$ACTION', '$CALLBACK');
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects AJAX actions registered for both logged-in and non-logged-in users.
-        These require careful security consideration.
-    
-  # Array-style callback registration
-  - id: wordpress.ajax.action-registration-array
-    message: "AJAX action registration (array style): $ACTION -> $OBJECT->$CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_$ACTION', array($OBJECT, '$CALLBACK'));
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects AJAX action registrations using array syntax for object methods.
-        Used for cross-file analysis to identify object method callbacks.
-    
-  # Nopriv array-style callback registration
-  - id: wordpress.ajax.action-registration-nopriv-array
-    message: "Nopriv AJAX action registration (array style): $ACTION -> $OBJECT->$CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_nopriv_$ACTION', array($OBJECT, '$CALLBACK'));
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects nopriv AJAX action registrations using array syntax for object methods.
-        These are publicly accessible and require special security attention.
-    
-  # Anonymous function callback registration
-  - id: wordpress.ajax.action-registration-anonymous
-    message: "AJAX action registration (anonymous function): $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_$ACTION', function() {
-        ...
-      });
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects AJAX action registrations using anonymous functions.
-        These are harder to analyze for security issues.
-    
-  # Nopriv anonymous function callback registration
-  - id: wordpress.ajax.action-registration-nopriv-anonymous
-    message: "Nopriv AJAX action registration (anonymous function): $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_nopriv_$ACTION', function() {
-        ...
-      });
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects nopriv AJAX action registrations using anonymous functions.
-        These are publicly accessible and harder to analyze for security issues.
-    
-  # AJAX action registration with priority
-  - id: wordpress.ajax.action-registration-priority
-    message: "AJAX action registration with priority: $ACTION -> $CALLBACK (priority: $PRIORITY)"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_$ACTION', '$CALLBACK', $PRIORITY);
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects AJAX action registrations with custom priority.
-        Used for cross-file analysis to identify AJAX endpoints.
-    
-  # Nopriv AJAX action registration with priority
-  - id: wordpress.ajax.action-registration-nopriv-priority
-    message: "Nopriv AJAX action registration with priority: $ACTION -> $CALLBACK (priority: $PRIORITY)"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_nopriv_$ACTION', '$CALLBACK', $PRIORITY);
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
-      description: |
-        Detects nopriv AJAX action registrations with custom priority.
-        These are publicly accessible and require special security attention.
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects AJAX actions registered for both logged-in and non-logged-in users. These require careful security consideration.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-array
+  message: 'AJAX action registration (array style): $ACTION -> $OBJECT->$CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: 'add_action(''wp_ajax_$ACTION'', array($OBJECT, ''$CALLBACK''));'
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects AJAX action registrations using array syntax for object methods. Used for cross-file analysis to identify object method callbacks.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-nopriv-array
+  message: 'Nopriv AJAX action registration (array style): $ACTION -> $OBJECT->$CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: 'add_action(''wp_ajax_nopriv_$ACTION'', array($OBJECT, ''$CALLBACK''));'
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects nopriv AJAX action registrations using array syntax for object methods. These are publicly accessible and require special security attention.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-anonymous
+  message: 'AJAX action registration (anonymous function): $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: "add_action('wp_ajax_$ACTION', function() { ... });"
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects AJAX action registrations using anonymous functions. These are harder to analyze for security issues.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-nopriv-anonymous
+  message: 'Nopriv AJAX action registration (anonymous function): $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: "add_action('wp_ajax_nopriv_$ACTION', function() { ... });"
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects nopriv AJAX action registrations using anonymous functions. These are publicly accessible and harder to analyze for security issues.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-priority
+  message: 'AJAX action registration with priority: $ACTION -> $CALLBACK (priority: $PRIORITY)'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: 'add_action(''wp_ajax_$ACTION'', ''$CALLBACK'', $PRIORITY);'
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects AJAX action registrations with custom priority. Used for cross-file analysis to identify AJAX endpoints.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.action-registration-nopriv-priority
+  message: 'Nopriv AJAX action registration with priority: $ACTION -> $CALLBACK (priority: $PRIORITY)'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+  - pattern: 'add_action(''wp_ajax_nopriv_$ACTION'', ''$CALLBACK'', $PRIORITY);'
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    description: 'Detects nopriv AJAX action registrations with custom priority. These are publicly accessible and require special security attention.'
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax

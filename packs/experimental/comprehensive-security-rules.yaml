@@ -1,105 +1,212 @@
 rules:
-  # SQL injection in conditional blocks
-  - id: php-conditional-sql-injection
-    message: "SQL injection in conditional control flow"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (date('N') == 6 && date('H') > 14) {
-        ...
-        $sql = "SELECT * FROM {$wpdb->users} WHERE user_login = '$user_input'";
-        $wpdb->get_results($sql);
-      }
-    
-  # Obfuscated SSRF via function names
-  - id: php-safe-function-ssrf
-    message: "SSRF via function with misleading name"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      function safe_data_fetcher() {
-        ...
-        wp_remote_get($url);
-      }
-    
-  # Insecure deserialization
-  - id: php-object-injection
-    message: "Potential object injection via unserialize"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (strpos($config, 'O:') === 0) {
-        return maybe_unserialize($config);
-      }
-    
-  # Weak randomness
-  - id: php-weak-token-generation
-    message: "Weak token generation using mt_rand and md5"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      $token = md5(mt_rand() . microtime(true) . $_SERVER['REMOTE_ADDR']);
-    
-  # Path traversal in obfuscated functions
-  - id: php-resolve-path-traversal
-    message: "Path traversal via resolve_file_path function"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      function resolve_file_path($input) {
-        ...
-        file_get_contents($file_path);
-      }
-    
-  # Time-based conditional vulnerability
-  - id: php-time-based-vuln
-    message: "Time-based conditional vulnerability"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      if (date('N') == 3 && date('H') == 15 && date('i') > 30) {
-        ...
-        $_POST['avt_special'];
-      }
-    
-  # Static state vulnerabilities
-  - id: php-static-state-xss
-    message: "XSS via static state variables"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      self::$state['processed_data'] = $processed;
-      ...
-      echo "<span>$item</span>";
-    
-  # WordPress REST API without auth
-  - id: php-wp-rest-no-auth
-    message: "WordPress REST API endpoint without authentication"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      register_rest_route('avt/v1', '/config', [
-        'methods' => 'GET',
-        'callback' => [$this, 'get_config'],
-        'permission_callback' => '__return_true'
-      ]);
-    
-  # Misleading function names
-  - id: php-misleading-function-names
-    message: "Function with misleading name contains vulnerability"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      function generate_secure_token() {
-        ...
-        $token = md5($seed);
-      }
-    
-  # Callback chain vulnerabilities
-  - id: php-callback-chain-vuln
-    message: "Vulnerability in callback chain"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      add_filter('the_content', [$this, 'content_processor']);
-      add_shortcode('avt_display', [$this, 'shortcode_handler']);
+- id: php-conditional-sql-injection
+  message: SQL injection in conditional control flow
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (date('N') == 6 && date('H') > 14) {\n  ...\n  $sql = \"SELECT * FROM\
+    \ {$wpdb->users} WHERE user_login = '$user_input'\";\n  $wpdb->get_results($sql);\n\
+    }\n"
+  metadata:
+    confidence: high
+    cwe: CWE-89
+    category: security
+    tags:
+    - wordpress
+    - error
+    - sql-injection
+    - database
+    - security
+    - wpdb
+    - sqli
+    vuln_class: sqli
+- id: php-safe-function-ssrf
+  message: SSRF via function with misleading name
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function safe_data_fetcher() {\n  ...\n  wp_remote_get($url);\n}\n"
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-object-injection
+  message: Potential object injection via unserialize
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (strpos($config, 'O:') === 0) {\n  return maybe_unserialize($config);\n\
+    }\n"
+  metadata:
+    confidence: high
+    cwe: CWE-502
+    category: security
+    tags:
+    - wordpress
+    - eval
+    - error
+    - deserialization
+    - security
+    - dynamic-execution
+    vuln_class: deserialization
+- id: php-weak-token-generation
+  message: Weak token generation using mt_rand and md5
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$token = md5(mt_rand() . microtime(true) . $_SERVER[''REMOTE_ADDR'']);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - warning
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-resolve-path-traversal
+  message: Path traversal via resolve_file_path function
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function resolve_file_path($input) {\n  ...\n  file_get_contents($file_path);\n\
+    }\n"
+  metadata:
+    confidence: high
+    cwe: CWE-434
+    category: security
+    tags:
+    - wordpress
+    - file_upload
+    - validation
+    - error
+    - path-traversal
+    - security
+    - file-upload
+    vuln_class: file_upload
+- id: php-time-based-vuln
+  message: Time-based conditional vulnerability
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (date('N') == 3 && date('H') == 15 && date('i') > 30) {\n  ...\n  $_POST['avt_special'];\n\
+    }\n"
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-static-state-xss
+  message: XSS via static state variables
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'self::$state[''processed_data''] = $processed;
+
+    ...
+
+    echo "<span>$item</span>";
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-79
+    category: security
+    tags:
+    - html
+    - wordpress
+    - error
+    - escaping
+    - security
+    - xss
+    vuln_class: xss
+- id: php-wp-rest-no-auth
+  message: WordPress REST API endpoint without authentication
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: "register_rest_route('avt/v1', '/config', [\n  'methods' => 'GET',\n  'callback'\
+    \ => [$this, 'get_config'],\n  'permission_callback' => '__return_true'\n]);\n"
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-misleading-function-names
+  message: Function with misleading name contains vulnerability
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function generate_secure_token() {\n  ...\n  $token = md5($seed);\n}\n"
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-callback-chain-vuln
+  message: Vulnerability in callback chain
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'add_filter(''the_content'', [$this, ''content_processor'']);
+
+    add_shortcode(''avt_display'', [$this, ''shortcode_handler'']);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other

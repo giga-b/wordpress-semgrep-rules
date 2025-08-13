@@ -1,181 +1,236 @@
 rules:
-  # Nonce Creation Rules
-  - id: wordpress.nonce.insecure-creation
-    languages: [php]
-    message: "Nonce created with predictable or empty action. Use a specific, unique action name."
-    severity: WARNING
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: wp_create_nonce("")
-      - pattern: wp_create_nonce("action")
-      - pattern: wp_create_nonce("nonce")
-      - pattern: wp_create_nonce("token")
-      - pattern: wp_create_nonce($variable)
+- id: wordpress.nonce.insecure-creation
+  languages:
+  - php
+  message: Nonce created with predictable or empty action. Use a specific, unique
+    action name.
+  severity: WARNING
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    vuln_class: csrf
+    tags:
+    - nonce
+    - csrf
+    - security
+  patterns:
+  - pattern: wp_create_nonce("")
+  - pattern: wp_create_nonce("action")
+  - pattern: wp_create_nonce("nonce")
+  - pattern: wp_create_nonce("token")
+  - pattern: wp_create_nonce($variable)
+- id: wordpress.nonce.missing-verification
+  languages:
+  - php
+  message: Nonce verification is missing. Use wp_verify_nonce() to verify the nonce
+    before processing form data.
+  severity: ERROR
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    vuln_class: csrf
+    tags:
+    - nonce
+    - csrf
+    - security
+  patterns:
+  - pattern: "if (isset($_POST['submit'])) {\n  $data = $_POST['data'];\n}\n"
+  - pattern-not: "if (isset($_POST['submit'])) {\n  if (wp_verify_nonce($_POST['_wpnonce'],\
+      \ 'action_name')) {\n    $data = $_POST['data'];\n  }\n}\n"
+- id: wordpress.nonce.weak-verification
+  languages:
+  - php
+  message: Nonce verification is weak. Check the return value of wp_verify_nonce()
+    explicitly.
+  severity: WARNING
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: 'wp_verify_nonce($_POST[''_wpnonce''], ''action_name'');
 
-  # Nonce Verification Rules
-  - id: wordpress.nonce.missing-verification
-    languages: [php]
-    message: "Nonce verification is missing. Use wp_verify_nonce() to verify the nonce before processing form data."
-    severity: ERROR
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          if (isset($_POST['submit'])) {
-            $data = $_POST['data'];
-          }
-      - pattern-not: |
-          if (isset($_POST['submit'])) {
-            if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
-              $data = $_POST['data'];
-            }
-          }
+      $data = $_POST[''data''];
 
-  - id: wordpress.nonce.weak-verification
-    languages: [php]
-    message: "Nonce verification is weak. Check the return value of wp_verify_nonce() explicitly."
-    severity: WARNING
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          wp_verify_nonce($_POST['_wpnonce'], 'action_name');
-          $data = $_POST['data'];
-      - pattern-not: |
-          if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
-            $data = $_POST['data'];
-          }
+      '
+  - pattern-not: "if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {\n  $data\
+      \ = $_POST['data'];\n}\n"
+- id: wordpress.nonce.wrong-action
+  languages:
+  - php
+  message: Nonce verification uses wrong action name. Ensure action name matches the
+    one used in creation.
+  severity: ERROR
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: 'wp_create_nonce(''specific_action'');
 
-  - id: wordpress.nonce.wrong-action
-    languages: [php]
-    message: "Nonce verification uses wrong action name. Ensure action name matches the one used in creation."
-    severity: ERROR
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          wp_create_nonce('specific_action');
-          ...
-          wp_verify_nonce($_POST['_wpnonce'], 'different_action');
+      ...
 
-  # AJAX Nonce Rules
-  - id: wordpress.nonce.ajax-missing
-    languages: [php]
-    message: "AJAX request missing nonce verification. Use check_ajax_referer() or wp_verify_nonce()."
-    severity: ERROR
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            $data = $_POST['data'];
-          }
-      - pattern-not: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            check_ajax_referer('my_nonce_action', 'nonce');
-            $data = $_POST['data'];
-          }
+      wp_verify_nonce($_POST[''_wpnonce''], ''different_action'');
 
-  - id: wordpress.nonce.ajax-weak
-    languages: [php]
-    message: "AJAX nonce verification is weak. Use check_ajax_referer() with proper action name."
-    severity: WARNING
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: check_ajax_referer("")
-      - pattern: check_ajax_referer("action")
-      - pattern: check_ajax_referer($variable)
-
-  # REST API Nonce Rules
-  - id: wordpress.nonce.rest-missing
-    languages: [php]
-    message: "REST API endpoint missing nonce verification. Use wp_verify_nonce() or check_ajax_referer()."
-    severity: ERROR
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          register_rest_route('my-namespace/v1', '/endpoint', array(
-            'methods' => 'POST',
-            'callback' => 'my_rest_callback',
-            'permission_callback' => '__return_true'
-          ));
-          function my_rest_callback($request) {
-            $data = $request->get_param('data');
-          }
-      - pattern-not: |
-          register_rest_route('my-namespace/v1', '/endpoint', array(
-            'methods' => 'POST',
-            'callback' => 'my_rest_callback',
-            'permission_callback' => 'my_permission_callback'
-          ));
-          function my_permission_callback($request) {
-            return wp_verify_nonce($request->get_header('X-WP-Nonce'), 'wp_rest');
-          }
-
-  # Nonce Lifecycle Rules
-  - id: wordpress.nonce.expired-check
-    languages: [php]
-    message: "Nonce expiration not handled. Check for nonce expiration and provide user feedback."
-    severity: WARNING
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          if (!wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
-            die('Invalid nonce');
-          }
-      - pattern-not: |
-          if (!wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
-            if (wp_verify_nonce($_POST['_wpnonce'], 'action_name') === false) {
-              wp_die('Nonce expired. Please try again.');
-            } else {
-              wp_die('Invalid nonce.');
-            }
-          }
-
-  # Nonce Security Best Practices
-  - id: wordpress.nonce.hardcoded-action
-    languages: [php]
-    message: "Hardcoded nonce action name. Use a descriptive, unique action name for better security."
-    severity: INFO
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: wp_create_nonce("action")
-      - pattern: wp_verify_nonce($_POST['_wpnonce'], "action")
-      - pattern: wp_nonce_field("action")
-
-  # Missing nonce field in forms
-  - id: wordpress.nonce.missing-nonce-field
-    languages: [php]
-    message: "Form processing without nonce field. Add wp_nonce_field() to forms for security."
-    severity: ERROR
-    metadata:
-      category: "nonce-verification"
-      cwe: "CWE-352"
-    patterns:
-      - pattern: |
-          if (isset($_POST['submit'])) {
-            // Process form data
-            $data = $_POST['data'];
-          }
-      - pattern-not: |
-          if (isset($_POST['submit'])) {
-            if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
-              $data = $_POST['data'];
-            }
-          }
+      '
+- id: wordpress.nonce.ajax-missing
+  languages:
+  - php
+  message: AJAX request missing nonce verification. Use check_ajax_referer() or wp_verify_nonce().
+  severity: ERROR
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: "add_action('wp_ajax_my_action', 'my_ajax_handler');\nfunction my_ajax_handler()\
+      \ {\n  $data = $_POST['data'];\n}\n"
+  - pattern-not: "add_action('wp_ajax_my_action', 'my_ajax_handler');\nfunction my_ajax_handler()\
+      \ {\n  check_ajax_referer('my_nonce_action', 'nonce');\n  $data = $_POST['data'];\n\
+      }\n"
+- id: wordpress.nonce.ajax-weak
+  languages:
+  - php
+  message: AJAX nonce verification is weak. Use check_ajax_referer() with proper action
+    name.
+  severity: WARNING
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: check_ajax_referer("")
+  - pattern: check_ajax_referer("action")
+  - pattern: check_ajax_referer($variable)
+- id: wordpress.nonce.rest-missing
+  languages:
+  - php
+  message: REST API endpoint missing nonce verification. Use wp_verify_nonce() or
+    check_ajax_referer().
+  severity: ERROR
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: "register_rest_route('my-namespace/v1', '/endpoint', array(\n  'methods'\
+      \ => 'POST',\n  'callback' => 'my_rest_callback',\n  'permission_callback' =>\
+      \ '__return_true'\n));\nfunction my_rest_callback($request) {\n  $data = $request->get_param('data');\n\
+      }\n"
+  - pattern-not: "register_rest_route('my-namespace/v1', '/endpoint', array(\n  'methods'\
+      \ => 'POST',\n  'callback' => 'my_rest_callback',\n  'permission_callback' =>\
+      \ 'my_permission_callback'\n));\nfunction my_permission_callback($request) {\n\
+      \  return wp_verify_nonce($request->get_header('X-WP-Nonce'), 'wp_rest');\n\
+      }\n"
+- id: wordpress.nonce.expired-check
+  languages:
+  - php
+  message: Nonce expiration not handled. Check for nonce expiration and provide user
+    feedback.
+  severity: WARNING
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: "if (!wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {\n  die('Invalid\
+      \ nonce');\n}\n"
+  - pattern-not: "if (!wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {\n  if\
+      \ (wp_verify_nonce($_POST['_wpnonce'], 'action_name') === false) {\n    wp_die('Nonce\
+      \ expired. Please try again.');\n  } else {\n    wp_die('Invalid nonce.');\n\
+      \  }\n}\n"
+- id: wordpress.nonce.hardcoded-action
+  languages:
+  - php
+  message: Hardcoded nonce action name. Use a descriptive, unique action name for
+    better security.
+  severity: INFO
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: wp_create_nonce("action")
+  - pattern: wp_verify_nonce($_POST['_wpnonce'], "action")
+  - pattern: wp_nonce_field("action")
+- id: wordpress.nonce.missing-nonce-field
+  languages:
+  - php
+  message: Form processing without nonce field. Add wp_nonce_field() to forms for
+    security.
+  severity: ERROR
+  metadata:
+    category: nonce-verification
+    cwe: CWE-352
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+  patterns:
+  - pattern: "if (isset($_POST['submit'])) {\n  // Process form data\n  $data = $_POST['data'];\n\
+      }\n"
+  - pattern-not: "if (isset($_POST['submit'])) {\n  if (wp_verify_nonce($_POST['_wpnonce'],\
+      \ 'action_name')) {\n    $data = $_POST['data'];\n  }\n}\n"

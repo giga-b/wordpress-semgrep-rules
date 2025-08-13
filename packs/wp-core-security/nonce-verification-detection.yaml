@@ -1,90 +1,143 @@
 rules:
-  # Nonce Verification Detection
-  # This rule detects nonce verification patterns in functions for cross-file analysis
-  
-  - id: wordpress.nonce.verification-check-ajax-referer
-    message: "Nonce verification using check_ajax_referer detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        check_ajax_referer('$NONCE_ACTION', '$NONCE_FIELD');
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use check_ajax_referer() for nonce verification.
-        Used for cross-file analysis to identify properly secured AJAX handlers.
-    
-  - id: wordpress.nonce.verification-wp-verify-nonce
-    message: "Nonce verification using wp_verify_nonce detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        if (wp_verify_nonce($_POST['$NONCE_FIELD'], '$NONCE_ACTION')) {
-          ...
-        }
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use wp_verify_nonce() for nonce verification.
-        Used for cross-file analysis to identify properly secured AJAX handlers.
-    
-  - id: wordpress.nonce.verification-wp-verify-nonce-direct
-    message: "Nonce verification using wp_verify_nonce (direct) detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        wp_verify_nonce($_POST['$NONCE_FIELD'], '$NONCE_ACTION');
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use wp_verify_nonce() directly without if statement.
-        Note: This pattern is less secure as it doesn't check the return value.
-    
-  - id: wordpress.nonce.verification-check-admin-referer
-    message: "Nonce verification using check_admin_referer detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        check_admin_referer('$NONCE_ACTION');
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use check_admin_referer() for nonce verification.
-        Used for cross-file analysis to identify properly secured admin handlers.
-    
-  - id: wordpress.nonce.verification-wp-nonce-ays
-    message: "Nonce verification using wp_nonce_ays detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        wp_nonce_ays('$NONCE_ACTION');
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use wp_nonce_ays() for nonce verification.
-        Used for cross-file analysis to identify properly secured action handlers.
+- id: wordpress.nonce.verification-check-ajax-referer
+  message: 'Nonce verification using check_ajax_referer detected in function: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  check_ajax_referer('$NONCE_ACTION',\
+    \ '$NONCE_FIELD');\n  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    description: 'Detects functions that use check_ajax_referer() for nonce verification.
+
+      Used for cross-file analysis to identify properly secured AJAX handlers.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-wp-verify-nonce
+  message: 'Nonce verification using wp_verify_nonce detected in function: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  if (wp_verify_nonce($_POST['$NONCE_FIELD'],\
+    \ '$NONCE_ACTION')) {\n    ...\n  }\n  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    description: 'Detects functions that use wp_verify_nonce() for nonce verification.
+
+      Used for cross-file analysis to identify properly secured AJAX handlers.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-wp-verify-nonce-direct
+  message: 'Nonce verification using wp_verify_nonce (direct) detected in function:
+    $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  wp_verify_nonce($_POST['$NONCE_FIELD'],\
+    \ '$NONCE_ACTION');\n  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    description: 'Detects functions that use wp_verify_nonce() directly without if
+      statement.
+
+      Note: This pattern is less secure as it doesn''t check the return value.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-check-admin-referer
+  message: 'Nonce verification using check_admin_referer detected in function: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  check_admin_referer('$NONCE_ACTION');\n\
+    \  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    description: 'Detects functions that use check_admin_referer() for nonce verification.
+
+      Used for cross-file analysis to identify properly secured admin handlers.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-wp-nonce-ays
+  message: 'Nonce verification using wp_nonce_ays detected in function: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  wp_nonce_ays('$NONCE_ACTION');\n\
+    \  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    description: 'Detects functions that use wp_nonce_ays() for nonce verification.
+
+      Used for cross-file analysis to identify properly secured action handlers.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf

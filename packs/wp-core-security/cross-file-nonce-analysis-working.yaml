@@ -1,135 +1,253 @@
 rules:
-  # Cross-File Nonce Lifecycle Analysis (Working Version)
-  # This rule detects AJAX actions that are registered but lack proper nonce verification
-  
-  # AJAX Action Registration Detection
-  - id: wordpress.cross-file.ajax-action-registration
-    message: "AJAX action registration detected: $ACTION -> $CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: add_action($ACTION, $CALLBACK)
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects WordPress AJAX action registrations for cross-file analysis.
-        Used to identify AJAX endpoints that may lack security checks.
-    
-  # AJAX Nopriv Action Registration Detection
-  - id: wordpress.cross-file.ajax-nopriv-action-registration
-    message: "AJAX nopriv action registration detected: $ACTION -> $CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: add_action($ACTION, $CALLBACK)
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects WordPress AJAX nopriv action registrations for cross-file analysis.
-        These actions are accessible to non-logged-in users and require special security attention.
-    
-  # AJAX Action Registration with Array Callback
-  - id: wordpress.cross-file.ajax-action-array-callback
-    message: "AJAX action registration (array style): $ACTION -> $OBJECT->$CALLBACK"
-    severity: INFO
-    languages: [php]
-    pattern: add_action($ACTION, array($OBJECT, $CALLBACK))
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects AJAX action registrations using array syntax for object methods.
-        Used for cross-file analysis to identify object method callbacks.
-    
-  # Function Definition Detection
-  - id: wordpress.cross-file.function-definition
-    message: "Function definition detected: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-      }
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects function definitions for cross-file analysis.
-        Used to trace callback functions and their security implementations.
-    
-  # Nonce Verification Detection
-  - id: wordpress.cross-file.nonce-verification-check-ajax-referer
-    message: "Nonce verification using check_ajax_referer detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        check_ajax_referer('$NONCE_ACTION', '$NONCE_FIELD');
-        ...
-      }
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use check_ajax_referer() for nonce verification.
-        Used for cross-file analysis to identify properly secured AJAX handlers.
-    
-  # Nonce Verification with wp_verify_nonce
-  - id: wordpress.cross-file.nonce-verification-wp-verify-nonce
-    message: "Nonce verification using wp_verify_nonce detected in function: $FUNCTION_NAME"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        if (wp_verify_nonce($_POST['$NONCE_FIELD'], '$NONCE_ACTION')) {
-          ...
-        }
-        ...
-      }
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects functions that use wp_verify_nonce() for nonce verification.
-        Used for cross-file analysis to identify properly secured AJAX handlers.
-    
-  # Nonce Creation Detection
-  - id: wordpress.cross-file.nonce-creation-wp-create-nonce
-    message: "Nonce creation using wp_create_nonce detected: $CREATE_ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: wp_create_nonce('$CREATE_ACTION')
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects nonce creation using wp_create_nonce().
-        Used for cross-file analysis to identify nonce creation patterns.
-    
-  # Nonce Field Creation Detection
-  - id: wordpress.cross-file.nonce-creation-wp-nonce-field
-    message: "Nonce field creation using wp_nonce_field detected: $CREATE_ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: wp_nonce_field('$CREATE_ACTION')
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects nonce field creation using wp_nonce_field().
-        Used for cross-file analysis to identify nonce field generation.
-    
-  # Nonce URL Creation Detection
-  - id: wordpress.cross-file.nonce-creation-wp-nonce-url
-    message: "Nonce URL creation using wp_nonce_url detected: $CREATE_ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: wp_nonce_url('$URL', '$CREATE_ACTION')
-    metadata:
-      category: "cross-file-analysis"
-      technology: ["wordpress"]
-      description: |
-        Detects nonce URL creation using wp_nonce_url().
-        Used for cross-file analysis to identify nonce URL generation.
+- id: wordpress.cross-file.ajax-action-registration
+  message: 'AJAX action registration detected: $ACTION -> $CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: add_action($ACTION, $CALLBACK)
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects WordPress AJAX action registrations for cross-file analysis.
+
+      Used to identify AJAX endpoints that may lack security checks.
+
+      '
+    confidence: high
+    cwe: CWE-434
+    tags:
+    - file-upload
+    - wordpress
+    - file_upload
+    - info
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+- id: wordpress.cross-file.ajax-nopriv-action-registration
+  message: 'AJAX nopriv action registration detected: $ACTION -> $CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: add_action($ACTION, $CALLBACK)
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects WordPress AJAX nopriv action registrations for cross-file
+      analysis.
+
+      These actions are accessible to non-logged-in users and require special security
+      attention.
+
+      '
+    confidence: high
+    cwe: CWE-434
+    tags:
+    - file-upload
+    - wordpress
+    - file_upload
+    - info
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+- id: wordpress.cross-file.ajax-action-array-callback
+  message: 'AJAX action registration (array style): $ACTION -> $OBJECT->$CALLBACK'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: add_action($ACTION, array($OBJECT, $CALLBACK))
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects AJAX action registrations using array syntax for object
+      methods.
+
+      Used for cross-file analysis to identify object method callbacks.
+
+      '
+    confidence: high
+    cwe: CWE-434
+    tags:
+    - file-upload
+    - wordpress
+    - file_upload
+    - info
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+- id: wordpress.cross-file.function-definition
+  message: 'Function definition detected: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n}\n"
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects function definitions for cross-file analysis.
+
+      Used to trace callback functions and their security implementations.
+
+      '
+    confidence: high
+    cwe: CWE-434
+    tags:
+    - file-upload
+    - wordpress
+    - file_upload
+    - info
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+- id: wordpress.cross-file.nonce-verification-check-ajax-referer
+  message: 'Nonce verification using check_ajax_referer detected in function: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  check_ajax_referer('$NONCE_ACTION',\
+    \ '$NONCE_FIELD');\n  ...\n}\n"
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects functions that use check_ajax_referer() for nonce verification.
+
+      Used for cross-file analysis to identify properly secured AJAX handlers.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.cross-file.nonce-verification-wp-verify-nonce
+  message: 'Nonce verification using wp_verify_nonce detected in function: $FUNCTION_NAME'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  if (wp_verify_nonce($_POST['$NONCE_FIELD'],\
+    \ '$NONCE_ACTION')) {\n    ...\n  }\n  ...\n}\n"
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects functions that use wp_verify_nonce() for nonce verification.
+
+      Used for cross-file analysis to identify properly secured AJAX handlers.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.cross-file.nonce-creation-wp-create-nonce
+  message: 'Nonce creation using wp_create_nonce detected: $CREATE_ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: wp_create_nonce('$CREATE_ACTION')
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects nonce creation using wp_create_nonce().
+
+      Used for cross-file analysis to identify nonce creation patterns.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.cross-file.nonce-creation-wp-nonce-field
+  message: 'Nonce field creation using wp_nonce_field detected: $CREATE_ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: wp_nonce_field('$CREATE_ACTION')
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects nonce field creation using wp_nonce_field().
+
+      Used for cross-file analysis to identify nonce field generation.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.cross-file.nonce-creation-wp-nonce-url
+  message: 'Nonce URL creation using wp_nonce_url detected: $CREATE_ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: wp_nonce_url('$URL', '$CREATE_ACTION')
+  metadata:
+    category: cross-file-analysis
+    technology:
+    - wordpress
+    description: 'Detects nonce URL creation using wp_nonce_url().
+
+      Used for cross-file analysis to identify nonce URL generation.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf

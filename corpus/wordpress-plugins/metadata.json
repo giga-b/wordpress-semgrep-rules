@@ -126,5 +126,81 @@
     "file_size": 174574,
     "source": "local",
     "type": "plugin"
-  }
+  },
+  "components": [
+    {
+      "name": "fluent-form",
+      "slug": "fluentform",
+      "type": "form_builder",
+      "main_file": "fluentform\\fluentform.php",
+      "version": "6.0.4",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/techjewel/\">Shahjahan Jewel</a>",
+      "size_mb": 28.384516716003418
+    },
+    {
+      "name": "fluent-crm",
+      "slug": "fluent-crm",
+      "type": "crm",
+      "main_file": "fluent-crm\\fluent-crm.php",
+      "version": "2.9.65",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/techjewel/\">Shahjahan Jewel</a>",
+      "size_mb": 14.03441047668457
+    },
+    {
+      "name": "monster-insights",
+      "slug": "google-analytics-for-wordpress",
+      "type": "analytics",
+      "main_file": "google-analytics-for-wordpress\\googleanalytics.php",
+      "version": "9.7.0",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/chriscct7/\">chriscct7</a>",
+      "size_mb": 18.856661796569824
+    },
+    {
+      "name": "block-visibility",
+      "slug": "block-visibility",
+      "type": "blocks",
+      "main_file": "block-visibility\\block-visibility.php",
+      "version": "3.7.1",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/ndiego/\">Nick Diego</a>",
+      "size_mb": 1.0319643020629883
+    },
+    {
+      "name": "event-manager",
+      "slug": "events-manager",
+      "type": "events",
+      "main_file": "events-manager\\events-manager.php",
+      "version": "7.0.5",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/netweblogic/\">Marcus (aka @msykes)</a>",
+      "size_mb": 18.219017028808594
+    },
+    {
+      "name": "publish-press",
+      "slug": "publishpress",
+      "type": "publishing",
+      "main_file": "publishpress\\publishpress.php",
+      "version": "4.7.2",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/publishpress/\">PublishPress</a>",
+      "size_mb": 9.623997688293457
+    },
+    {
+      "name": "code-snippets",
+      "slug": "code-snippets",
+      "type": "development",
+      "main_file": "code-snippets\\code-snippets.php",
+      "version": "3.6.8",
+      "description": "",
+      "author": "<a href=\"https://profiles.wordpress.org/codesnippetspro/\">Code Snippets Pro</a>",
+      "size_mb": 1.2458200454711914
+    }
+  ],
+  "total_components": 7,
+  "total_size_mb": 91.39638805389404,
+  "last_updated": "2025-08-11 21:08:17",
+  "source": "mixed"
 }

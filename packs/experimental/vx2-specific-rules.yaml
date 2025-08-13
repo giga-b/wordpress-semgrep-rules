@@ -1,81 +1,209 @@
 rules:
-  # WordPress wpdb prepare misuse
-  - id: php-wpdb-prepare-misuse
-    message: "Misuse of wpdb->prepare with string interpolation"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $wpdb->prepare("... $...");
-    
-  # REST API without authentication
-  - id: php-rest-no-auth-vx2
-    message: "REST API endpoint without authentication"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      'permission_callback' => '__return_true'
-    
-  # Insecure deserialization
-  - id: php-maybe-unserialize
-    message: "Potential insecure deserialization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      maybe_unserialize($...);
-    
-  # Weak randomness
-  - id: php-weak-randomness-vx2
-    message: "Weak randomness generation"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      $token = md5($raw);
-    
-  # Path traversal
-  - id: php-path-traversal-vx2
-    message: "Potential path traversal"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $full = $base . $path;
-      file_get_contents($full);
-    
-  # XSS via unescaped output
-  - id: php-xss-unescaped
-    message: "XSS via unescaped output"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo "<div class=\"notice\">{$data['html']}</div>";
-    
-  # Open redirect
-  - id: php-open-redirect
-    message: "Potential open redirect"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      wp_safe_redirect($opt['redirect']);
-    
-  # Header injection
-  - id: php-header-injection
-    message: "Potential header injection"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      header('X-User: ' . $_POST['x_user']);
-    
-  # SSRF via wp_remote_request
-  - id: php-ssrf-wp-remote
-    message: "Potential SSRF via wp_remote_request"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      wp_remote_request($url, $args);
-    
-  # Zip slip vulnerability
-  - id: php-zip-slip
-    message: "Potential Zip Slip vulnerability"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $zip->extractTo($dest);
+- id: php-wpdb-prepare-misuse
+  message: Misuse of wpdb->prepare with string interpolation
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$wpdb->prepare("... $...");
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-89
+    category: security
+    tags:
+    - wordpress
+    - error
+    - sql-injection
+    - database
+    - security
+    - wpdb
+    - sqli
+    vuln_class: sqli
+- id: php-rest-no-auth-vx2
+  message: REST API endpoint without authentication
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: "register_rest_route($ROUTE, ['permission_callback' => '__return_true'])"
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-maybe-unserialize
+  message: Potential insecure deserialization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'maybe_unserialize($VARIABLE);'
+  metadata:
+    confidence: high
+    cwe: CWE-502
+    category: security
+    tags:
+    - wordpress
+    - eval
+    - error
+    - deserialization
+    - security
+    - dynamic-execution
+    vuln_class: deserialization
+- id: php-weak-randomness-vx2
+  message: Weak randomness generation
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$token = md5($raw);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-path-traversal-vx2
+  message: Potential path traversal
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$full = $base . $path;
+
+    file_get_contents($full);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-434
+    category: security
+    tags:
+    - wordpress
+    - file_upload
+    - validation
+    - error
+    - path-traversal
+    - security
+    - file-upload
+    vuln_class: file_upload
+- id: php-xss-unescaped
+  message: XSS via unescaped output
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'echo "<div class=\"notice\">{$data[''html'']}</div>";
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-79
+    category: security
+    tags:
+    - html
+    - wordpress
+    - error
+    - escaping
+    - security
+    - xss
+    vuln_class: xss
+- id: php-open-redirect
+  message: Potential open redirect
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_safe_redirect($opt[''redirect'']);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - warning
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-header-injection
+  message: Potential header injection
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'header(''X-User: '' . $_POST[''x_user'']);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-ssrf-wp-remote
+  message: Potential SSRF via wp_remote_request
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_remote_request($url, $args);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-zip-slip
+  message: Potential Zip Slip vulnerability
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$zip->extractTo($dest);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other

@@ -1,0 +1,78 @@
+# WordPress Semgrep Rules Quality Control Configuration
+# This file defines the minimum quality standards for all rules in the project
+
+global_targets:
+  precision_min: 0.95
+  recall_min: 0.95
+  fp_rate_max: 0.05
+  fn_rate_max: 0.05
+  test_coverage_min: 1.0         # 100%
+  baseline_stability_min: 0.99
+  autofix_safety_min: 0.95
+  require_confidence: "high"
+
+class_targets:
+  xss:
+    precision_min: 0.95
+    recall_min: 0.90
+    description: "Cross-site scripting detection with context awareness"
+  sqli:
+    precision_min: 0.95
+    recall_min: 0.95
+    description: "SQL injection detection including wpdb misuse"
+  csrf:
+    precision_min: 0.95
+    recall_min: 0.95
+    description: "CSRF/nonce lifecycle detection"
+  authz:
+    precision_min: 0.92
+    recall_min: 0.90
+    description: "Authorization and capability checks"
+  file_upload:
+    precision_min: 0.95
+    recall_min: 0.90
+    description: "File upload and path traversal detection"
+  deserialization:
+    precision_min: 0.95
+    recall_min: 0.95
+    description: "Unsafe deserialization and dynamic execution"
+  secrets_storage:
+    precision_min: 0.95
+    recall_min: 0.95
+    description: "Secrets in options/meta detection"
+  rest_ajax:
+    precision_min: 0.95
+    recall_min: 0.95
+    description: "REST/AJAX endpoint security"
+
+# Rule promotion criteria
+promotion_criteria:
+  experimental_to_core:
+    min_tests: 10
+    min_corpus_findings: 5
+    max_false_positives: 2
+    confidence_required: "high"
+    review_required: true
+  
+  core_to_production:
+    min_tests: 20
+    min_corpus_findings: 10
+    max_false_positives: 1
+    confidence_required: "high"
+    performance_benchmark_passed: true
+    documentation_complete: true
+
+# Testing requirements
+testing_requirements:
+  positive_tests_min: 1
+  negative_tests_min: 1
+  edge_case_tests_min: 1
+  performance_test_required: true
+  regression_test_required: true
+
+# Corpus validation
+corpus_validation:
+  min_components: 5
+  min_total_size_mb: 10
+  diversity_required: true
+  version_coverage: "latest"

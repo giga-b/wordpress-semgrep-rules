@@ -1,456 +1,713 @@
 rules:
-  # Missing Sanitization Rules
-  - id: wordpress.sanitization.missing-input
-    languages: [php]
-    message: "User input not sanitized. Use appropriate WordPress sanitization functions before using user data."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $data = $_POST['user_input'];
-          echo $data;
-      - pattern-not: |
-          $data = sanitize_text_field($_POST['user_input']);
-          echo $data;
-      - pattern-not: |
-          $data = wp_kses_post($_POST['user_input']);
-          echo $data;
-      - pattern-not: |
-          $data = esc_html($_POST['user_input']);
-          echo $data;
+- id: wordpress.sanitization.missing-input
+  languages:
+  - php
+  message: User input not sanitized. Use appropriate WordPress sanitization functions
+    before using user data.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$data = $_POST[''user_input''];
 
-  - id: wordpress.sanitization.missing-get
-    languages: [php]
-    message: "GET parameter not sanitized. Use sanitize_text_field() or appropriate sanitization for GET data."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $param = $_GET['parameter'];
-          $wpdb->query("SELECT * FROM table WHERE id = '$param'");
-      - pattern-not: |
-          $param = sanitize_text_field($_GET['parameter']);
-          $wpdb->prepare("SELECT * FROM table WHERE id = %s", $param);
+      echo $data;
 
-  - id: wordpress.sanitization.missing-request
-    languages: [php]
-    message: "REQUEST data not sanitized. Always sanitize REQUEST data before use."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $data = $_REQUEST['input'];
-          update_option('setting', $data);
-      - pattern-not: |
-          $data = sanitize_text_field($_REQUEST['input']);
-          update_option('setting', $data);
+      '
+  - pattern-not: '$data = sanitize_text_field($_POST[''user_input'']);
 
-  # Database Operations Without Sanitization
-  - id: wordpress.sanitization.unsafe-db-query
-    languages: [php]
-    message: "Database query with unsanitized input. Use $wpdb->prepare() for safe database operations."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $user_input = $_POST['search'];
-          $wpdb->query("SELECT * FROM posts WHERE title LIKE '%$user_input%'");
-      - pattern-not: |
-          $user_input = sanitize_text_field($_POST['search']);
-          $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", '%' . $wpdb->esc_like($user_input) . '%');
+      echo $data;
 
-  - id: wordpress.sanitization.unsafe-insert
-    languages: [php]
-    message: "Database insert with unsanitized data. Use $wpdb->prepare() for safe inserts."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $title = $_POST['title'];
-          $wpdb->insert('posts', array('title' => $title));
-      - pattern-not: |
-          $title = sanitize_text_field($_POST['title']);
-          $wpdb->insert('posts', array('title' => $title));
+      '
+  - pattern-not: '$data = wp_kses_post($_POST[''user_input'']);
 
-  # Output Without Escaping
-  - id: wordpress.sanitization.unsafe-output
-    languages: [php]
-    message: "Unsafe output without escaping. Use esc_html(), esc_attr(), or wp_kses_post() for safe output."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $user_data = $_POST['content'];
-          echo $user_data;
-      - pattern-not: |
-          $user_data = wp_kses_post($_POST['content']);
-          echo $user_data;
-      - pattern-not: |
-          $user_data = esc_html($_POST['content']);
-          echo $user_data;
+      echo $data;
 
-  - id: wordpress.sanitization.unsafe-attribute
-    languages: [php]
-    message: "Unsafe attribute output. Use esc_attr() for HTML attributes."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $value = $_GET['param'];
-          echo "<input value='$value'>";
-      - pattern-not: |
-          $value = esc_attr($_GET['param']);
-          echo "<input value='$value'>";
+      '
+  - pattern-not: '$data = esc_html($_POST[''user_input'']);
 
-  # File Operations Without Sanitization
-  - id: wordpress.sanitization.unsafe-file-path
-    languages: [php]
-    message: "Unsafe file path usage. Use sanitize_file_name() for file operations."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-22"
-    patterns:
-      - pattern: |
-          $filename = $_POST['filename'];
-          $file = fopen($filename, 'r');
-      - pattern-not: |
-          $filename = sanitize_file_name($_POST['filename']);
-          $file = fopen($filename, 'r');
+      echo $data;
 
-  - id: wordpress.sanitization.unsafe-include
-    languages: [php]
-    message: "Unsafe include/require with user input. Validate and sanitize file paths."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-98"
-    patterns:
-      - pattern: |
-          $page = $_GET['page'];
-          include($page . '.php');
-      - pattern-not: |
-          $page = sanitize_text_field($_GET['page']);
-          if (in_array($page, array('allowed1', 'allowed2'))) {
-            include($page . '.php');
-          }
+      '
+- id: wordpress.sanitization.missing-get
+  languages:
+  - php
+  message: GET parameter not sanitized. Use sanitize_text_field() or appropriate sanitization
+    for GET data.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$param = $_GET[''parameter''];
 
-  # URL Operations Without Sanitization
-  - id: wordpress.sanitization.unsafe-url
-    languages: [php]
-    message: "Unsafe URL usage. Use esc_url() for URLs and validate with wp_http_validate_url()."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-601"
-    patterns:
-      - pattern: |
-          $url = $_POST['redirect_url'];
-          wp_redirect($url);
-      - pattern-not: |
-          $url = esc_url_raw($_POST['redirect_url']);
-          if (wp_http_validate_url($url)) {
-            wp_redirect($url);
-          }
+      $wpdb->query("SELECT * FROM table WHERE id = ''$param''");
 
-  - id: wordpress.sanitization.unsafe-link
-    languages: [php]
-    message: "Unsafe link output. Use esc_url() for link href attributes."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-601"
-    patterns:
-      - pattern: |
-          $link = $_GET['link'];
-          echo "<a href='$link'>Click here</a>";
-      - pattern-not: |
-          $link = esc_url($_GET['link']);
-          echo "<a href='$link'>Click here</a>";
+      '
+  - pattern-not: '$param = sanitize_text_field($_GET[''parameter'']);
 
-  # Email Operations Without Sanitization
-  - id: wordpress.sanitization.unsafe-email
-    languages: [php]
-    message: "Unsafe email usage. Use sanitize_email() for email addresses."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $email = $_POST['email'];
-          wp_mail($email, 'Subject', 'Message');
-      - pattern-not: |
-          $email = sanitize_email($_POST['email']);
-          if (is_email($email)) {
-            wp_mail($email, 'Subject', 'Message');
-          }
+      $wpdb->prepare("SELECT * FROM table WHERE id = %s", $param);
 
-  # JSON Operations Without Sanitization
-  - id: wordpress.sanitization.unsafe-json
-    languages: [php]
-    message: "Unsafe JSON output. Use wp_json_encode() and esc_html() for JSON data."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $data = $_POST['json_data'];
-          echo json_encode($data);
-      - pattern-not: |
-          $data = sanitize_text_field($_POST['json_data']);
-          echo wp_json_encode($data);
+      '
+- id: wordpress.sanitization.missing-request
+  languages:
+  - php
+  message: REQUEST data not sanitized. Always sanitize REQUEST data before use.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$data = $_REQUEST[''input''];
 
-  # Improper Sanitization Usage
-  - id: wordpress.sanitization.wrong-function
-    languages: [php]
-    message: "Wrong sanitization function for context. Use appropriate function for the data type and usage."
-    severity: WARNING
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $html_content = $_POST['content'];
-          $sanitized = sanitize_text_field($html_content);
-          echo $sanitized;
-      - pattern-not: |
-          $html_content = $_POST['content'];
-          $sanitized = wp_kses_post($html_content);
-          echo $sanitized;
+      update_option(''setting'', $data);
 
-  - id: wordpress.sanitization.double-sanitization
-    languages: [php]
-    message: "Unnecessary double sanitization. Avoid sanitizing already sanitized data."
-    severity: WARNING
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $data = sanitize_text_field($_POST['input']);
-          $data = sanitize_text_field($data);
-      - pattern-not: |
-          $data = sanitize_text_field($_POST['input']);
+      '
+  - pattern-not: '$data = sanitize_text_field($_REQUEST[''input'']);
 
-  # Missing Validation
-  - id: wordpress.sanitization.missing-validation
-    languages: [php]
-    message: "Sanitization without validation. Validate data before sanitizing for better security."
-    severity: WARNING
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-20"
-    patterns:
-      - pattern: |
-          $email = sanitize_email($_POST['email']);
-          wp_mail($email, 'Subject', 'Message');
-      - pattern-not: |
-          $email = sanitize_email($_POST['email']);
-          if (is_email($email)) {
-            wp_mail($email, 'Subject', 'Message');
-          }
+      update_option(''setting'', $data);
 
-  # AJAX Sanitization
-  - id: wordpress.sanitization.ajax-missing
-    languages: [php]
-    message: "AJAX handler missing sanitization. Always sanitize AJAX input data."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            $data = $_POST['data'];
-            echo $data;
-          }
-      - pattern-not: |
-          add_action('wp_ajax_my_action', 'my_ajax_handler');
-          function my_ajax_handler() {
-            $data = sanitize_text_field($_POST['data']);
-            echo esc_html($data);
-          }
+      '
+- id: wordpress.sanitization.unsafe-db-query
+  languages:
+  - php
+  message: Database query with unsanitized input. Use $wpdb->prepare() for safe database
+    operations.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$user_input = $_POST[''search''];
 
-  # REST API Sanitization
-  - id: wordpress.sanitization.rest-missing
-    languages: [php]
-    message: "REST API endpoint missing sanitization. Sanitize all input parameters in REST callbacks."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          register_rest_route('myplugin/v1', '/data', array(
-            'callback' => 'my_rest_callback',
-            'methods' => 'POST'
-          ));
-          function my_rest_callback($request) {
-            $data = $request->get_param('data');
-            return $data;
-          }
-      - pattern-not: |
-          register_rest_route('myplugin/v1', '/data', array(
-            'callback' => 'my_rest_callback',
-            'methods' => 'POST'
-          ));
-          function my_rest_callback($request) {
-            $data = sanitize_text_field($request->get_param('data'));
-            return $data;
-          }
+      $wpdb->query("SELECT * FROM posts WHERE title LIKE ''%$user_input%''");
 
-  # Options/Settings Sanitization
-  - id: wordpress.sanitization.options-missing
-    languages: [php]
-    message: "Options update without sanitization. Always sanitize data before saving to options."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          if (isset($_POST['save_settings'])) {
-            update_option('my_setting', $_POST['setting_value']);
-          }
-      - pattern-not: |
-          if (isset($_POST['save_settings'])) {
-            update_option('my_setting', sanitize_text_field($_POST['setting_value']));
-          }
+      '
+  - pattern-not: '$user_input = sanitize_text_field($_POST[''search'']);
 
-  # User Meta Sanitization
-  - id: wordpress.sanitization.usermeta-missing
-    languages: [php]
-    message: "User meta update without sanitization. Sanitize data before updating user meta."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $user_id = get_current_user_id();
-          update_user_meta($user_id, 'custom_field', $_POST['value']);
-      - pattern-not: |
-          $user_id = get_current_user_id();
-          update_user_meta($user_id, 'custom_field', sanitize_text_field($_POST['value']));
+      $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", ''%'' . $wpdb->esc_like($user_input)
+      . ''%'');
 
-  # Post Meta Sanitization
-  - id: wordpress.sanitization.postmeta-missing
-    languages: [php]
-    message: "Post meta update without sanitization. Sanitize data before updating post meta."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $post_id = $_POST['post_id'];
-          update_post_meta($post_id, 'custom_field', $_POST['value']);
-      - pattern-not: |
-          $post_id = intval($_POST['post_id']);
-          update_post_meta($post_id, 'custom_field', sanitize_text_field($_POST['value']));
+      '
+- id: wordpress.sanitization.unsafe-insert
+  languages:
+  - php
+  message: Database insert with unsanitized data. Use $wpdb->prepare() for safe inserts.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$title = $_POST[''title''];
 
-  # Comment Sanitization
-  - id: wordpress.sanitization.comment-missing
-    languages: [php]
-    message: "Comment data without sanitization. Use wp_filter_comment() for comment sanitization."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $comment_data = array(
-            'comment_content' => $_POST['comment'],
-            'comment_author' => $_POST['author']
-          );
-          wp_insert_comment($comment_data);
-      - pattern-not: |
-          $comment_data = array(
-            'comment_content' => wp_filter_comment($_POST['comment']),
-            'comment_author' => sanitize_text_field($_POST['author'])
-          );
-          wp_insert_comment($comment_data);
+      $wpdb->insert(''posts'', array(''title'' => $title));
 
-  # Search Sanitization
-  - id: wordpress.sanitization.search-missing
-    languages: [php]
-    message: "Search query without sanitization. Use sanitize_text_field() for search terms."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $search_term = $_GET['s'];
-          $query = new WP_Query(array('s' => $search_term));
-      - pattern-not: |
-          $search_term = sanitize_text_field($_GET['s']);
-          $query = new WP_Query(array('s' => $search_term));
+      '
+  - pattern-not: '$title = sanitize_text_field($_POST[''title'']);
 
-  # Upload Sanitization
-  - id: wordpress.sanitization.upload-missing
-    languages: [php]
-    message: "File upload without proper validation. Use wp_handle_upload() and validate file types."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-434"
-    patterns:
-      - pattern: |
-          $uploaded_file = $_FILES['file'];
-          move_uploaded_file($uploaded_file['tmp_name'], $uploaded_file['name']);
-      - pattern-not: |
-          $uploaded_file = $_FILES['file'];
-          $upload_overrides = array('test_form' => false);
-          $moved_file = wp_handle_upload($uploaded_file, $upload_overrides);
+      $wpdb->insert(''posts'', array(''title'' => $title));
 
-  # Cookie Sanitization
-  - id: wordpress.sanitization.cookie-missing
-    languages: [php]
-    message: "Cookie data without sanitization. Always sanitize cookie data before use."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          $cookie_value = $_COOKIE['user_preference'];
-          echo $cookie_value;
-      - pattern-not: |
-          $cookie_value = sanitize_text_field($_COOKIE['user_preference']);
-          echo esc_html($cookie_value);
+      '
+- id: wordpress.sanitization.unsafe-output
+  languages:
+  - php
+  message: Unsafe output without escaping. Use esc_html(), esc_attr(), or wp_kses_post()
+    for safe output.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+  patterns:
+  - pattern: '$user_data = $_POST[''content''];
 
-  # Session Sanitization
-  - id: wordpress.sanitization.session-missing
-    languages: [php]
-    message: "Session data without sanitization. Sanitize session data before use."
-    severity: ERROR
-    metadata:
-      category: "sanitization-functions"
-      cwe: "CWE-79"
-    patterns:
-      - pattern: |
-          session_start();
-          $session_data = $_SESSION['user_data'];
-          echo $session_data;
-      - pattern-not: |
-          session_start();
-          $session_data = sanitize_text_field($_SESSION['user_data']);
-          echo esc_html($session_data);
+      echo $user_data;
+
+      '
+  - pattern-not: '$user_data = wp_kses_post($_POST[''content'']);
+
+      echo $user_data;
+
+      '
+  - pattern-not: '$user_data = esc_html($_POST[''content'']);
+
+      echo $user_data;
+
+      '
+- id: wordpress.sanitization.unsafe-attribute
+  languages:
+  - php
+  message: Unsafe attribute output. Use esc_attr() for HTML attributes.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+  patterns:
+  - pattern: '$value = $_GET[''param''];
+
+      echo "<input value=''$value''>";
+
+      '
+  - pattern-not: '$value = esc_attr($_GET[''param'']);
+
+      echo "<input value=''$value''>";
+
+      '
+- id: wordpress.sanitization.unsafe-file-path
+  languages:
+  - php
+  message: Unsafe file path usage. Use sanitize_file_name() for file operations.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-22
+    confidence: high
+    tags:
+    - error
+    - file-upload
+    - wordpress
+    - file_upload
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+  patterns:
+  - pattern: '$filename = $_POST[''filename''];
+
+      $file = fopen($filename, ''r'');
+
+      '
+  - pattern-not: '$filename = sanitize_file_name($_POST[''filename'']);
+
+      $file = fopen($filename, ''r'');
+
+      '
+- id: wordpress.sanitization.unsafe-include
+  languages:
+  - php
+  message: Unsafe include/require with user input. Validate and sanitize file paths.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-98
+    confidence: high
+    tags:
+    - error
+    - file-upload
+    - wordpress
+    - file_upload
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+  patterns:
+  - pattern: '$page = $_GET[''page''];
+
+      include($page . ''.php'');
+
+      '
+  - pattern-not: "$page = sanitize_text_field($_GET['page']);\nif (in_array($page,\
+      \ array('allowed1', 'allowed2'))) {\n  include($page . '.php');\n}\n"
+- id: wordpress.sanitization.unsafe-url
+  languages:
+  - php
+  message: Unsafe URL usage. Use esc_url() for URLs and validate with wp_http_validate_url().
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-601
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+  patterns:
+  - pattern: '$url = $_POST[''redirect_url''];
+
+      wp_redirect($url);
+
+      '
+  - pattern-not: "$url = esc_url_raw($_POST['redirect_url']);\nif (wp_http_validate_url($url))\
+      \ {\n  wp_redirect($url);\n}\n"
+- id: wordpress.sanitization.unsafe-link
+  languages:
+  - php
+  message: Unsafe link output. Use esc_url() for link href attributes.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-601
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+  patterns:
+  - pattern: '$link = $_GET[''link''];
+
+      echo "<a href=''$link''>Click here</a>";
+
+      '
+  - pattern-not: '$link = esc_url($_GET[''link'']);
+
+      echo "<a href=''$link''>Click here</a>";
+
+      '
+- id: wordpress.sanitization.unsafe-email
+  languages:
+  - php
+  message: Unsafe email usage. Use sanitize_email() for email addresses.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$email = $_POST[''email''];
+
+      wp_mail($email, ''Subject'', ''Message'');
+
+      '
+  - pattern-not: "$email = sanitize_email($_POST['email']);\nif (is_email($email))\
+      \ {\n  wp_mail($email, 'Subject', 'Message');\n}\n"
+- id: wordpress.sanitization.unsafe-json
+  languages:
+  - php
+  message: Unsafe JSON output. Use wp_json_encode() and esc_html() for JSON data.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+  patterns:
+  - pattern: '$data = $_POST[''json_data''];
+
+      echo json_encode($data);
+
+      '
+  - pattern-not: '$data = sanitize_text_field($_POST[''json_data'']);
+
+      echo wp_json_encode($data);
+
+      '
+- id: wordpress.sanitization.wrong-function
+  languages:
+  - php
+  message: Wrong sanitization function for context. Use appropriate function for the
+    data type and usage.
+  severity: WARNING
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - warning
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$html_content = $_POST[''content''];
+
+      $sanitized = sanitize_text_field($html_content);
+
+      echo $sanitized;
+
+      '
+  - pattern-not: '$html_content = $_POST[''content''];
+
+      $sanitized = wp_kses_post($html_content);
+
+      echo $sanitized;
+
+      '
+- id: wordpress.sanitization.double-sanitization
+  languages:
+  - php
+  message: Unnecessary double sanitization. Avoid sanitizing already sanitized data.
+  severity: WARNING
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - warning
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$data = sanitize_text_field($_POST[''input'']);
+
+      $data = sanitize_text_field($data);
+
+      '
+  - pattern-not: '$data = sanitize_text_field($_POST[''input'']);
+
+      '
+- id: wordpress.sanitization.missing-validation
+  languages:
+  - php
+  message: Sanitization without validation. Validate data before sanitizing for better
+    security.
+  severity: WARNING
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-20
+    confidence: high
+    tags:
+    - warning
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$email = sanitize_email($_POST[''email'']);
+
+      wp_mail($email, ''Subject'', ''Message'');
+
+      '
+  - pattern-not: "$email = sanitize_email($_POST['email']);\nif (is_email($email))\
+      \ {\n  wp_mail($email, 'Subject', 'Message');\n}\n"
+- id: wordpress.sanitization.ajax-missing
+  languages:
+  - php
+  message: AJAX handler missing sanitization. Always sanitize AJAX input data.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+  patterns:
+  - pattern: "add_action('wp_ajax_my_action', 'my_ajax_handler');\nfunction my_ajax_handler()\
+      \ {\n  $data = $_POST['data'];\n  echo $data;\n}\n"
+  - pattern-not: "add_action('wp_ajax_my_action', 'my_ajax_handler');\nfunction my_ajax_handler()\
+      \ {\n  $data = sanitize_text_field($_POST['data']);\n  echo esc_html($data);\n\
+      }\n"
+- id: wordpress.sanitization.rest-missing
+  languages:
+  - php
+  message: REST API endpoint missing sanitization. Sanitize all input parameters in
+    REST callbacks.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: "register_rest_route('myplugin/v1', '/data', array(\n  'callback' =>\
+      \ 'my_rest_callback',\n  'methods' => 'POST'\n));\nfunction my_rest_callback($request)\
+      \ {\n  $data = $request->get_param('data');\n  return $data;\n}\n"
+  - pattern-not: "register_rest_route('myplugin/v1', '/data', array(\n  'callback'\
+      \ => 'my_rest_callback',\n  'methods' => 'POST'\n));\nfunction my_rest_callback($request)\
+      \ {\n  $data = sanitize_text_field($request->get_param('data'));\n  return $data;\n\
+      }\n"
+- id: wordpress.sanitization.options-missing
+  languages:
+  - php
+  message: Options update without sanitization. Always sanitize data before saving
+    to options.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: "if (isset($_POST['save_settings'])) {\n  update_option('my_setting',\
+      \ $_POST['setting_value']);\n}\n"
+  - pattern-not: "if (isset($_POST['save_settings'])) {\n  update_option('my_setting',\
+      \ sanitize_text_field($_POST['setting_value']));\n}\n"
+- id: wordpress.sanitization.usermeta-missing
+  languages:
+  - php
+  message: User meta update without sanitization. Sanitize data before updating user
+    meta.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$user_id = get_current_user_id();
+
+      update_user_meta($user_id, ''custom_field'', $_POST[''value'']);
+
+      '
+  - pattern-not: '$user_id = get_current_user_id();
+
+      update_user_meta($user_id, ''custom_field'', sanitize_text_field($_POST[''value'']));
+
+      '
+- id: wordpress.sanitization.postmeta-missing
+  languages:
+  - php
+  message: Post meta update without sanitization. Sanitize data before updating post
+    meta.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$post_id = $_POST[''post_id''];
+
+      update_post_meta($post_id, ''custom_field'', $_POST[''value'']);
+
+      '
+  - pattern-not: '$post_id = intval($_POST[''post_id'']);
+
+      update_post_meta($post_id, ''custom_field'', sanitize_text_field($_POST[''value'']));
+
+      '
+- id: wordpress.sanitization.comment-missing
+  languages:
+  - php
+  message: Comment data without sanitization. Use wp_filter_comment() for comment
+    sanitization.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: "$comment_data = array(\n  'comment_content' => $_POST['comment'],\n\
+      \  'comment_author' => $_POST['author']\n);\nwp_insert_comment($comment_data);\n"
+  - pattern-not: "$comment_data = array(\n  'comment_content' => wp_filter_comment($_POST['comment']),\n\
+      \  'comment_author' => sanitize_text_field($_POST['author'])\n);\nwp_insert_comment($comment_data);\n"
+- id: wordpress.sanitization.search-missing
+  languages:
+  - php
+  message: Search query without sanitization. Use sanitize_text_field() for search
+    terms.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$search_term = $_GET[''s''];
+
+      $query = new WP_Query(array(''s'' => $search_term));
+
+      '
+  - pattern-not: '$search_term = sanitize_text_field($_GET[''s'']);
+
+      $query = new WP_Query(array(''s'' => $search_term));
+
+      '
+- id: wordpress.sanitization.upload-missing
+  languages:
+  - php
+  message: File upload without proper validation. Use wp_handle_upload() and validate
+    file types.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-434
+    confidence: high
+    tags:
+    - error
+    - file-upload
+    - wordpress
+    - file_upload
+    - validation
+    - path-traversal
+    - security
+    vuln_class: file_upload
+  patterns:
+  - pattern: '$uploaded_file = $_FILES[''file''];
+
+      move_uploaded_file($uploaded_file[''tmp_name''], $uploaded_file[''name'']);
+
+      '
+  - pattern-not: '$uploaded_file = $_FILES[''file''];
+
+      $upload_overrides = array(''test_form'' => false);
+
+      $moved_file = wp_handle_upload($uploaded_file, $upload_overrides);
+
+      '
+- id: wordpress.sanitization.cookie-missing
+  languages:
+  - php
+  message: Cookie data without sanitization. Always sanitize cookie data before use.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: '$cookie_value = $_COOKIE[''user_preference''];
+
+      echo $cookie_value;
+
+      '
+  - pattern-not: '$cookie_value = sanitize_text_field($_COOKIE[''user_preference'']);
+
+      echo esc_html($cookie_value);
+
+      '
+- id: wordpress.sanitization.session-missing
+  languages:
+  - php
+  message: Session data without sanitization. Sanitize session data before use.
+  severity: ERROR
+  metadata:
+    category: sanitization-functions
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - security
+    - other
+    vuln_class: other
+  patterns:
+  - pattern: 'session_start();
+
+      $session_data = $_SESSION[''user_data''];
+
+      echo $session_data;
+
+      '
+  - pattern-not: 'session_start();
+
+      $session_data = sanitize_text_field($_SESSION[''user_data'']);
+
+      echo esc_html($session_data);
+
+      '

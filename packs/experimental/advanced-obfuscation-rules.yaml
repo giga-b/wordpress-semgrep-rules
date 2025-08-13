@@ -1,239 +1,410 @@
 rules:
-  # Token Leakage via Debug Logs
-  - id: php-token-leakage-error-log
-    message: "Token leakage via error_log"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      error_log("... Token: " . $VAR);
-    
-  - id: php-token-leakage-debug-header
-    message: "Token leakage via debug headers"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      header('X-Debug-...: ' . $VAR);
-    
-  - id: php-token-leakage-admin-notice
-    message: "Token leakage via admin notices"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo '<p>... Token: ' . esc_html($VAR) . '</p>';
-    
-  - id: php-token-leakage-api-response
-    message: "Token leakage via API response"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $config = array(
-        'api_token' => $VAR,
-      );
-    
-  - id: php-token-leakage-trigger-error
-    message: "Token leakage via trigger_error"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      trigger_error("Debug key: " . $VAR, E_USER_NOTICE);
-    
-  # Nonce Confusion Patterns
-  - id: php-nonce-confusion-wrong-action
-    message: "Nonce confusion - wrong action"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (wp_verify_nonce($VAR, 'other_plugin_action')) {
-        $this->process_action();
-      }
-  # 
-  # - id: php-nonce-confusion-global-action
-  #   message: "Nonce confusion - global action"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     if (wp_verify_nonce($VAR, 'global_action')) {
-  # 
-  # - id: php-nonce-confusion-admin-ajax
-  #   message: "Nonce confusion - admin action in AJAX"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     if (wp_verify_nonce($VAR, 'admin_action') && current_user_can('manage_options')) {
-  # 
-  # - id: php-nonce-confusion-options-page
-  #   message: "Nonce confusion - options page nonce"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     if (wp_verify_nonce($VAR, 'options-general.php')) {
-  # 
-  # - id: php-nonce-confusion-plugin-settings
-  #   message: "Nonce confusion - plugin settings nonce"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     if (wp_verify_nonce($VAR, 'plugin_settings')) {
-    
-  # Subtle Deserialization via Global Handlers - Disabled due to syntax issues
-  # - id: php-deserialization-header-processor
-  #   message: "Deserialization via header processor"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $data = maybe_unserialize($VAR);
-  #     if (is_object($data) && method_exists($data, 'process')) {
-  # 
-  # - id: php-deserialization-content-processor
-  #   message: "Deserialization via content processor"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $data = maybe_unserialize(base64_decode($VAR));
-  #     if (is_array($data) && isset($data['inject'])) {
-  # 
-  # - id: php-deserialization-footer-processor
-  #   message: "Deserialization via footer processor"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $data = maybe_unserialize($VAR);
-  #     if (is_object($data) && property_exists($data, 'script')) {
-  # 
-  # - id: php-deserialization-global-data
-  #   message: "Deserialization via global data processor"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     if (is_string($data) && strpos($data, 'O:') === 0) {
-  #       $object = unserialize($data);
-  #       if (is_object($object) && method_exists($object, 'execute')) {
-  # 
-  # - id: php-deserialization-content-filter
-  #   message: "Deserialization via content filter"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $data = maybe_unserialize($filter_data);
-  #     if (is_array($data) && isset($data['replace'])) {
-  # 
-  # - id: php-deserialization-header-handler
-  #   message: "Deserialization via header handler"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $data = maybe_unserialize($header_data);
-  #     if (is_object($data) && property_exists($data, 'custom_header')) {
-    
-  - id: php-deserialization-api-endpoint
-    message: "Deserialization via API endpoint"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $processed_data = maybe_unserialize($data);
-    
-  # Disabled due to syntax issues - needs proper PHP context
-  # - id: php-deserialization-global-hook
-  #   message: "Deserialization via global hook"
-  #   severity: ERROR
-  #   languages: [php]
-  #   pattern: |
-  #     $data = maybe_unserialize($global_data);
-  #     if (is_object($data) && method_exists($data, 'global_process')) {
-    
-  # Privilege Escalation via Nonce Confusion
-  - id: php-privilege-escalation-elevated
-    message: "Privilege escalation via elevated privileges"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $this->process_with_elevated_privileges($_POST);
-    
-  - id: php-privilege-escalation-admin-function
-    message: "Privilege escalation via admin function"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $this->admin_only_function($_POST);
-    
-  - id: php-privilege-escalation-unauthorized-admin
-    message: "Privilege escalation via unauthorized admin action"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $this->unauthorized_admin_action($_POST);
-    
-  # Token Storage with Sensitive Data
-  - id: php-token-storage-with-data
-    message: "Token storage with sensitive data"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      $storage = array(
-        'token' => $api_token,
-        'timestamp' => time()
-      );
-    
-  # Weak Randomness in Token Generation
-  - id: php-weak-token-generation
-    message: "Weak token generation using md5 and uniqid"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $key = md5(uniqid() . microtime(true));
-    
-  # SQL Injection After Nonce Bypass
-  - id: php-sql-injection-after-nonce
-    message: "SQL injection after nonce bypass"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $sql = "SELECT * FROM {$wpdb->users} WHERE user_login = '" . $data . "'";
-      $results = $wpdb->get_results($sql);
-    
-  # Path Traversal After Nonce Bypass
-  - id: php-path-traversal-after-nonce
-    message: "Path traversal after nonce bypass"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $content = file_get_contents($file_path);
-    
-  # Unauthorized Option Update
-  - id: php-unauthorized-option-update
-    message: "Unauthorized option update"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      update_option('sensitive_admin_option', $option_value);
-    
-  # Object Injection via Deserialized Data
-  - id: php-object-injection-method-execution
-    message: "Object injection via method execution"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $result = $data->process();
-    
-  - id: php-object-injection-script-injection
-    message: "Object injection via script injection"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo '<script>' . $data->script . '</script>';
-    
-  # Content Injection via Deserialized Data
-  - id: php-content-injection-deserialized
-    message: "Content injection via deserialized data"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $content .= '<div class="injected-content">' . $data['inject'] . '</div>';
-    
-  # Header Injection via Deserialized Object
-  - id: php-header-injection-deserialized
-    message: "Header injection via deserialized object"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $headers['X-Custom-Header'] = $data->custom_header;
+- id: php-token-leakage-error-log
+  message: Token leakage via error_log
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'error_log("... Token: " . $VAR);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - error
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-token-leakage-debug-header
+  message: Token leakage via debug headers
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'header(''X-Debug-...: '' . $VAR);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - error
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-token-leakage-admin-notice
+  message: Token leakage via admin notices
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'echo ''<p>... Token: '' . esc_html($VAR) . ''</p>'';
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - error
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-token-leakage-api-response
+  message: Token leakage via API response
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "$config = array(\n  'api_token' => $VAR,\n);\n"
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - error
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-token-leakage-trigger-error
+  message: Token leakage via trigger_error
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'trigger_error("Debug key: " . $VAR, E_USER_NOTICE);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - error
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-nonce-confusion-wrong-action
+  message: Nonce confusion - wrong action
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (wp_verify_nonce($VAR, 'other_plugin_action')) {\n  $this->process_action();\n\
+    }\n"
+  metadata:
+    confidence: high
+    cwe: CWE-352
+    category: security
+    tags:
+    - authentication
+    - wordpress
+    - error
+    - csrf
+    - security
+    - nonce
+    vuln_class: csrf
+- id: php-deserialization-api-endpoint
+  message: Deserialization via API endpoint
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$processed_data = maybe_unserialize($data);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-privilege-escalation-elevated
+  message: Privilege escalation via elevated privileges
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$this->process_with_elevated_privileges($_POST);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-privilege-escalation-admin-function
+  message: Privilege escalation via admin function
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$this->admin_only_function($_POST);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-privilege-escalation-unauthorized-admin
+  message: Privilege escalation via unauthorized admin action
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$this->unauthorized_admin_action($_POST);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-token-storage-with-data
+  message: Token storage with sensitive data
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: "$storage = array(\n  'token' => $api_token,\n  'timestamp' => time()\n\
+    );\n"
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - warning
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-weak-token-generation
+  message: Weak token generation using md5 and uniqid
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$key = md5(uniqid() . microtime(true));
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-532
+    category: security
+    tags:
+    - options
+    - wordpress
+    - secrets_storage
+    - error
+    - secrets
+    - security
+    - configuration
+    vuln_class: secrets_storage
+- id: php-sql-injection-after-nonce
+  message: SQL injection after nonce bypass
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$sql = "SELECT * FROM {$wpdb->users} WHERE user_login = ''" . $data .
+    "''";
+
+    $results = $wpdb->get_results($sql);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-89
+    category: security
+    tags:
+    - wordpress
+    - error
+    - sql-injection
+    - database
+    - security
+    - wpdb
+    - sqli
+    vuln_class: sqli
+- id: php-path-traversal-after-nonce
+  message: Path traversal after nonce bypass
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$content = file_get_contents($file_path);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-352
+    category: security
+    tags:
+    - authentication
+    - wordpress
+    - error
+    - csrf
+    - security
+    - nonce
+    vuln_class: csrf
+- id: php-unauthorized-option-update
+  message: Unauthorized option update
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'update_option(''sensitive_admin_option'', $option_value);
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-object-injection-method-execution
+  message: Object injection via method execution
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$result = $data->process();
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-502
+    category: security
+    tags:
+    - wordpress
+    - eval
+    - error
+    - deserialization
+    - security
+    - dynamic-execution
+    vuln_class: deserialization
+- id: php-object-injection-script-injection
+  message: Object injection via script injection
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'echo ''<script>'' . $data->script . ''</script>'';
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-content-injection-deserialized
+  message: Content injection via deserialized data
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$content .= ''<div class="injected-content">'' . $data[''inject''] . ''</div>'';
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other
+- id: php-header-injection-deserialized
+  message: Header injection via deserialized object
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$headers[''X-Custom-Header''] = $data->custom_header;
+
+    '
+  metadata:
+    confidence: high
+    cwe: CWE-200
+    category: security
+    tags:
+    - other
+    - error
+    - wordpress
+    - security
+    vuln_class: other

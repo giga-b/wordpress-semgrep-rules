@@ -1,576 +1,1040 @@
 rules:
-  # Direct SQL Query with User Input - Pattern 1
-  - id: wordpress.sql-injection.direct-query-1
-    languages: [php]
-    message: "Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-      references:
-        - "https://developer.wordpress.org/reference/classes/wpdb/prepare/"
-        - "https://developer.wordpress.org/plugins/security/securing-input/"
-    patterns:
-      - pattern: |
-          $user_input = $_GET['id'];
-          $sql = "SELECT * FROM {$wpdb->users} WHERE ID = " . $user_input;
-          $results = $wpdb->get_results($sql);
-      - pattern-not: |
-          $user_input = intval($_GET['id']);
-          $results = $wpdb->get_results(
-              $wpdb->prepare("SELECT * FROM {$wpdb->users} WHERE ID = %d", $user_input)
-          );
+- id: wordpress.sql-injection.direct-query-1
+  languages:
+  - php
+  message: Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    vuln_class: sqli
+    tags:
+    - sql-injection
+    - wpdb
+    - security
+    references:
+    - https://developer.wordpress.org/reference/classes/wpdb/prepare/
+    - https://developer.wordpress.org/plugins/security/securing-input/
+  patterns:
+  - pattern: '$user_input = $_GET[''id''];
 
-  # Direct SQL Query with User Input - Pattern 2
-  - id: wordpress.sql-injection.direct-query-2
-    languages: [php]
-    message: "Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $user_input = $_POST['id'];
-          $sql = "SELECT * FROM {$wpdb->posts} WHERE ID = " . $user_input;
-          $results = $wpdb->query($sql);
+      $sql = "SELECT * FROM {$wpdb->users} WHERE ID = " . $user_input;
 
-  # Direct SQL Query with User Input - Pattern 3
-  - id: wordpress.sql-injection.direct-query-3
-    languages: [php]
-    message: "Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $user_input = $_REQUEST['id'];
-          $sql = "SELECT * FROM {$wpdb->users} WHERE ID = " . $user_input;
-          $results = $wpdb->get_var($sql);
+      $results = $wpdb->get_results($sql);
 
-  # String Concatenation in SQL Queries - Pattern 1
-  - id: wordpress.sql-injection.string-concatenation-1
-    languages: [php]
-    message: "SQL query with string concatenation of user input. Use $wpdb->prepare() with placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $search = $_GET['search'];
-          $wpdb->query("SELECT * FROM posts WHERE title LIKE '%$search%'");
-      - pattern-not: |
-          $search = sanitize_text_field($_GET['search']);
-          $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", '%' . $wpdb->esc_like($search) . '%');
+      '
+  - pattern-not: "$user_input = intval($_GET['id']);\n$results = $wpdb->get_results(\n\
+      \    $wpdb->prepare(\"SELECT * FROM {$wpdb->users} WHERE ID = %d\", $user_input)\n\
+      );\n"
+- id: wordpress.sql-injection.direct-query-2
+  languages:
+  - php
+  message: Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    vuln_class: sqli
+    tags:
+    - sql-injection
+    - wpdb
+    - security
+  patterns:
+  - pattern: '$user_input = $_POST[''id''];
 
-  # String Concatenation in SQL Queries - Pattern 2
-  - id: wordpress.sql-injection.string-concatenation-2
-    languages: [php]
-    message: "SQL query with string concatenation of user input. Use $wpdb->prepare() with placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $name = $_POST['name'];
-          $wpdb->query("SELECT * FROM users WHERE name = '$name'");
+      $sql = "SELECT * FROM {$wpdb->posts} WHERE ID = " . $user_input;
 
-  # String Concatenation in SQL Queries - Pattern 3
-  - id: wordpress.sql-injection.string-concatenation-3
-    languages: [php]
-    message: "SQL query with string concatenation of user input. Use $wpdb->prepare() with placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $email = $_REQUEST['email'];
-          $wpdb->query("SELECT * FROM users WHERE email = '$email'");
+      $results = $wpdb->query($sql);
 
-  # Dynamic Table Names - Pattern 1
-  - id: wordpress.sql-injection.dynamic-table-1
-    languages: [php]
-    message: "Dynamic table name from user input. Use whitelist validation or hardcoded table names."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $table = $_POST['table'];
-          $wpdb->query("SELECT * FROM " . $table . " WHERE status = 'active'");
-      - pattern-not: |
-          $allowed_tables = array('posts', 'users', 'comments');
-          if (in_array($_POST['table'], $allowed_tables)) {
-              $table = $_POST['table'];
-              $wpdb->query("SELECT * FROM " . $table);
-          }
+      '
+- id: wordpress.sql-injection.direct-query-3
+  languages:
+  - php
+  message: Direct SQL query with user input. Use $wpdb->prepare() to prevent SQL injection.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$user_input = $_REQUEST[''id''];
 
-  # Dynamic Table Names - Pattern 2
-  - id: wordpress.sql-injection.dynamic-table-2
-    languages: [php]
-    message: "Dynamic table name from user input. Use whitelist validation or hardcoded table names."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $table = $_GET['table'];
-          $wpdb->query("SELECT * FROM " . $table);
+      $sql = "SELECT * FROM {$wpdb->users} WHERE ID = " . $user_input;
 
-  # Dynamic Table Names - Pattern 3
-  - id: wordpress.sql-injection.dynamic-table-3
-    languages: [php]
-    message: "Dynamic table name from user input. Use whitelist validation or hardcoded table names."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $table = $_REQUEST['table'];
-          $wpdb->get_results("SELECT * FROM " . $table);
+      $results = $wpdb->get_var($sql);
 
-  # Misuse of prepare with String Concatenation - Pattern 1
-  - id: wordpress.sql-injection.prepare-concatenation-1
-    languages: [php]
-    message: "Misuse of $wpdb->prepare() with string concatenation. Use placeholders for all user input."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $table_name = $_POST['table'];
-          $wpdb->prepare("SELECT * FROM " . $table_name . " WHERE id = %s", $user_id);
-      - pattern-not: |
-          $wpdb->prepare("SELECT * FROM posts WHERE id = %d", $post_id);
+      '
+- id: wordpress.sql-injection.string-concatenation-1
+  languages:
+  - php
+  message: SQL query with string concatenation of user input. Use $wpdb->prepare()
+    with placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$search = $_GET[''search''];
 
-  # Misuse of prepare with String Concatenation - Pattern 2
-  - id: wordpress.sql-injection.prepare-concatenation-2
-    languages: [php]
-    message: "Misuse of $wpdb->prepare() with string concatenation. Use placeholders for all user input."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $column = $_GET['column'];
-          $wpdb->prepare("SELECT " . $column . " FROM posts WHERE id = %d", $post_id);
+      $wpdb->query("SELECT * FROM posts WHERE title LIKE ''%$search%''");
 
-  # Misuse of prepare with String Concatenation - Pattern 3
-  - id: wordpress.sql-injection.prepare-concatenation-3
-    languages: [php]
-    message: "Misuse of $wpdb->prepare() with string concatenation. Use placeholders for all user input."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $order_by = $_REQUEST['order'];
-          $wpdb->prepare("SELECT * FROM posts ORDER BY " . $order_by . " LIMIT %d", $limit);
+      '
+  - pattern-not: '$search = sanitize_text_field($_GET[''search'']);
 
-  # Direct Query Execution - Pattern 1
-  - id: wordpress.sql-injection.direct-execution-1
-    languages: [php]
-    message: "Direct execution of SQL query with user input. Use $wpdb->prepare() for safe execution."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $sql = $_POST['sql'];
-          $wpdb->query($sql);
-      - pattern-not: |
-          $wpdb->query("SELECT * FROM posts WHERE status = 'publish'");
+      $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", ''%'' . $wpdb->esc_like($search)
+      . ''%'');
 
-  # Direct Query Execution - Pattern 2
-  - id: wordpress.sql-injection.direct-execution-2
-    languages: [php]
-    message: "Direct execution of SQL query with user input. Use $wpdb->prepare() for safe execution."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $sql = $_GET['query'];
-          $wpdb->get_results($sql);
+      '
+- id: wordpress.sql-injection.string-concatenation-2
+  languages:
+  - php
+  message: SQL query with string concatenation of user input. Use $wpdb->prepare()
+    with placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$name = $_POST[''name''];
 
-  # Direct Query Execution - Pattern 3
-  - id: wordpress.sql-injection.direct-execution-3
-    languages: [php]
-    message: "Direct execution of SQL query with user input. Use $wpdb->prepare() for safe execution."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $sql = $_REQUEST['sql'];
-          $wpdb->get_var($sql);
+      $wpdb->query("SELECT * FROM users WHERE name = ''$name''");
 
-  # Unsafe Database Operations - Pattern 1
-  - id: wordpress.sql-injection.unsafe-insert-1
-    languages: [php]
-    message: "Database insert with unsanitized user input. Use $wpdb->prepare() or sanitization functions."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $title = $_POST['title'];
-          $content = $_POST['content'];
-          $wpdb->insert('posts', array(
-              'title' => $title,
-              'content' => $content
-          ));
-      - pattern-not: |
-          $title = sanitize_text_field($_POST['title']);
-          $content = wp_kses_post($_POST['content']);
-          $wpdb->insert('posts', array(
-              'title' => $title,
-              'content' => $content
-          ));
+      '
+- id: wordpress.sql-injection.string-concatenation-3
+  languages:
+  - php
+  message: SQL query with string concatenation of user input. Use $wpdb->prepare()
+    with placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$email = $_REQUEST[''email''];
 
-  # Unsafe Update Operations - Pattern 1
-  - id: wordpress.sql-injection.unsafe-update-1
-    languages: [php]
-    message: "Database update with unsanitized user input. Use $wpdb->prepare() or sanitization functions."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $title = $_POST['title'];
-          $wpdb->update('posts', array('title' => $title), array('ID' => $post_id));
-      - pattern-not: |
-          $title = sanitize_text_field($_POST['title']);
-          $wpdb->update('posts', array('title' => $title), array('ID' => $post_id));
+      $wpdb->query("SELECT * FROM users WHERE email = ''$email''");
 
-  # Unsafe Update Operations - Pattern 2
-  - id: wordpress.sql-injection.unsafe-update-2
-    languages: [php]
-    message: "Database update with unsanitized user input. Use $wpdb->prepare() or sanitization functions."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $content = $_POST['content'];
-          $wpdb->update('posts', array('content' => $content), array('ID' => $post_id));
+      '
+- id: wordpress.sql-injection.dynamic-table-1
+  languages:
+  - php
+  message: Dynamic table name from user input. Use whitelist validation or hardcoded
+    table names.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$table = $_POST[''table''];
 
-  # Unsafe Delete Operations - Pattern 1
-  - id: wordpress.sql-injection.unsafe-delete-1
-    languages: [php]
-    message: "Database delete with unsanitized user input. Use $wpdb->prepare() or proper validation."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $id = $_POST['id'];
-          $wpdb->delete('posts', array('ID' => $id));
-      - pattern-not: |
-          $id = intval($_POST['id']);
-          $wpdb->delete('posts', array('ID' => $id));
+      $wpdb->query("SELECT * FROM " . $table . " WHERE status = ''active''");
 
-  # Unsafe Delete Operations - Pattern 2
-  - id: wordpress.sql-injection.unsafe-delete-2
-    languages: [php]
-    message: "Database delete with unsanitized user input. Use $wpdb->prepare() or proper validation."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $id = $_GET['id'];
-          $wpdb->query("DELETE FROM posts WHERE ID = $id");
+      '
+  - pattern-not: "$allowed_tables = array('posts', 'users', 'comments');\nif (in_array($_POST['table'],\
+      \ $allowed_tables)) {\n    $table = $_POST['table'];\n    $wpdb->query(\"SELECT\
+      \ * FROM \" . $table);\n}\n"
+- id: wordpress.sql-injection.dynamic-table-2
+  languages:
+  - php
+  message: Dynamic table name from user input. Use whitelist validation or hardcoded
+    table names.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$table = $_GET[''table''];
 
-  # Unsafe WHERE Clauses - Pattern 1
-  - id: wordpress.sql-injection.unsafe-where-1
-    languages: [php]
-    message: "WHERE clause with unsanitized user input. Use $wpdb->prepare() with placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $status = $_POST['status'];
-          $wpdb->query("SELECT * FROM posts WHERE status = '$status'");
-      - pattern-not: |
-          $status = sanitize_text_field($_POST['status']);
-          $wpdb->prepare("SELECT * FROM posts WHERE status = %s", $status);
+      $wpdb->query("SELECT * FROM " . $table);
 
-  # Unsafe WHERE Clauses - Pattern 2
-  - id: wordpress.sql-injection.unsafe-where-2
-    languages: [php]
-    message: "WHERE clause with unsanitized user input. Use $wpdb->prepare() with placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $author = $_GET['author'];
-          $wpdb->query("SELECT * FROM posts WHERE author = '$author'");
+      '
+- id: wordpress.sql-injection.dynamic-table-3
+  languages:
+  - php
+  message: Dynamic table name from user input. Use whitelist validation or hardcoded
+    table names.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$table = $_REQUEST[''table''];
 
-  # Unsafe ORDER BY Clauses - Pattern 1
-  - id: wordpress.sql-injection.unsafe-orderby-1
-    languages: [php]
-    message: "ORDER BY clause with user input. Use whitelist validation for column names."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $order = $_GET['order'];
-          $wpdb->query("SELECT * FROM posts ORDER BY $order");
-      - pattern-not: |
-          $allowed_columns = array('title', 'date', 'author');
-          if (in_array($_GET['order'], $allowed_columns)) {
-              $order = $_GET['order'];
-              $wpdb->query("SELECT * FROM posts ORDER BY $order");
-          }
+      $wpdb->get_results("SELECT * FROM " . $table);
 
-  # Unsafe ORDER BY Clauses - Pattern 2
-  - id: wordpress.sql-injection.unsafe-orderby-2
-    languages: [php]
-    message: "ORDER BY clause with user input. Use whitelist validation for column names."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $sort = $_POST['sort'];
-          $wpdb->query("SELECT * FROM posts ORDER BY $sort DESC");
+      '
+- id: wordpress.sql-injection.prepare-concatenation-1
+  languages:
+  - php
+  message: Misuse of $wpdb->prepare() with string concatenation. Use placeholders
+    for all user input.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$table_name = $_POST[''table''];
 
-  # Unsafe LIMIT Clauses - Pattern 1
-  - id: wordpress.sql-injection.unsafe-limit-1
-    languages: [php]
-    message: "LIMIT clause with unsanitized user input. Use $wpdb->prepare() with %d placeholder."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $limit = $_GET['limit'];
-          $wpdb->query("SELECT * FROM posts LIMIT $limit");
-      - pattern-not: |
-          $limit = intval($_GET['limit']);
-          $wpdb->prepare("SELECT * FROM posts LIMIT %d", $limit);
+      $wpdb->prepare("SELECT * FROM " . $table_name . " WHERE id = %s", $user_id);
 
-  # Unsafe LIMIT Clauses - Pattern 2
-  - id: wordpress.sql-injection.unsafe-limit-2
-    languages: [php]
-    message: "LIMIT clause with unsanitized user input. Use $wpdb->prepare() with %d placeholder."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $limit = $_POST['limit'];
-          $wpdb->query("SELECT * FROM posts LIMIT 0, $limit");
+      '
+  - pattern-not: '$wpdb->prepare("SELECT * FROM posts WHERE id = %d", $post_id);
 
-  # Unsafe LIKE Patterns - Pattern 1
-  - id: wordpress.sql-injection.unsafe-like-1
-    languages: [php]
-    message: "LIKE pattern with unsanitized user input. Use $wpdb->esc_like() and $wpdb->prepare()."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $search = $_GET['search'];
-          $wpdb->query("SELECT * FROM posts WHERE title LIKE '%$search%'");
-      - pattern-not: |
-          $search = sanitize_text_field($_GET['search']);
-          $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", '%' . $wpdb->esc_like($search) . '%');
+      '
+- id: wordpress.sql-injection.prepare-concatenation-2
+  languages:
+  - php
+  message: Misuse of $wpdb->prepare() with string concatenation. Use placeholders
+    for all user input.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$column = $_GET[''column''];
 
-  # Unsafe LIKE Patterns - Pattern 2
-  - id: wordpress.sql-injection.unsafe-like-2
-    languages: [php]
-    message: "LIKE pattern with unsanitized user input. Use $wpdb->esc_like() and $wpdb->prepare()."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $search = $_POST['search'];
-          $wpdb->query("SELECT * FROM posts WHERE content LIKE '%$search%'");
+      $wpdb->prepare("SELECT " . $column . " FROM posts WHERE id = %d", $post_id);
 
-  # Unsafe IN Clauses - Pattern 1
-  - id: wordpress.sql-injection.unsafe-in-1
-    languages: [php]
-    message: "IN clause with unsanitized user input. Use $wpdb->prepare() with proper placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $ids = $_POST['ids'];
-          $wpdb->query("SELECT * FROM posts WHERE ID IN ($ids)");
-      - pattern-not: |
-          $ids = array_map('intval', $_POST['ids']);
-          $placeholders = implode(',', array_fill(0, count($ids), '%d'));
-          $wpdb->prepare("SELECT * FROM posts WHERE ID IN ($placeholders)", $ids);
+      '
+- id: wordpress.sql-injection.prepare-concatenation-3
+  languages:
+  - php
+  message: Misuse of $wpdb->prepare() with string concatenation. Use placeholders
+    for all user input.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$order_by = $_REQUEST[''order''];
 
-  # Unsafe IN Clauses - Pattern 2
-  - id: wordpress.sql-injection.unsafe-in-2
-    languages: [php]
-    message: "IN clause with unsanitized user input. Use $wpdb->prepare() with proper placeholders."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $categories = $_GET['categories'];
-          $wpdb->query("SELECT * FROM posts WHERE category IN ($categories)");
+      $wpdb->prepare("SELECT * FROM posts ORDER BY " . $order_by . " LIMIT %d", $limit);
 
-  # Unsafe Subqueries - Pattern 1
-  - id: wordpress.sql-injection.unsafe-subquery-1
-    languages: [php]
-    message: "Subquery with unsanitized user input. Use $wpdb->prepare() for all user input in subqueries."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $user_id = $_GET['user_id'];
-          $wpdb->query("SELECT * FROM posts WHERE author IN (SELECT ID FROM users WHERE ID = $user_id)");
-      - pattern-not: |
-          $user_id = intval($_GET['user_id']);
-          $wpdb->prepare("SELECT * FROM posts WHERE author IN (SELECT ID FROM users WHERE ID = %d)", $user_id);
+      '
+- id: wordpress.sql-injection.direct-execution-1
+  languages:
+  - php
+  message: Direct execution of SQL query with user input. Use $wpdb->prepare() for
+    safe execution.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$sql = $_POST[''sql''];
 
-  # Unsafe Subqueries - Pattern 2
-  - id: wordpress.sql-injection.unsafe-subquery-2
-    languages: [php]
-    message: "Subquery with unsanitized user input. Use $wpdb->prepare() for all user input in subqueries."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $category = $_POST['category'];
-          $wpdb->query("SELECT * FROM posts WHERE category IN (SELECT ID FROM categories WHERE name = '$category')");
+      $wpdb->query($sql);
 
-  # Missing Type Casting for Numeric Input - Pattern 1
-  - id: wordpress.sql-injection.missing-type-cast-1
-    languages: [php]
-    message: "Numeric user input not type cast. Use intval() or floatval() for numeric database operations."
-    severity: WARNING
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $id = $_GET['id'];
-          $wpdb->prepare("SELECT * FROM posts WHERE ID = %d", $id);
-      - pattern-not: |
-          $id = intval($_GET['id']);
-          $wpdb->prepare("SELECT * FROM posts WHERE ID = %d", $id);
+      '
+  - pattern-not: '$wpdb->query("SELECT * FROM posts WHERE status = ''publish''");
 
-  # Missing Type Casting for Numeric Input - Pattern 2
-  - id: wordpress.sql-injection.missing-type-cast-2
-    languages: [php]
-    message: "Numeric user input not type cast. Use intval() or floatval() for numeric database operations."
-    severity: WARNING
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $limit = $_POST['limit'];
-          $wpdb->prepare("SELECT * FROM posts LIMIT %d", $limit);
+      '
+- id: wordpress.sql-injection.direct-execution-2
+  languages:
+  - php
+  message: Direct execution of SQL query with user input. Use $wpdb->prepare() for
+    safe execution.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$sql = $_GET[''query''];
 
-  # Unsafe Database Schema Operations - Pattern 1
-  - id: wordpress.sql-injection.unsafe-schema-1
-    languages: [php]
-    message: "Database schema operation with user input. Avoid dynamic schema operations with user data."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $column = $_POST['column'];
-          $wpdb->query("ALTER TABLE posts ADD COLUMN $column VARCHAR(255)");
+      $wpdb->get_results($sql);
 
-  # Unsafe Database Schema Operations - Pattern 2
-  - id: wordpress.sql-injection.unsafe-schema-2
-    languages: [php]
-    message: "Database schema operation with user input. Avoid dynamic schema operations with user data."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $table = $_GET['table'];
-          $wpdb->query("CREATE TABLE $table (id INT PRIMARY KEY)");
+      '
+- id: wordpress.sql-injection.direct-execution-3
+  languages:
+  - php
+  message: Direct execution of SQL query with user input. Use $wpdb->prepare() for
+    safe execution.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$sql = $_REQUEST[''sql''];
 
-  # Unsafe Database Schema Operations - Pattern 3
-  - id: wordpress.sql-injection.unsafe-schema-3
-    languages: [php]
-    message: "Database schema operation with user input. Avoid dynamic schema operations with user data."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $index = $_REQUEST['index'];
-          $wpdb->query("CREATE INDEX $index ON posts(title)");
+      $wpdb->get_var($sql);
 
-  # Unsafe Database Functions - Pattern 1
-  - id: wordpress.sql-injection.unsafe-functions-1
-    languages: [php]
-    message: "Database function with unsanitized user input. Use $wpdb->prepare() for all user input in functions."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $value = $_POST['value'];
-          $wpdb->query("SELECT COUNT(*) FROM posts WHERE title = '$value'");
-      - pattern-not: |
-          $value = sanitize_text_field($_POST['value']);
-          $wpdb->prepare("SELECT COUNT(*) FROM posts WHERE title = %s", $value);
+      '
+- id: wordpress.sql-injection.unsafe-insert-1
+  languages:
+  - php
+  message: Database insert with unsanitized user input. Use $wpdb->prepare() or sanitization
+    functions.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: "$title = $_POST['title'];\n$content = $_POST['content'];\n$wpdb->insert('posts',\
+      \ array(\n    'title' => $title,\n    'content' => $content\n));\n"
+  - pattern-not: "$title = sanitize_text_field($_POST['title']);\n$content = wp_kses_post($_POST['content']);\n\
+      $wpdb->insert('posts', array(\n    'title' => $title,\n    'content' => $content\n\
+      ));\n"
+- id: wordpress.sql-injection.unsafe-update-1
+  languages:
+  - php
+  message: Database update with unsanitized user input. Use $wpdb->prepare() or sanitization
+    functions.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$title = $_POST[''title''];
 
-  # Unsafe Database Functions - Pattern 2
-  - id: wordpress.sql-injection.unsafe-functions-2
-    languages: [php]
-    message: "Database function with unsanitized user input. Use $wpdb->prepare() for all user input in functions."
-    severity: ERROR
-    metadata:
-      category: "sql-injection"
-      cwe: "CWE-89"
-    patterns:
-      - pattern: |
-          $value = $_GET['value'];
-          $wpdb->query("SELECT MAX(id) FROM posts WHERE status = '$value'");
+      $wpdb->update(''posts'', array(''title'' => $title), array(''ID'' => $post_id));
+
+      '
+  - pattern-not: '$title = sanitize_text_field($_POST[''title'']);
+
+      $wpdb->update(''posts'', array(''title'' => $title), array(''ID'' => $post_id));
+
+      '
+- id: wordpress.sql-injection.unsafe-update-2
+  languages:
+  - php
+  message: Database update with unsanitized user input. Use $wpdb->prepare() or sanitization
+    functions.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$content = $_POST[''content''];
+
+      $wpdb->update(''posts'', array(''content'' => $content), array(''ID'' => $post_id));
+
+      '
+- id: wordpress.sql-injection.unsafe-delete-1
+  languages:
+  - php
+  message: Database delete with unsanitized user input. Use $wpdb->prepare() or proper
+    validation.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$id = $_POST[''id''];
+
+      $wpdb->delete(''posts'', array(''ID'' => $id));
+
+      '
+  - pattern-not: '$id = intval($_POST[''id'']);
+
+      $wpdb->delete(''posts'', array(''ID'' => $id));
+
+      '
+- id: wordpress.sql-injection.unsafe-delete-2
+  languages:
+  - php
+  message: Database delete with unsanitized user input. Use $wpdb->prepare() or proper
+    validation.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$id = $_GET[''id''];
+
+      $wpdb->query("DELETE FROM posts WHERE ID = $id");
+
+      '
+- id: wordpress.sql-injection.unsafe-where-1
+  languages:
+  - php
+  message: WHERE clause with unsanitized user input. Use $wpdb->prepare() with placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$status = $_POST[''status''];
+
+      $wpdb->query("SELECT * FROM posts WHERE status = ''$status''");
+
+      '
+  - pattern-not: '$status = sanitize_text_field($_POST[''status'']);
+
+      $wpdb->prepare("SELECT * FROM posts WHERE status = %s", $status);
+
+      '
+- id: wordpress.sql-injection.unsafe-where-2
+  languages:
+  - php
+  message: WHERE clause with unsanitized user input. Use $wpdb->prepare() with placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$author = $_GET[''author''];
+
+      $wpdb->query("SELECT * FROM posts WHERE author = ''$author''");
+
+      '
+- id: wordpress.sql-injection.unsafe-orderby-1
+  languages:
+  - php
+  message: ORDER BY clause with user input. Use whitelist validation for column names.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$order = $_GET[''order''];
+
+      $wpdb->query("SELECT * FROM posts ORDER BY $order");
+
+      '
+  - pattern-not: "$allowed_columns = array('title', 'date', 'author');\nif (in_array($_GET['order'],\
+      \ $allowed_columns)) {\n    $order = $_GET['order'];\n    $wpdb->query(\"SELECT\
+      \ * FROM posts ORDER BY $order\");\n}\n"
+- id: wordpress.sql-injection.unsafe-orderby-2
+  languages:
+  - php
+  message: ORDER BY clause with user input. Use whitelist validation for column names.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$sort = $_POST[''sort''];
+
+      $wpdb->query("SELECT * FROM posts ORDER BY $sort DESC");
+
+      '
+- id: wordpress.sql-injection.unsafe-limit-1
+  languages:
+  - php
+  message: LIMIT clause with unsanitized user input. Use $wpdb->prepare() with %d
+    placeholder.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$limit = $_GET[''limit''];
+
+      $wpdb->query("SELECT * FROM posts LIMIT $limit");
+
+      '
+  - pattern-not: '$limit = intval($_GET[''limit'']);
+
+      $wpdb->prepare("SELECT * FROM posts LIMIT %d", $limit);
+
+      '
+- id: wordpress.sql-injection.unsafe-limit-2
+  languages:
+  - php
+  message: LIMIT clause with unsanitized user input. Use $wpdb->prepare() with %d
+    placeholder.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$limit = $_POST[''limit''];
+
+      $wpdb->query("SELECT * FROM posts LIMIT 0, $limit");
+
+      '
+- id: wordpress.sql-injection.unsafe-like-1
+  languages:
+  - php
+  message: LIKE pattern with unsanitized user input. Use $wpdb->esc_like() and $wpdb->prepare().
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$search = $_GET[''search''];
+
+      $wpdb->query("SELECT * FROM posts WHERE title LIKE ''%$search%''");
+
+      '
+  - pattern-not: '$search = sanitize_text_field($_GET[''search'']);
+
+      $wpdb->prepare("SELECT * FROM posts WHERE title LIKE %s", ''%'' . $wpdb->esc_like($search)
+      . ''%'');
+
+      '
+- id: wordpress.sql-injection.unsafe-like-2
+  languages:
+  - php
+  message: LIKE pattern with unsanitized user input. Use $wpdb->esc_like() and $wpdb->prepare().
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$search = $_POST[''search''];
+
+      $wpdb->query("SELECT * FROM posts WHERE content LIKE ''%$search%''");
+
+      '
+- id: wordpress.sql-injection.unsafe-in-1
+  languages:
+  - php
+  message: IN clause with unsanitized user input. Use $wpdb->prepare() with proper
+    placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$ids = $_POST[''ids''];
+
+      $wpdb->query("SELECT * FROM posts WHERE ID IN ($ids)");
+
+      '
+  - pattern-not: '$ids = array_map(''intval'', $_POST[''ids'']);
+
+      $placeholders = implode('','', array_fill(0, count($ids), ''%d''));
+
+      $wpdb->prepare("SELECT * FROM posts WHERE ID IN ($placeholders)", $ids);
+
+      '
+- id: wordpress.sql-injection.unsafe-in-2
+  languages:
+  - php
+  message: IN clause with unsanitized user input. Use $wpdb->prepare() with proper
+    placeholders.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$categories = $_GET[''categories''];
+
+      $wpdb->query("SELECT * FROM posts WHERE category IN ($categories)");
+
+      '
+- id: wordpress.sql-injection.unsafe-subquery-1
+  languages:
+  - php
+  message: Subquery with unsanitized user input. Use $wpdb->prepare() for all user
+    input in subqueries.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$user_id = $_GET[''user_id''];
+
+      $wpdb->query("SELECT * FROM posts WHERE author IN (SELECT ID FROM users WHERE
+      ID = $user_id)");
+
+      '
+  - pattern-not: '$user_id = intval($_GET[''user_id'']);
+
+      $wpdb->prepare("SELECT * FROM posts WHERE author IN (SELECT ID FROM users WHERE
+      ID = %d)", $user_id);
+
+      '
+- id: wordpress.sql-injection.unsafe-subquery-2
+  languages:
+  - php
+  message: Subquery with unsanitized user input. Use $wpdb->prepare() for all user
+    input in subqueries.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$category = $_POST[''category''];
+
+      $wpdb->query("SELECT * FROM posts WHERE category IN (SELECT ID FROM categories
+      WHERE name = ''$category'')");
+
+      '
+- id: wordpress.sql-injection.missing-type-cast-1
+  languages:
+  - php
+  message: Numeric user input not type cast. Use intval() or floatval() for numeric
+    database operations.
+  severity: WARNING
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - warning
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$id = $_GET[''id''];
+
+      $wpdb->prepare("SELECT * FROM posts WHERE ID = %d", $id);
+
+      '
+  - pattern-not: '$id = intval($_GET[''id'']);
+
+      $wpdb->prepare("SELECT * FROM posts WHERE ID = %d", $id);
+
+      '
+- id: wordpress.sql-injection.missing-type-cast-2
+  languages:
+  - php
+  message: Numeric user input not type cast. Use intval() or floatval() for numeric
+    database operations.
+  severity: WARNING
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - warning
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$limit = $_POST[''limit''];
+
+      $wpdb->prepare("SELECT * FROM posts LIMIT %d", $limit);
+
+      '
+- id: wordpress.sql-injection.unsafe-schema-1
+  languages:
+  - php
+  message: Database schema operation with user input. Avoid dynamic schema operations
+    with user data.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$column = $_POST[''column''];
+
+      $wpdb->query("ALTER TABLE posts ADD COLUMN $column VARCHAR(255)");
+
+      '
+- id: wordpress.sql-injection.unsafe-schema-2
+  languages:
+  - php
+  message: Database schema operation with user input. Avoid dynamic schema operations
+    with user data.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$table = $_GET[''table''];
+
+      $wpdb->query("CREATE TABLE $table (id INT PRIMARY KEY)");
+
+      '
+- id: wordpress.sql-injection.unsafe-schema-3
+  languages:
+  - php
+  message: Database schema operation with user input. Avoid dynamic schema operations
+    with user data.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$index = $_REQUEST[''index''];
+
+      $wpdb->query("CREATE INDEX $index ON posts(title)");
+
+      '
+- id: wordpress.sql-injection.unsafe-functions-1
+  languages:
+  - php
+  message: Database function with unsanitized user input. Use $wpdb->prepare() for
+    all user input in functions.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$value = $_POST[''value''];
+
+      $wpdb->query("SELECT COUNT(*) FROM posts WHERE title = ''$value''");
+
+      '
+  - pattern-not: '$value = sanitize_text_field($_POST[''value'']);
+
+      $wpdb->prepare("SELECT COUNT(*) FROM posts WHERE title = %s", $value);
+
+      '
+- id: wordpress.sql-injection.unsafe-functions-2
+  languages:
+  - php
+  message: Database function with unsanitized user input. Use $wpdb->prepare() for
+    all user input in functions.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    confidence: high
+    tags:
+    - error
+    - sql-injection
+    - wordpress
+    - sqli
+    - wpdb
+    - database
+    - security
+    vuln_class: sqli
+  patterns:
+  - pattern: '$value = $_GET[''value''];
+
+      $wpdb->query("SELECT MAX(id) FROM posts WHERE status = ''$value''");
+
+      '

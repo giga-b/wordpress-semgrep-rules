@@ -1,159 +1,230 @@
 rules:
-  # Cross-File Nonce Lifecycle Analysis using Join Mode
-  # This rule detects AJAX actions that are registered but lack proper nonce verification
-  
-  - id: wordpress.cross-file.ajax-nonce-lifecycle
-    mode: join
-    message: |
-      AJAX action '$ACTION' is registered but the callback function '$CALLBACK' 
-      lacks proper nonce verification. This creates a CSRF vulnerability.
-    severity: ERROR
-    languages: [php]
-    metadata:
-      category: "cross-file-analysis"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      confidence: HIGH
-      description: |
-        This rule uses Semgrep join mode to perform cross-file analysis of WordPress AJAX actions.
-        It detects when an AJAX action is registered via add_action('wp_ajax_*') but the corresponding
-        callback function lacks proper nonce verification using check_ajax_referer() or wp_verify_nonce().
-        This creates a Cross-Site Request Forgery (CSRF) vulnerability.
-    join:
-      refs:
-        # Rule 1: Detect AJAX action registrations
-        - rule: packs/wp-core-security/ajax-action-registration.yaml
-          as: ajax-registration
-        
-        # Rule 2: Detect callback functions
-        - rule: packs/wp-core-security/ajax-callback-functions.yaml
-          as: callback-functions
-        
-        # Rule 3: Detect nonce verification in functions
-        - rule: packs/wp-core-security/nonce-verification-detection.yaml
-          as: nonce-verification
-      
-      on:
-        # Join condition: Match AJAX registration callback with actual function
-        - 'ajax-registration.$CALLBACK == callback-functions.$FUNCTION_NAME'
-        # Join condition: Ensure the callback function lacks nonce verification
-        - 'callback-functions.$FUNCTION_NAME != nonce-verification.$FUNCTION_NAME'
+- id: wordpress.cross-file.ajax-nonce-lifecycle
+  message: "AJAX action '$ACTION' is registered but the callback function '$CALLBACK'\
+    \ \nlacks proper nonce verification. This creates a CSRF vulnerability.\n"
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  # AJAX Action Registration Detection Rule
-  - id: wordpress.ajax.action-registration
-    message: "AJAX action registration detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      add_action('wp_ajax_$ACTION', '$CALLBACK');
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
+  - pattern: 'add_action("wp_ajax_$ACTION", "$CALLBACK");'
+  metadata:
+    category: cross-file-analysis
+    cwe: CWE-352
+    technology:
+    - wordpress
+    confidence: high
+    description: 'This rule detects AJAX action registrations that may lack proper nonce verification.
 
-  # AJAX Callback Function Detection Rule
-  - id: wordpress.ajax.callback-function
-    message: "AJAX callback function detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-      }
-    metadata:
-      category: "ajax-security"
-      technology: ["wordpress"]
+      It identifies when an AJAX action is registered via add_action(''wp_ajax_*'') which
+      could create a Cross-Site Request Forgery (CSRF) vulnerability if not properly secured.
 
-  # Nonce Verification Detection Rule
-  - id: wordpress.nonce.verification-in-function
-    message: "Nonce verification detected in function"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        check_ajax_referer('$NONCE_ACTION', '$NONCE_FIELD');
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
+      '
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.ajax.action-registration
+  message: AJAX action registration detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # Alternative nonce verification pattern
-  - id: wordpress.nonce.verification-wp-verify
-    message: "wp_verify_nonce detected in function"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      function $FUNCTION_NAME() {
-        ...
-        if (wp_verify_nonce($_POST['$NONCE_FIELD'], '$NONCE_ACTION')) {
-          ...
-        }
-        ...
-      }
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
+  - pattern: 'add_action(''wp_ajax_$ACTION'', ''$CALLBACK'');
 
-  # Cross-File Nonce Creation to Verification Analysis
-  - id: wordpress.cross-file.nonce-creation-verification
-    mode: join
-    message: |
-      Nonce created with action '$CREATE_ACTION' but verified with different action '$VERIFY_ACTION'.
-      This creates a security vulnerability as the nonce verification will fail.
-    severity: ERROR
-    languages: [php]
-    metadata:
-      category: "cross-file-analysis"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      confidence: HIGH
-      description: |
-        This rule detects when a nonce is created with one action name but verified with a different
-        action name, which will cause the verification to fail and potentially create security issues.
-    join:
-      refs:
-        # Rule 1: Detect nonce creation
-        - rule: packs/wp-core-security/nonce-creation-detection.yaml
-          as: nonce-creation
-        
-        # Rule 2: Detect nonce verification
-        - rule: packs/wp-core-security/nonce-verification-detection.yaml
-          as: nonce-verification
-      
-      on:
-        # Join condition: Match nonce creation and verification but with different actions
-        - 'nonce-creation.$CREATE_ACTION != nonce-verification.$VERIFY_ACTION'
+    '
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.ajax.callback-function
+  message: AJAX callback function detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # Nonce Creation Detection Rule
-  - id: wordpress.nonce.creation-detection
-    message: "Nonce creation detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_create_nonce('$CREATE_ACTION')
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n}\n"
+  metadata:
+    category: ajax-security
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-285
+    tags:
+    - rest_ajax
+    - wordpress
+    - ajax
+    - endpoints
+    - info
+    - security
+    - rest-api
+    vuln_class: rest_ajax
+- id: wordpress.nonce.verification-in-function
+  message: Nonce verification detected in function
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # Nonce Verification with Action Detection Rule
-  - id: wordpress.nonce.verification-action-detection
-    message: "Nonce verification with action detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      check_ajax_referer('$VERIFY_ACTION', '$NONCE_FIELD')
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  check_ajax_referer('$NONCE_ACTION',\
+    \ '$NONCE_FIELD');\n  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-wp-verify
+  message: wp_verify_nonce detected in function
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # Alternative nonce verification with action
-  - id: wordpress.nonce.verification-wp-verify-action
-    message: "wp_verify_nonce with action detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_verify_nonce($_POST['$NONCE_FIELD'], '$VERIFY_ACTION')
-    metadata:
-      category: "nonce-verification"
-      technology: ["wordpress"]
+  - pattern: "function $FUNCTION_NAME() {\n  ...\n  if (wp_verify_nonce($_POST['$NONCE_FIELD'],\
+    \ '$NONCE_ACTION')) {\n    ...\n  }\n  ...\n}\n"
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.cross-file.nonce-creation-verification
+  message: 'Nonce created with action ''$CREATE_ACTION'' but verified with different
+    action ''$VERIFY_ACTION''.
+
+    This creates a security vulnerability as the nonce verification will fail.
+
+    '
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce($CREATE_ACTION)'
+  metadata:
+    category: cross-file-analysis
+    cwe: CWE-352
+    technology:
+    - wordpress
+    confidence: high
+    description: 'This rule detects when a nonce is created with one action name but
+      verified with a different
+
+      action name, which will cause the verification to fail and potentially create
+      security issues.
+
+      '
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.creation-detection
+  message: Nonce creation detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$CREATE_ACTION'')
+
+    '
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-action-detection
+  message: Nonce verification with action detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'check_ajax_referer(''$VERIFY_ACTION'', ''$NONCE_FIELD'')
+
+    '
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.verification-wp-verify-action
+  message: wp_verify_nonce with action detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_verify_nonce($_POST[''$NONCE_FIELD''], ''$VERIFY_ACTION'')
+
+    '
+  metadata:
+    category: nonce-verification
+    technology:
+    - wordpress
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf

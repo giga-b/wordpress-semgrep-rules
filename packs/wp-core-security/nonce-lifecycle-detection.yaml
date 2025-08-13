@@ -1,431 +1,751 @@
-# ============================================================================
-# WORDPRESS NONCE LIFECYCLE DETECTION RULES
-# ============================================================================
-# Task 1.5: Comprehensive Nonce Lifecycle Detection
-# 
-# This file contains comprehensive rules for detecting nonce lifecycle patterns
-# including creation, inclusion, verification, and expiration handling.
-# 
-# Cross-file analysis is supported for users with Semgrep AppSec Platform accounts.
-# For users without accounts, use the Python test scripts in tests/ directory.
-# ============================================================================
-
 options:
-  # Enable cross-file analysis for users with Semgrep AppSec Platform accounts
-  # This allows detection of nonce patterns that span multiple files
   interfile: true
-
 rules:
-  # ============================================================================
-  # TASK 1.5.1: NONCE CREATION DETECTION
-  # ============================================================================
-  
-  - id: wordpress.nonce.lifecycle.creation-wp-create-nonce
-    message: "Nonce creation detected using wp_create_nonce with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_create_nonce('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "creation"
-      description: |
-        Detects nonce creation using wp_create_nonce() function.
-        Used for lifecycle analysis to track nonce creation patterns.
-    
-  - id: wordpress.nonce.lifecycle.creation-wp-nonce-field
-    message: "Nonce field creation detected using wp_nonce_field with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_nonce_field('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "creation"
-      description: |
-        Detects nonce field creation using wp_nonce_field() function.
-        Used for lifecycle analysis to track form nonce generation.
-    
-  - id: wordpress.nonce.lifecycle.creation-wp-nonce-url
-    message: "Nonce URL creation detected using wp_nonce_url with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_nonce_url('$URL', '$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "creation"
-      description: |
-        Detects nonce URL creation using wp_nonce_url() function.
-        Used for lifecycle analysis to track URL-based nonce generation.
-    
-  - id: wordpress.nonce.lifecycle.creation-wp-nonce-ays
-    message: "Nonce AYS creation detected using wp_nonce_ays with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_nonce_ays('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "creation"
-      description: |
-        Detects nonce AYS (Are You Sure) creation using wp_nonce_ays() function.
-        Used for lifecycle analysis to track confirmation nonce generation.
-    
-  - id: wordpress.nonce.lifecycle.creation-weak-action
-    message: "Weak nonce creation detected - empty or generic action name"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      wp_create_nonce('')
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "creation"
-      description: |
-        Detects weak nonce creation with empty action names.
-        This creates security vulnerabilities as nonces are not properly scoped.
-    
-  - id: wordpress.nonce.lifecycle.creation-variable-action
-    message: "Nonce creation with variable action detected: $ACTION"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      wp_create_nonce($ACTION)
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "creation"
-      description: |
-        Detects nonce creation with variable action names.
-        This can be vulnerable if the variable is not properly validated.
-    
-  # ============================================================================
-  # TASK 1.5.2: NONCE INCLUSION DETECTION
-  # ============================================================================
-  
-  - id: wordpress.nonce.lifecycle.inclusion-form-field
-    message: "Nonce field inclusion detected in form with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_nonce_field('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "inclusion"
-      description: |
-        Detects nonce field inclusion in HTML forms.
-        Used for lifecycle analysis to track nonce field placement.
-    
-  - id: wordpress.nonce.lifecycle.inclusion-hidden-field
-    message: "Hidden nonce field inclusion detected with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_create_nonce('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "inclusion"
-      description: |
-        Detects manual hidden nonce field inclusion.
-        Used for lifecycle analysis to track custom nonce field placement.
-    
-  - id: wordpress.nonce.lifecycle.inclusion-ajax-data
-    message: "Nonce inclusion in AJAX data detected with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_create_nonce('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "inclusion"
-      description: |
-        Detects nonce inclusion in AJAX data objects.
-        Used for lifecycle analysis to track AJAX nonce inclusion.
-    
-  - id: wordpress.nonce.lifecycle.inclusion-missing-field
-    message: "Form processing detected without nonce field inclusion"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (isset($_POST['submit'])) {
-        $data = $_POST['data'];
-      }
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "inclusion"
-      description: |
-        Detects form processing without nonce field inclusion.
-        This creates CSRF vulnerabilities.
-    
-  # ============================================================================
-  # TASK 1.5.3: NONCE VERIFICATION DETECTION
-  # ============================================================================
-  
-  - id: wordpress.nonce.lifecycle.verification-wp-verify-nonce
-    message: "Nonce verification detected using wp_verify_nonce with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_verify_nonce($_POST['$FIELD'], '$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "verification"
-      description: |
-        Detects nonce verification using wp_verify_nonce() function.
-        Used for lifecycle analysis to track nonce verification patterns.
-    
-  - id: wordpress.nonce.lifecycle.verification-check-ajax-referer
-    message: "AJAX nonce verification detected using check_ajax_referer with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      check_ajax_referer('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "verification"
-      description: |
-        Detects AJAX nonce verification using check_ajax_referer() function.
-        Used for lifecycle analysis to track AJAX nonce verification.
-    
-  - id: wordpress.nonce.lifecycle.verification-check-admin-referer
-    message: "Admin nonce verification detected using check_admin_referer with action: $ACTION"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      check_admin_referer('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "verification"
-      description: |
-        Detects admin nonce verification using check_admin_referer() function.
-        Used for lifecycle analysis to track admin nonce verification.
-    
-  - id: wordpress.nonce.lifecycle.verification-weak-check
-    message: "Weak nonce verification detected - return value not checked"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      wp_verify_nonce($_POST['$FIELD'], '$ACTION');
-      $data = $_POST['data'];
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "verification"
-      description: |
-        Detects weak nonce verification where return value is not checked.
-        This pattern is vulnerable as it doesn't validate the nonce result.
-    
-  - id: wordpress.nonce.lifecycle.verification-missing
-    message: "Form processing detected without nonce verification"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      if (isset($_POST['submit'])) {
-        $data = $_POST['data'];
-      }
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "verification"
-      description: |
-        Detects form processing without nonce verification.
-        This creates CSRF vulnerabilities.
-    
-  - id: wordpress.nonce.lifecycle.verification-ajax-missing
-    message: "AJAX handler detected without nonce verification"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      function $FUNCTION() {
-        $data = $_POST['data'];
-      }
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "verification"
-      description: |
-        Detects AJAX handlers without nonce verification.
-        This creates CSRF vulnerabilities in AJAX endpoints.
-    
-  # ============================================================================
-  # TASK 1.5.4: NONCE EXPIRATION HANDLING
-  # ============================================================================
-  
-  - id: wordpress.nonce.lifecycle.expiration-proper-handling
-    message: "Proper nonce expiration handling detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $result = wp_verify_nonce($_POST['$FIELD'], '$ACTION');
-      if ($result === false) {
-        // Handle expired nonce
-      } elseif ($result === 0) {
-        // Handle invalid nonce
-      } else {
-        // Process data safely
-      }
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "expiration"
-      description: |
-        Detects proper nonce expiration handling with specific error checking.
-        This is the recommended pattern for handling nonce verification results.
-    
-  - id: wordpress.nonce.lifecycle.expiration-basic-handling
-    message: "Basic nonce expiration handling detected"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      if (!wp_verify_nonce($_POST['$FIELD'], '$ACTION')) {
-        wp_die('Security check failed');
-      }
-    metadata:
-      category: "nonce-lifecycle"
-      technology: ["wordpress"]
-      lifecycle-stage: "expiration"
-      description: |
-        Detects basic nonce expiration handling with wp_die().
-        This is acceptable but less informative than proper handling.
-    
-  - id: wordpress.nonce.lifecycle.expiration-poor-handling
-    message: "Poor nonce expiration handling detected - no specific error messages"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      if (!wp_verify_nonce($_POST['$FIELD'], '$ACTION')) {
-        die('Invalid nonce');
-      }
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "expiration"
-      description: |
-        Detects poor nonce expiration handling with generic error messages.
-        This doesn't distinguish between expired and invalid nonces.
-    
-  - id: wordpress.nonce.lifecycle.expiration-no-handling
-    message: "No nonce expiration handling detected"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      wp_verify_nonce($_POST['$FIELD'], '$ACTION');
-      // Process data without handling verification result
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "expiration"
-      description: |
-        Detects nonce verification without proper error handling.
-        This can lead to security issues and poor user experience.
-    
-  # ============================================================================
-  # CROSS-FILE NONCE LIFECYCLE ANALYSIS
-  # ============================================================================
-  
-  - id: wordpress.nonce.lifecycle.mismatch-detection
-    message: "Potential nonce action mismatch detected"
-    severity: WARNING
-    languages: [php]
-    pattern: |
-      wp_create_nonce('$CREATE_ACTION');
-      ...
-      wp_verify_nonce($_POST['_wpnonce'], '$VERIFY_ACTION');
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "cross-file"
-      description: |
-        Detects potential nonce action mismatches within the same file.
-        This creates security vulnerabilities as verification will fail.
-    
-  # ============================================================================
-  # ADVANCED CROSS-FILE ANALYSIS RULES (Requires Semgrep AppSec Platform)
-  # ============================================================================
-  
-  - id: wordpress.nonce.cross-file.ajax-lifecycle
-    message: |
-      Cross-file AJAX nonce lifecycle vulnerability detected:
-      AJAX action '$ACTION' is registered but callback function '$CALLBACK' 
-      lacks proper nonce verification. This creates a CSRF vulnerability.
-    severity: ERROR
-    languages: [php]
-    options:
-      interfile: true
-    pattern: |
-      add_action('wp_ajax_$ACTION', '$CALLBACK');
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "cross-file"
-      confidence: HIGH
-      description: |
-        Cross-file analysis rule that detects AJAX actions registered without
-        corresponding nonce verification in callback functions.
-        Requires Semgrep AppSec Platform account with cross-file analysis enabled.
-    
-  - id: wordpress.nonce.cross-file.creation-verification-mismatch
-    message: |
-      Cross-file nonce creation-verification mismatch detected:
-      Nonce created with action '$CREATE_ACTION' but verified with '$VERIFY_ACTION'.
-      This creates a security vulnerability as verification will fail.
-    severity: ERROR
-    languages: [php]
-    options:
-      interfile: true
-    pattern: |
-      wp_create_nonce('$CREATE_ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "cross-file"
-      confidence: HIGH
-      description: |
-        Cross-file analysis rule that detects nonce creation and verification
-        with mismatched action names across different files.
-        Requires Semgrep AppSec Platform account with cross-file analysis enabled.
-    
-  - id: wordpress.nonce.cross-file.missing-verification
-    message: |
-      Cross-file missing nonce verification detected:
-      Nonce created with action '$ACTION' but no corresponding verification found.
-      This creates a CSRF vulnerability.
-    severity: ERROR
-    languages: [php]
-    options:
-      interfile: true
-    pattern: |
-      wp_create_nonce('$ACTION')
-    metadata:
-      category: "nonce-lifecycle"
-      cwe: "CWE-352"
-      technology: ["wordpress"]
-      lifecycle-stage: "cross-file"
-      confidence: HIGH
-      description: |
-        Cross-file analysis rule that detects nonce creation without
-        corresponding verification across different files.
-        Requires Semgrep AppSec Platform account with cross-file analysis enabled.
+- id: wordpress.nonce.lifecycle.creation-wp-create-nonce
+  message: 'Nonce creation detected using wp_create_nonce with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: creation
+    description: 'Detects nonce creation using wp_create_nonce() function.
+
+      Used for lifecycle analysis to track nonce creation patterns.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.creation-wp-nonce-field
+  message: 'Nonce field creation detected using wp_nonce_field with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_nonce_field(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: creation
+    description: 'Detects nonce field creation using wp_nonce_field() function.
+
+      Used for lifecycle analysis to track form nonce generation.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.creation-wp-nonce-url
+  message: 'Nonce URL creation detected using wp_nonce_url with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_nonce_url(''$URL'', ''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: creation
+    description: 'Detects nonce URL creation using wp_nonce_url() function.
+
+      Used for lifecycle analysis to track URL-based nonce generation.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.creation-wp-nonce-ays
+  message: 'Nonce AYS creation detected using wp_nonce_ays with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_nonce_ays(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: creation
+    description: 'Detects nonce AYS (Are You Sure) creation using wp_nonce_ays() function.
+
+      Used for lifecycle analysis to track confirmation nonce generation.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.creation-weak-action
+  message: Weak nonce creation detected - empty or generic action name
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce('''')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: creation
+    description: 'Detects weak nonce creation with empty action names.
+
+      This creates security vulnerabilities as nonces are not properly scoped.
+
+      '
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.creation-variable-action
+  message: 'Nonce creation with variable action detected: $ACTION'
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce($ACTION)
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: creation
+    description: 'Detects nonce creation with variable action names.
+
+      This can be vulnerable if the variable is not properly validated.
+
+      '
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.inclusion-form-field
+  message: 'Nonce field inclusion detected in form with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_nonce_field(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: inclusion
+    description: 'Detects nonce field inclusion in HTML forms.
+
+      Used for lifecycle analysis to track nonce field placement.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.inclusion-hidden-field
+  message: 'Hidden nonce field inclusion detected with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: inclusion
+    description: 'Detects manual hidden nonce field inclusion.
+
+      Used for lifecycle analysis to track custom nonce field placement.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.inclusion-ajax-data
+  message: 'Nonce inclusion in AJAX data detected with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: inclusion
+    description: 'Detects nonce inclusion in AJAX data objects.
+
+      Used for lifecycle analysis to track AJAX nonce inclusion.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.inclusion-missing-field
+  message: Form processing detected without nonce field inclusion
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (isset($_POST['submit'])) {\n  $data = $_POST['data'];\n}\n"
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: inclusion
+    description: 'Detects form processing without nonce field inclusion.
+
+      This creates CSRF vulnerabilities.
+
+      '
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.verification-wp-verify-nonce
+  message: 'Nonce verification detected using wp_verify_nonce with action: $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_verify_nonce($_POST[''$FIELD''], ''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: verification
+    description: 'Detects nonce verification using wp_verify_nonce() function.
+
+      Used for lifecycle analysis to track nonce verification patterns.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.verification-check-ajax-referer
+  message: 'AJAX nonce verification detected using check_ajax_referer with action:
+    $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'check_ajax_referer(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: verification
+    description: 'Detects AJAX nonce verification using check_ajax_referer() function.
+
+      Used for lifecycle analysis to track AJAX nonce verification.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.verification-check-admin-referer
+  message: 'Admin nonce verification detected using check_admin_referer with action:
+    $ACTION'
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'check_admin_referer(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: verification
+    description: 'Detects admin nonce verification using check_admin_referer() function.
+
+      Used for lifecycle analysis to track admin nonce verification.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.verification-weak-check
+  message: Weak nonce verification detected - return value not checked
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_verify_nonce($_POST[''$FIELD''], ''$ACTION'');
+
+    $data = $_POST[''data''];
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: verification
+    description: 'Detects weak nonce verification where return value is not checked.
+
+      This pattern is vulnerable as it doesn''t validate the nonce result.
+
+      '
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.verification-missing
+  message: Form processing detected without nonce verification
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (isset($_POST['submit'])) {\n  $data = $_POST['data'];\n}\n"
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: verification
+    description: 'Detects form processing without nonce verification.
+
+      This creates CSRF vulnerabilities.
+
+      '
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.verification-ajax-missing
+  message: AJAX handler detected without nonce verification
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: "function $FUNCTION() {\n  $data = $_POST['data'];\n}\n"
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: verification
+    description: 'Detects AJAX handlers without nonce verification.
+
+      This creates CSRF vulnerabilities in AJAX endpoints.
+
+      '
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.expiration-proper-handling
+  message: Proper nonce expiration handling detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "$result = wp_verify_nonce($_POST['$FIELD'], '$ACTION');\nif ($result ===\
+    \ false) {\n  // Handle expired nonce\n} elseif ($result === 0) {\n  // Handle\
+    \ invalid nonce\n} else {\n  // Process data safely\n}\n"
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: expiration
+    description: 'Detects proper nonce expiration handling with specific error checking.
+
+      This is the recommended pattern for handling nonce verification results.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.expiration-basic-handling
+  message: Basic nonce expiration handling detected
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (!wp_verify_nonce($_POST['$FIELD'], '$ACTION')) {\n  wp_die('Security\
+    \ check failed');\n}\n"
+  metadata:
+    category: nonce-lifecycle
+    technology:
+    - wordpress
+    lifecycle-stage: expiration
+    description: 'Detects basic nonce expiration handling with wp_die().
+
+      This is acceptable but less informative than proper handling.
+
+      '
+    confidence: high
+    cwe: CWE-352
+    tags:
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - info
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.expiration-poor-handling
+  message: Poor nonce expiration handling detected - no specific error messages
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: "if (!wp_verify_nonce($_POST['$FIELD'], '$ACTION')) {\n  die('Invalid nonce');\n\
+    }\n"
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: expiration
+    description: 'Detects poor nonce expiration handling with generic error messages.
+
+      This doesn''t distinguish between expired and invalid nonces.
+
+      '
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.expiration-no-handling
+  message: No nonce expiration handling detected
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_verify_nonce($_POST[''$FIELD''], ''$ACTION'');
+
+    // Process data without handling verification result
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: expiration
+    description: 'Detects nonce verification without proper error handling.
+
+      This can lead to security issues and poor user experience.
+
+      '
+    confidence: high
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.lifecycle.mismatch-detection
+  message: Potential nonce action mismatch detected
+  severity: WARNING
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$CREATE_ACTION'');
+
+    ...
+
+    wp_verify_nonce($_POST[''_wpnonce''], ''$VERIFY_ACTION'');
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: cross-file
+    description: 'Detects potential nonce action mismatches within the same file.
+
+      This creates security vulnerabilities as verification will fail.
+
+      '
+    confidence: high
+    tags:
+    - warning
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.cross-file.ajax-lifecycle
+  message: "Cross-file AJAX nonce lifecycle vulnerability detected:\nAJAX action '$ACTION'\
+    \ is registered but callback function '$CALLBACK' \nlacks proper nonce verification.\
+    \ This creates a CSRF vulnerability.\n"
+  severity: ERROR
+  languages:
+  - php
+  options:
+    interfile: true
+  patterns:
+
+  - pattern: 'add_action(''wp_ajax_$ACTION'', ''$CALLBACK'');
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: cross-file
+    confidence: high
+    description: 'Cross-file analysis rule that detects AJAX actions registered without
+
+      corresponding nonce verification in callback functions.
+
+      Requires Semgrep AppSec Platform account with cross-file analysis enabled.
+
+      '
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.cross-file.creation-verification-mismatch
+  message: 'Cross-file nonce creation-verification mismatch detected:
+
+    Nonce created with action ''$CREATE_ACTION'' but verified with ''$VERIFY_ACTION''.
+
+    This creates a security vulnerability as verification will fail.
+
+    '
+  severity: ERROR
+  languages:
+  - php
+  options:
+    interfile: true
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$CREATE_ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: cross-file
+    confidence: high
+    description: 'Cross-file analysis rule that detects nonce creation and verification
+
+      with mismatched action names across different files.
+
+      Requires Semgrep AppSec Platform account with cross-file analysis enabled.
+
+      '
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
+- id: wordpress.nonce.cross-file.missing-verification
+  message: 'Cross-file missing nonce verification detected:
+
+    Nonce created with action ''$ACTION'' but no corresponding verification found.
+
+    This creates a CSRF vulnerability.
+
+    '
+  severity: ERROR
+  languages:
+  - php
+  options:
+    interfile: true
+  patterns:
+
+  - pattern: 'wp_create_nonce(''$ACTION'')
+
+    '
+  metadata:
+    category: nonce-lifecycle
+    cwe: CWE-352
+    technology:
+    - wordpress
+    lifecycle-stage: cross-file
+    confidence: high
+    description: 'Cross-file analysis rule that detects nonce creation without
+
+      corresponding verification across different files.
+
+      Requires Semgrep AppSec Platform account with cross-file analysis enabled.
+
+      '
+    tags:
+    - error
+    - nonce
+    - authentication
+    - wordpress
+    - csrf
+    - security
+    vuln_class: csrf
