@@ -121,7 +121,7 @@
 **Notes**: Successfully implemented comprehensive nonce lifecycle detection rules covering creation, inclusion, verification, and expiration handling. Created 21 rules with proper categorization and severity levels. Tested against safe examples (47 findings) and vulnerable examples (84 findings) with excellent detection rates. Rules cover all major nonce security patterns including wp_create_nonce, wp_nonce_field, wp_verify_nonce, check_ajax_referer, and proper expiration handling.
 
 #### Task 1.6: Comprehensive Test Cases
-- **Status**: ⏳ In Progress
+- **Status**: ✅ Complete
 - **Owner**: QA Engineer
 - **Effort**: 4 days
 - **Start Date**: 2025-01-XX
@@ -131,12 +131,15 @@
 **Subtasks:**
 - [x] Task 1.6.1: Create nonce test cases
 - [x] Task 1.6.2: Design XSS test scenarios
-- [ ] Task 1.6.3: Implement SQL injection tests
-- [ ] Task 1.6.4: Add file upload tests
+- [x] Task 1.6.3: Implement SQL injection tests
+- [x] Task 1.6.4: Add file upload tests
 - [x] Task 1.6.5: Create performance benchmarks
 
-**Progress**: 60% Complete
-**Notes**: Performance benchmarks implemented and verified. CSV/HTML/JSON reports generated with scenario labels. Latest CSV: `results/performance/benchmarks/performance-benchmark-report.csv`.
+**Progress**: 100% Complete
+**Notes**: 
+- SQLi tests: `tests/vulnerable-examples/sqli-context-matrix.php` flagged by `packs/wp-core-security/sql-injection.yaml`; safe counterpart `tests/safe-examples/sqli-context-matrix-safe.php` produced 0 findings.
+- File upload tests: `tests/vulnerable-examples/file-upload-context-matrix.php` flagged by `packs/wp-core-security/ajax-file-upload-test.yaml`; safe counterpart `tests/safe-examples/file-upload-context-matrix-safe.php` produced 0 findings.
+- Performance benchmarks implemented and verified. CSV/HTML/JSON reports generated with scenario labels. Latest CSV: `results/performance/benchmarks/performance-benchmark-report.csv`.
 
 ### Week 5-6: File Upload Security
 
