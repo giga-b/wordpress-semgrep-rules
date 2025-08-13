@@ -1,0 +1,13 @@
+rules:
+- id: wordpress.experimental.control.echo-get
+  message: "Control: echo of GET-assigned variable"
+  severity: INFO
+  languages: [php]
+  pattern: |
+    $X = $_GET[$KEY];
+    ...
+    echo $X;
+  metadata:
+    category: control
+    vuln_class: xss
+    tags: [control, wordpress]

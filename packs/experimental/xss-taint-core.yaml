@@ -1,0 +1,53 @@
+rules:
+- id: wordpress.experimental.xss-taint-core
+  message: "Potential XSS: tainted input flows to output without sanitization"
+  severity: ERROR
+  languages: [php]
+  mode: taint
+  pattern-propagators:
+    - pattern: $TO = $FROM;
+      from: $FROM
+      to: $TO
+    - pattern: $TO = "<...>" . $FROM . "<...>";
+      from: $FROM
+      to: $TO
+  pattern-sources:
+    # Minimal superglobals
+    - pattern: $_GET[...]
+    - pattern: $_POST[...]
+  pattern-sinks:
+    # Minimal sink
+    - pattern: echo $SINK;
+    
+    # Common templating / JS contexts
+    - pattern: echo "<...>" . $SINK . "</...>";
+    - pattern: echo "<... style='..." . $SINK . "...'>";
+    - pattern: echo "<script>..." . $SINK . "...</script>";
+    - pattern: echo "<script>var data = '" . $SINK . "';</script>";
+    
+    # JSON / AJAX
+    - pattern: wp_send_json($SINK);
+    - pattern: echo wp_json_encode($SINK);
+  pattern-sanitizers:
+    - pattern: esc_html(...)
+    - pattern: esc_attr(...)
+    - pattern: esc_js(...)
+    - pattern: esc_url(...)
+    - pattern: esc_url_raw(...)
+    - pattern: esc_textarea(...)
+    - pattern: sanitize_text_field(...)
+    - pattern: sanitize_textarea_field(...)
+    - pattern: sanitize_email(...)
+    - pattern: sanitize_url(...)
+    - pattern: sanitize_file_name(...)
+    - pattern: sanitize_hex_color(...)
+    - pattern: sanitize_hex_color_no_hash(...)
+    - pattern: sanitize_title(...)
+    - pattern: sanitize_key(...)
+    - pattern: sanitize_html_class(...)
+    - pattern: sanitize_user(...)
+    - pattern: wp_strip_all_tags(...)
+    - pattern: wp_kses_post(...)
+    - pattern: wp_kses(...)
+    - pattern: wp_kses_data(...)
+    - pattern: wp_json_encode(...)

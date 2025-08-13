@@ -1,623 +1,1170 @@
 rules:
-  # =============================================================================
-  # XSS TAINT ANALYSIS RULES
-  # =============================================================================
-  # This file contains specialized taint analysis rules for detecting XSS
-  # vulnerabilities in WordPress applications. These rules track tainted data
-  # from sources through the application to XSS sinks, detecting when user
-  # input flows to output without proper sanitization.
-  # =============================================================================
+- id: wordpress.experimental.xss-taint-core
+  message: "Potential XSS: tainted input flows to output without sanitization"
+  severity: ERROR
+  languages: [php]
+  mode: taint
+  pattern-propagators:
+    - pattern: $TO = $FROM;
+      from: $FROM
+      to: $TO
+    - pattern: $TO = "<...>" . $FROM . "<...>";
+      from: $FROM
+      to: $TO
+  pattern-sources:
+    - pattern: $_GET[...]
+    - pattern: $_POST[...]
+  pattern-sinks:
+    - pattern: echo $SINK;
+    - pattern: echo "<...>" . $SINK . "</...>";
+    - pattern: echo "<... style='..." . $SINK . "...'>";
+    - pattern: echo "<script>..." . $SINK . "...</script>";
+    - pattern: echo "<script>var data = '" . $SINK . "';</script>";
+    - pattern: wp_send_json($SINK);
+    - pattern: echo wp_json_encode($SINK);
+  pattern-sanitizers:
+    - pattern: esc_html(...)
+    - pattern: esc_attr(...)
+    - pattern: esc_js(...)
+    - pattern: esc_url(...)
+    - pattern: esc_url_raw(...)
+    - pattern: esc_textarea(...)
+    - pattern: sanitize_text_field(...)
+    - pattern: sanitize_textarea_field(...)
+    - pattern: sanitize_email(...)
+    - pattern: sanitize_url(...)
+    - pattern: sanitize_file_name(...)
+    - pattern: sanitize_hex_color(...)
+    - pattern: sanitize_hex_color_no_hash(...)
+    - pattern: sanitize_title(...)
+    - pattern: sanitize_key(...)
+    - pattern: sanitize_html_class(...)
+    - pattern: sanitize_user(...)
+    - pattern: wp_strip_all_tags(...)
+    - pattern: wp_kses_post(...)
+    - pattern: wp_kses(...)
+    - pattern: wp_kses_data(...)
+    - pattern: wp_json_encode(...)
+- id: xss-taint-source-get-parameter
+  message: XSS taint source - GET parameter
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # =============================================================================
-  # XSS TAINT SOURCES - User input that can contain malicious scripts
-  # =============================================================================
+  - pattern: '$_GET[...]
 
-  # Direct user input sources
-  - id: xss-taint-source-get-parameter
-    message: "XSS taint source - GET parameter"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $_GET[...]
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "User input from GET parameters that can contain XSS payloads"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: User input from GET parameters that can contain XSS payloads
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-post-parameter
+  message: XSS taint source - POST parameter
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-source-post-parameter
-    message: "XSS taint source - POST parameter"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $_POST[...]
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "User input from POST parameters that can contain XSS payloads"
-      cwe: "CWE-79"
+  - pattern: '$_POST[...]
 
-  - id: xss-taint-source-request-parameter
-    message: "XSS taint source - REQUEST parameter"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $_REQUEST[...]
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "User input from REQUEST parameters that can contain XSS payloads"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: User input from POST parameters that can contain XSS payloads
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-request-parameter
+  message: XSS taint source - REQUEST parameter
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-source-cookie
-    message: "XSS taint source - Cookie data"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $_COOKIE[...]
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "User input from cookies that can contain XSS payloads"
-      cwe: "CWE-79"
+  - pattern: '$_REQUEST[...]
 
-  # Database sources that may contain user input
-  - id: xss-taint-source-database-user-content
-    message: "XSS taint source - Database content from user input"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $wpdb->get_var(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "Database content that may contain user-provided data"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: User input from REQUEST parameters that can contain XSS payloads
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-cookie
+  message: XSS taint source - Cookie data
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-source-database-row
-    message: "XSS taint source - Database row from user input"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $wpdb->get_row(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "Database row that may contain user-provided data"
-      cwe: "CWE-79"
+  - pattern: '$_COOKIE[...]
 
-  - id: xss-taint-source-database-results
-    message: "XSS taint source - Database results from user input"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      $wpdb->get_results(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "Database results that may contain user-provided data"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: User input from cookies that can contain XSS payloads
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-database-user-content
+  message: XSS taint source - Database content from user input
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # WordPress function sources
-  - id: xss-taint-source-get-post-meta
-    message: "XSS taint source - Post meta data"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      get_post_meta(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "Post meta data that may contain user-provided content"
-      cwe: "CWE-79"
+  - pattern: '$wpdb->get_var(...)
 
-  - id: xss-taint-source-get-option
-    message: "XSS taint source - WordPress option"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      get_option(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "WordPress option that may contain user-provided content"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: Database content that may contain user-provided data
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-database-row
+  message: XSS taint source - Database row from user input
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-source-get-user-meta
-    message: "XSS taint source - User meta data"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      get_user_meta(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "User meta data that may contain user-provided content"
-      cwe: "CWE-79"
+  - pattern: '$wpdb->get_row(...)
 
-  # File content sources
-  - id: xss-taint-source-file-content
-    message: "XSS taint source - File content"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      file_get_contents(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "File content that may contain malicious scripts"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: Database row that may contain user-provided data
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-database-results
+  message: XSS taint source - Database results from user input
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-source-remote-content
-    message: "XSS taint source - Remote content"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_remote_get(...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "source"
-      vulnerability: "xss"
-      description: "Remote content that may contain malicious scripts"
-      cwe: "CWE-79"
+  - pattern: '$wpdb->get_results(...)
 
-  # =============================================================================
-  # XSS TAINT SINKS - Output functions where XSS can occur
-  # =============================================================================
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: Database results that may contain user-provided data
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-get-post-meta
+  message: XSS taint source - Post meta data
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # Direct output sinks
-  - id: xss-taint-sink-echo
-    message: "XSS sink - echo statement"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo $tainted_data;
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Direct output of tainted data via echo"
-      cwe: "CWE-79"
+  - pattern: 'get_post_meta(...)
 
-  - id: xss-taint-sink-print
-    message: "XSS sink - print statement"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      print $tainted_data;
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Direct output of tainted data via print"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: Post meta data that may contain user-provided content
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-get-option
+  message: XSS taint source - WordPress option
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sink-printf
-    message: "XSS sink - printf statement"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      printf($tainted_data, ...);
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Direct output of tainted data via printf"
-      cwe: "CWE-79"
+  - pattern: 'get_option(...)
 
-  # HTML output sinks
-  - id: xss-taint-sink-html-attribute
-    message: "XSS sink - HTML attribute value"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo "<... " . $tainted_data . " ...>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in HTML attribute value"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: WordPress option that may contain user-provided content
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-get-user-meta
+  message: XSS taint source - User meta data
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sink-html-content
-    message: "XSS sink - HTML content"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo "<...>" . $tainted_data . "</...>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in HTML content"
-      cwe: "CWE-79"
+  - pattern: 'get_user_meta(...)
 
-  # JavaScript output sinks
-  - id: xss-taint-sink-javascript-string
-    message: "XSS sink - JavaScript string"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo "<script>..." . $tainted_data . "...</script>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in JavaScript string"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: User meta data that may contain user-provided content
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-file-content
+  message: XSS taint source - File content
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sink-javascript-variable
-    message: "XSS sink - JavaScript variable assignment"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo "<script>var data = '" . $tainted_data . "';</script>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in JavaScript variable assignment"
-      cwe: "CWE-79"
+  - pattern: 'file_get_contents(...)
 
-  # CSS output sinks
-  - id: xss-taint-sink-css-style
-    message: "XSS sink - CSS style attribute"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo "<... style='..." . $tainted_data . "...'>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in CSS style attribute"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: File content that may contain malicious scripts
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-source-remote-content
+  message: XSS taint source - Remote content
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # WordPress output sinks
-  - id: xss-taint-sink-wp-json-encode
-    message: "XSS sink - wp_json_encode output"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      echo wp_json_encode($tainted_data);
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in JSON output"
-      cwe: "CWE-79"
+  - pattern: 'wp_remote_get(...)
 
-  - id: xss-taint-sink-wp-send-json
-    message: "XSS sink - wp_send_json output"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      wp_send_json($tainted_data);
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sink"
-      vulnerability: "xss"
-      description: "Tainted data in AJAX JSON response"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: source
+    vulnerability: xss
+    description: Remote content that may contain malicious scripts
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-echo
+  message: XSS sink - echo statement
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  # =============================================================================
-  # XSS TAINT SANITIZERS - Functions that clean XSS payloads
-  # =============================================================================
+  - pattern: 'echo $tainted_data;
 
-  # WordPress HTML escaping functions
-  - id: xss-taint-sanitizer-esc-html
-    message: "XSS sanitizer - esc_html"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      esc_html($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress HTML escaping function"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Direct output of tainted data via echo
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-print
+  message: XSS sink - print statement
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sanitizer-esc-attr
-    message: "XSS sanitizer - esc_attr"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      esc_attr($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress attribute escaping function"
-      cwe: "CWE-79"
+  - pattern: 'print $tainted_data;
 
-  - id: xss-taint-sanitizer-esc-js
-    message: "XSS sanitizer - esc_js"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      esc_js($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress JavaScript escaping function"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Direct output of tainted data via print
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-printf
+  message: XSS sink - printf statement
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sanitizer-esc-url
-    message: "XSS sanitizer - esc_url"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      esc_url($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress URL escaping function"
-      cwe: "CWE-79"
+  - pattern: 'printf($tainted_data, ...);
 
-  # WordPress sanitization functions
-  - id: xss-taint-sanitizer-sanitize-text-field
-    message: "XSS sanitizer - sanitize_text_field"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      sanitize_text_field($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress text field sanitization"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Direct output of tainted data via printf
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-html-attribute
+  message: XSS sink - HTML attribute value
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sanitizer-sanitize-email
-    message: "XSS sanitizer - sanitize_email"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      sanitize_email($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress email sanitization"
-      cwe: "CWE-79"
+  - pattern: 'echo "<... " . $tainted_data . " ...>";
 
-  - id: xss-taint-sanitizer-sanitize-url
-    message: "XSS sanitizer - sanitize_url"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      sanitize_url($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress URL sanitization"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in HTML attribute value
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-html-content
+  message: XSS sink - HTML content
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  # WordPress content filtering
-  - id: xss-taint-sanitizer-wp-kses-post
-    message: "XSS sanitizer - wp_kses_post"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_kses_post($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress post content filtering"
-      cwe: "CWE-79"
+  - pattern: 'echo "<...>" . $tainted_data . "</...>";
 
-  - id: xss-taint-sanitizer-wp-kses-data
-    message: "XSS sanitizer - wp_kses"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_kses($tainted_data, ...)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress content filtering with allowed tags"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in HTML content
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-javascript-string
+  message: XSS sink - JavaScript string
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  # JSON encoding sanitizers
-  - id: xss-taint-sanitizer-wp-json-encode
-    message: "XSS sanitizer - wp_json_encode"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      wp_json_encode($tainted_data)
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "WordPress JSON encoding"
-      cwe: "CWE-79"
+  - pattern: 'echo "<script>..." . $tainted_data . "...</script>";
 
-  # Type casting sanitizers
-  - id: xss-taint-sanitizer-type-cast-int
-    message: "XSS sanitizer - integer casting"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      (int)$tainted_data
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "Integer type casting"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in JavaScript string
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-javascript-variable
+  message: XSS sink - JavaScript variable assignment
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-sanitizer-type-cast-float
-    message: "XSS sanitizer - float casting"
-    severity: INFO
-    languages: [php]
-    pattern: |
-      (float)$tainted_data
-    metadata:
-      category: "xss-taint-analysis"
-      type: "sanitizer"
-      sanitizes: ["xss"]
-      description: "Float type casting"
-      cwe: "CWE-79"
+  - pattern: 'echo "<script>var data = ''" . $tainted_data . "'';</script>";
 
-  # =============================================================================
-  # XSS TAINT FLOW DETECTION RULES
-  # =============================================================================
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in JavaScript variable assignment
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-css-style
+  message: XSS sink - CSS style attribute
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  # Direct user input to output flows
-  - id: xss-taint-flow-user-to-echo
-    message: "XSS vulnerability - user input flows to echo without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $user_input = $_GET[...];
-      ...
-      echo $user_input;
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "User input flows directly to output without sanitization"
-      cwe: "CWE-79"
+  - pattern: 'echo "<... style=''..." . $tainted_data . "...''>";
 
-  - id: xss-taint-flow-user-to-html
-    message: "XSS vulnerability - user input flows to HTML without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $user_input = $_POST[...];
-      ...
-      echo "<div>" . $user_input . "</div>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "User input flows to HTML output without sanitization"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in CSS style attribute
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-wp-json-encode
+  message: XSS sink - wp_json_encode output
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  - id: xss-taint-flow-user-to-attribute
-    message: "XSS vulnerability - user input flows to HTML attribute without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $user_input = $_REQUEST[...];
-      ...
-      echo "<input value='" . $user_input . "'>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "User input flows to HTML attribute without sanitization"
-      cwe: "CWE-79"
+  - pattern: 'echo wp_json_encode($tainted_data);
 
-  - id: xss-taint-flow-user-to-javascript
-    message: "XSS vulnerability - user input flows to JavaScript without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $user_input = $_GET[...];
-      ...
-      echo "<script>var data = '" . $user_input . "';</script>";
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "User input flows to JavaScript without sanitization"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in JSON output
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sink-wp-send-json
+  message: XSS sink - wp_send_json output
+  severity: ERROR
+  languages:
+  - php
+  patterns:
 
-  # Database content to output flows
-  - id: xss-taint-flow-database-to-output
-    message: "XSS vulnerability - database content flows to output without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $result = $wpdb->get_row("SELECT * FROM posts WHERE id = 1");
-      ...
-      echo $result->content;
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "Database content flows to output without sanitization"
-      cwe: "CWE-79"
+  - pattern: 'wp_send_json($tainted_data);
 
-  - id: xss-taint-flow-post-meta-to-output
-    message: "XSS vulnerability - post meta flows to output without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $meta_value = get_post_meta($post_id, 'custom_field', true);
-      ...
-      echo $meta_value;
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "Post meta data flows to output without sanitization"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sink
+    vulnerability: xss
+    description: Tainted data in AJAX JSON response
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-esc-html
+  message: XSS sanitizer - esc_html
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # WordPress option to output flows
-  - id: xss-taint-flow-option-to-output
-    message: "XSS vulnerability - WordPress option flows to output without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $option_value = get_option('site_description');
-      ...
-      echo $option_value;
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "WordPress option flows to output without sanitization"
-      cwe: "CWE-79"
+  - pattern: 'esc_html($tainted_data)
 
-  # AJAX response flows
-  - id: xss-taint-flow-user-to-ajax
-    message: "XSS vulnerability - user input flows to AJAX response without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $user_input = $_POST[...];
-      ...
-      wp_send_json_success($user_input);
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "User input flows to AJAX response without sanitization"
-      cwe: "CWE-79"
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress HTML escaping function
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-esc-attr
+  message: XSS sanitizer - esc_attr
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
-  # REST API response flows
-  - id: xss-taint-flow-user-to-rest
-    message: "XSS vulnerability - user input flows to REST response without sanitization"
-    severity: ERROR
-    languages: [php]
-    pattern: |
-      $user_input = $_POST[...];
-      ...
-      return new WP_REST_Response(['data' => $user_input], 200);
-    metadata:
-      category: "xss-taint-analysis"
-      type: "flow"
-      vulnerability: "xss"
-      description: "User input flows to REST API response without sanitization"
-      cwe: "CWE-79"
+  - pattern: 'esc_attr($tainted_data)
 
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress attribute escaping function
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-esc-js
+  message: XSS sanitizer - esc_js
+  severity: INFO
+  languages:
+  - php
+  patterns:
 
+  - pattern: 'esc_js($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress JavaScript escaping function
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-esc-url
+  message: XSS sanitizer - esc_url
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'esc_url($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress URL escaping function
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-sanitize-text-field
+  message: XSS sanitizer - sanitize_text_field
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'sanitize_text_field($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress text field sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-sanitize-email
+  message: XSS sanitizer - sanitize_email
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'sanitize_email($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress email sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-sanitize-url
+  message: XSS sanitizer - sanitize_url
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'sanitize_url($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress URL sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-wp-kses-post
+  message: XSS sanitizer - wp_kses_post
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_kses_post($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress post content filtering
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-wp-kses-data
+  message: XSS sanitizer - wp_kses
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_kses($tainted_data, ...)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress content filtering with allowed tags
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-wp-json-encode
+  message: XSS sanitizer - wp_json_encode
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: 'wp_json_encode($tainted_data)
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: WordPress JSON encoding
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-type-cast-int
+  message: XSS sanitizer - integer casting
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: '(int)$tainted_data
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: Integer type casting
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-sanitizer-type-cast-float
+  message: XSS sanitizer - float casting
+  severity: INFO
+  languages:
+  - php
+  patterns:
+
+  - pattern: '(float)$tainted_data
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: sanitizer
+    sanitizes:
+    - xss
+    description: Float type casting
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - wordpress
+    - info
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-user-to-echo
+  message: XSS vulnerability - user input flows to echo without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$user_input = $_GET[...];
+
+    ...
+
+    echo $user_input;
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: User input flows directly to output without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-user-to-html
+  message: XSS vulnerability - user input flows to HTML without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$user_input = $_POST[...];
+
+    ...
+
+    echo "<div>" . $user_input . "</div>";
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: User input flows to HTML output without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-user-to-attribute
+  message: XSS vulnerability - user input flows to HTML attribute without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$user_input = $_REQUEST[...];
+
+    ...
+
+    echo "<input value=''" . $user_input . "''>";
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: User input flows to HTML attribute without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-user-to-javascript
+  message: XSS vulnerability - user input flows to JavaScript without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$user_input = $_GET[...];
+
+    ...
+
+    echo "<script>var data = ''" . $user_input . "'';</script>";
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: User input flows to JavaScript without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-database-to-output
+  message: XSS vulnerability - database content flows to output without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$result = $wpdb->get_row("SELECT * FROM posts WHERE id = 1");
+
+    ...
+
+    echo $result->content;
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: Database content flows to output without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-post-meta-to-output
+  message: XSS vulnerability - post meta flows to output without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$meta_value = get_post_meta($post_id, ''custom_field'', true);
+
+    ...
+
+    echo $meta_value;
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: Post meta data flows to output without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-option-to-output
+  message: XSS vulnerability - WordPress option flows to output without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$option_value = get_option(''site_description'');
+
+    ...
+
+    echo $option_value;
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: WordPress option flows to output without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-user-to-ajax
+  message: XSS vulnerability - user input flows to AJAX response without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$user_input = $_POST[...];
+
+    ...
+
+    wp_send_json_success($user_input);
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: User input flows to AJAX response without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
+- id: xss-taint-flow-user-to-rest
+  message: XSS vulnerability - user input flows to REST response without sanitization
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+
+  - pattern: '$user_input = $_POST[...];
+
+    ...
+
+    return new WP_REST_Response([''data'' => $user_input], 200);
+
+    '
+  metadata:
+    category: xss-taint-analysis
+    type: flow
+    vulnerability: xss
+    description: User input flows to REST API response without sanitization
+    cwe: CWE-79
+    confidence: high
+    tags:
+    - error
+    - wordpress
+    - escaping
+    - xss
+    - html
+    - security
+    vuln_class: xss
