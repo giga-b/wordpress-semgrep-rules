@@ -144,7 +144,7 @@
 ### Week 5-6: File Upload Security
 
 #### Task 1.7: File Upload Vulnerability Detection
-- **Status**: ⏳ Pending
+ - **Status**: ✅ Complete
 - **Owner**: Security Engineer
 - **Effort**: 6 days
 - **Start Date**: 2025-02-XX
@@ -153,13 +153,18 @@
 
 **Subtasks:**
 - [x] Task 1.7.1: Analyze file upload patterns
-- [ ] Task 1.7.2: Design file type validation rules
-- [ ] Task 1.7.3: Implement size limit detection
-- [ ] Task 1.7.4: Create path traversal detection
-- [ ] Task 1.7.5: Add malware scanning integration
+- [x] Task 1.7.2: Design file type validation rules
+- [x] Task 1.7.3: Implement size limit detection
+- [x] Task 1.7.4: Create path traversal detection
+ - [x] Task 1.7.5: Add malware scanning integration
 
-**Progress**: 0% Complete
-**Notes**: Analysis completed for sources/sinks/validations (type allowlist, sanitize file name, unique name, safe upload dir, is_uploaded_file), and contexts (AJAX/REST/generic). Identified gaps for type validation before wp_handle_upload and direct move.
+**Progress**: 100% Complete
+**Notes**: Added type allowlist rules, size limit detection, path traversal detection, and malware scanning integration:
+- Implemented `wordpress.file.upload.missing-type-allowlist` and exemptions (wp_check_filetype[_and_ext], MIME checks, wp_handle_upload with 'mimes').
+- Implemented `wordpress.file.upload.missing-size-check` detecting missing size validation before `move_uploaded_file` with exemptions for `$_FILES['...']['size']`, `$FILE['size']`, and `wp_max_upload_size()`.
+- Implemented `wordpress.file.upload.path-traversal.user-dir` and `wordpress.file.unzip.path-traversal` / `wordpress.file.unzip.user-controlled-archive` to flag user-controlled directories and unzip destinations; safe patterns remain clean in tests.
+- Implemented `wordpress.file.upload.missing-malware-scan` to warn when uploads occur without a malware/antivirus scan step; added safe and vulnerable fixtures (`tests/safe-examples/malware-scan-upload-safe.php`, `tests/vulnerable-examples/malware-scan-upload-vuln.php`).
+- Tests: vulnerable fixture flagged; safe fixture clean. Results saved under `results/quick-debug/`.
 
 #### Task 1.8: Advanced File Upload Rules
 - **Status**: ⏳ Pending
@@ -170,14 +175,28 @@
 - **Deliverable**: Advanced file upload security
 
 **Subtasks:**
-- [ ] Task 1.8.1: Implement MIME type validation
-- [ ] Task 1.8.2: Create file content analysis
-- [ ] Task 1.8.3: Add virus scanning rules
-- [ ] Task 1.8.4: Design quarantine system
-- [ ] Task 1.8.5: Test advanced rules
+ - [x] Task 1.8.1: Implement MIME type validation
+ - [x] Task 1.8.2: Create file content analysis
+  - [x] Task 1.8.3: Add virus scanning rules
+  - [x] Task 1.8.4: Design quarantine system
+  - [x] Task 1.8.5: Test advanced rules
 
-**Progress**: 0% Complete
-**Notes**: Depends on Task 1.7 completion.
+**Progress**: 100% Complete
+**Notes**:
+ - Implemented `wordpress.file.upload.weak-mime-validation` to flag reliance on client-provided `$_FILES['...']['type']`; recommends `finfo_file`/`mime_content_type` or `wp_check_filetype_and_ext`.
+ - Added fixtures: vulnerable `tests/vulnerable-examples/weak-mime-validation-vuln.php` (flagged), safe `tests/safe-examples/strong-mime-validation-safe.php` (not flagged by weak-mime rule).
+ - Verified with Semgrep scans on targeted fixtures.
+ - Implemented `wordpress.file.upload.missing-content-analysis` to warn when uploads skip content parsing (e.g., no `exif_imagetype`, `getimagesize`, or byte inspection) before `move_uploaded_file`/`wp_handle_upload`.
+ - Added fixtures: vulnerable `tests/vulnerable-examples/content-analysis-upload-vuln.php` (flagged), safe `tests/safe-examples/content-analysis-upload-safe.php` (exempt due to `exif_imagetype`).
+ - Verified with Semgrep scans: vulnerable flagged by new rule; safe not flagged by the new rule.
+ - Implemented virus scanning rules:
+   - `wordpress.file.upload.malware-scan.result-not-checked`: scan called but result not used to gate the move.
+   - `wordpress.file.upload.malware-scan.after-move`: scanning performed only after the file is moved.
+   - Fixtures: `tests/vulnerable-examples/malware-scan-result-not-checked-vuln.php`, `tests/vulnerable-examples/malware-scan-after-move-vuln.php`, and safe `tests/safe-examples/malware-scan-before-move-safe.php`.
+   - Validated via Semgrep scans; YAML validated without key conflicts.
+  - Implemented quarantine design rule:
+    - `wordpress.file.upload.missing-quarantine.for-async-scan`: flags async scan enqueued after moving to final path without quarantine. Fixtures: `tests/vulnerable-examples/quarantine-missing-async-scan-vuln.php` (flagged) and `tests/safe-examples/quarantine-async-scan-safe.php`.
+  - Advanced testing executed: validated all advanced rules against vulnerable/safe fixtures using Semgrep CLI; configurations parsed cleanly.
 
 ### Week 7-8: Testing and Validation
 

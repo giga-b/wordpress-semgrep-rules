@@ -116,3 +116,7 @@ corpus/wordpress-themes/voxel/app/vendor/stripe/CHANGELOG.md
 # Cursor
 /.cursor
 .cursorrules
+
+# Ignore generated results
+/results/
+
