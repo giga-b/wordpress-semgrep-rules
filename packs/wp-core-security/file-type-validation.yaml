@@ -1,8 +1,8 @@
 rules:
-  # Warn when wp_handle_upload is used without prior allowlist validation
+  # Warn when wp_handle_upload is used without any prior file type validation in the same function
   - id: wordpress.file.upload.missing-type-allowlist
     languages: [php]
-    message: File upload without explicit type allowlist validation before wp_handle_upload
+    message: wp_handle_upload used without explicit type allowlist (wp_check_filetype[_and_ext])
     severity: WARNING
     metadata:
       category: file-operations
@@ -10,17 +10,40 @@ rules:
       vuln_class: file_upload
       confidence: high
     patterns:
+      - pattern-inside: |
+          function $HANDLER(...) {
+            ...
+          }
       - pattern: |
           $UPLOAD = wp_handle_upload($FILE, ...)
-      - pattern-not: |
-          $TYPE = wp_check_filetype_and_ext($FILE['tmp_name'], $FILE['name'])
-          if (in_array($TYPE['ext'], $ALLOWED, true)) {
-            $UPLOAD = wp_handle_upload($FILE, ...)
+      # Exempt if function contains any type check helpers
+      - pattern-not-inside: |
+          function $HANDLER(...) {
+            ...
+            wp_check_filetype_and_ext(...);
+            ...
           }
-      - pattern-not: |
-          $TYPE = wp_check_filetype($FILE['name'])
+      - pattern-not-inside: |
+          function $HANDLER(...) {
+            ...
+            wp_check_filetype(...);
+            ...
+          }
+      # Exempt if upload is directly guarded by an allowlist block
+      - pattern-not-inside: |
           if (in_array($TYPE['ext'], $ALLOWED, true)) {
-            $UPLOAD = wp_handle_upload($FILE, ...)
+            ...
+            $UPLOAD = wp_handle_upload(...);
+            ...
+          }
+      # Exempt if function uses negative allowlist guard (early return) anywhere
+      - pattern-not-inside: |
+          function $HANDLER(...) {
+            ...
+            if (!in_array(...)) {
+              ...
+            }
+            ...
           }
 
   # Error when move_uploaded_file to unsanitized/unsafe destination
