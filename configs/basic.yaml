@@ -22,6 +22,14 @@ rules:
     metadata:
       category: "nonce-verification"
       cwe: "CWE-352"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           if (isset($_POST['submit'])) {
@@ -41,6 +49,14 @@ rules:
     metadata:
       category: "nonce-verification"
       cwe: "CWE-352"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           add_action('wp_ajax_my_action', 'my_ajax_handler');
@@ -66,6 +82,14 @@ rules:
     metadata:
       category: "capability-checks"
       cwe: "CWE-285"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           if (isset($_POST['delete_user'])) {
@@ -85,6 +109,14 @@ rules:
     metadata:
       category: "capability-checks"
       cwe: "CWE-285"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           if (isset($_POST['update_settings'])) {
@@ -130,6 +162,14 @@ rules:
     metadata:
       category: "sanitization-functions"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           $data = $_POST['user_input'];
@@ -151,6 +191,14 @@ rules:
     metadata:
       category: "sanitization-functions"
       cwe: "CWE-89"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           $user_input = $_POST['search'];
@@ -166,6 +214,14 @@ rules:
     metadata:
       category: "sanitization-functions"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           $user_data = $_POST['content'];
@@ -194,6 +250,14 @@ rules:
     metadata:
       category: "xss"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           echo $_POST['user_input'];
@@ -209,6 +273,14 @@ rules:
     metadata:
       category: "xss"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           echo "<input value=\"" . $_POST['value'] . "\">";
@@ -226,6 +298,14 @@ rules:
     metadata:
       category: "file-operations"
       cwe: "CWE-22"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           include($_GET['file']);
@@ -242,6 +322,14 @@ rules:
     metadata:
       category: "file-operations"
       cwe: "CWE-434"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
@@ -259,6 +347,14 @@ rules:
     metadata:
       category: "rest-api-security"
       cwe: "CWE-287"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           register_rest_route($namespace, $route, array(
@@ -279,6 +375,14 @@ rules:
     metadata:
       category: "rest-api-security"
       cwe: "CWE-20"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           function $FUNC($request) {
@@ -302,6 +406,14 @@ rules:
     metadata:
       category: "rest-api-security"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           function $FUNC($request) {
@@ -322,6 +434,14 @@ rules:
     metadata:
       category: "rest-api-security"
       cwe: "CWE-352"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           register_rest_route($namespace, '/$endpoint', array(

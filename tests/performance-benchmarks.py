@@ -37,6 +37,16 @@ except Exception:
     psutil = None  # Monitoring will be disabled if psutil is unavailable
 import threading
 import queue
+import concurrent.futures
+
+# Add tooling directory to path for cache utilities
+try:
+    TOOLING_DIR = str((Path(__file__).parent.parent / 'tooling').resolve())
+    if TOOLING_DIR not in sys.path:
+        sys.path.insert(0, TOOLING_DIR)
+    from cache_manager import get_cache_manager  # type: ignore
+except Exception:
+    get_cache_manager = None  # Caching will be disabled if unavailable
 
 @dataclass
 class BenchmarkResult:
@@ -90,13 +100,16 @@ class BenchmarkReport:
 class PerformanceBenchmarker:
     """Performance benchmarking framework"""
     
-    def __init__(self, config_path: Optional[str] = None):
+    def __init__(self, config_path: Optional[str] = None, use_cache: bool = True):
         self.config = self._load_config(config_path)
         self.results: List[BenchmarkResult] = []
         self.start_time = time.time()
         self.monitoring_active = False
         self.monitoring_thread = None
         self.monitoring_queue = queue.Queue()
+        self.use_cache = use_cache and (get_cache_manager is not None)
+        self.cache_manager = get_cache_manager() if self.use_cache else None
+        self._semgrep_version_cache: Optional[str] = None
         
     def _get_semgrep_memory_mb(self) -> float:
         """Return total RSS memory in MB for semgrep child processes.
@@ -248,28 +261,71 @@ class PerformanceBenchmarker:
             print(f"\nRunning {self.config['warmup_runs']} warmup runs...")
             self._run_warmup()
         
-        # Run benchmarks for each configuration and test scenario
+        # Build task list for non-cached scenarios
+        tasks_to_run = []
         for config_name in self.config['benchmark_configs']:
             config_path = os.path.join(self.config['configs_path'], config_name)
-            
             if not os.path.exists(config_path):
                 print(f"Warning: Configuration not found: {config_path}")
                 continue
-            
             for scenario in self.config['test_scenarios']:
                 scenario_path = scenario['path']
-                # Allow absolute path in scenario definitions
                 test_path = scenario_path if os.path.isabs(scenario_path) else os.path.join(self.config['tests_path'], scenario_path)
-                
                 if not os.path.exists(test_path):
                     print(f"Warning: Test path not found: {test_path}")
                     continue
-                
                 print(f"\nBenchmarking {config_name} on {scenario['name']}...")
-                self._run_benchmark(config_name, config_path, test_path, scenario['name'])
+                # Cache check
+                cached_block = None
+                cache_key = self._make_cache_key(config_name, config_path, test_path)
+                if self.use_cache and self.cache_manager is not None:
+                    try:
+                        cached_block = self.cache_manager.get('performance_data', cache_key)
+                    except Exception:
+                        cached_block = None
+                if cached_block and isinstance(cached_block, list):
+                    for item in cached_block:
+                        try:
+                            self.results.append(BenchmarkResult(**item))
+                        except Exception:
+                            pass
+                    print("Using cached benchmark results for this scenario.")
+                else:
+                    tasks_to_run.append((config_name, config_path, test_path, scenario['name'], cache_key))
+
+        # Execute pending tasks (optionally in parallel)
+        if tasks_to_run:
+            enable_parallel = bool(self.config.get('enable_parallel', False))
+            workers = int(self.config.get('parallel_workers', 0) or 0)
+            if enable_parallel and workers > 1:
+                print(f"\nRunning {len(tasks_to_run)} benchmark task(s) in parallel with {workers} worker(s)...")
+                with concurrent.futures.ThreadPoolExecutor(max_workers=workers) as executor:
+                    future_to_task = {
+                        executor.submit(self._run_and_cache_block, *t): t for t in tasks_to_run
+                    }
+                    for future in concurrent.futures.as_completed(future_to_task):
+                        _ = future_to_task[future]
+                        try:
+                            future.result()
+                        except Exception as e:
+                            print(f"Parallel task failed: {e}")
+            else:
+                for t in tasks_to_run:
+                    self._run_and_cache_block(*t)
         
         # Generate comprehensive report
         return self._generate_report()
+
+    def _run_and_cache_block(self, config_name: str, config_path: str, test_path: str, scenario_name: str, cache_key: str) -> None:
+        """Run a benchmark block and cache its results."""
+        prev_len = len(self.results)
+        self._run_benchmark(config_name, config_path, test_path, scenario_name)
+        new_block = [asdict(r) for r in self.results[prev_len:]]
+        if self.use_cache and self.cache_manager is not None and new_block:
+            try:
+                self.cache_manager.set('performance_data', new_block, cache_key)
+            except Exception:
+                pass
     
     def _run_warmup(self):
         """Run warmup runs to stabilize performance"""
@@ -460,6 +516,40 @@ class PerformanceBenchmarker:
             return self.monitoring_queue.get_nowait()
         except queue.Empty:
             return {'memory_peak': 0.0, 'memory_final': 0.0, 'cpu_percent': 0.0}
+
+    def _get_semgrep_version(self) -> str:
+        """Get semgrep version string for cache key stability."""
+        if self._semgrep_version_cache is not None:
+            return self._semgrep_version_cache
+        try:
+            result = subprocess.run([self.config['semgrep_binary'], '--version'], capture_output=True, text=True)
+            if result.returncode == 0:
+                self._semgrep_version_cache = (result.stdout or '').strip()
+            else:
+                self._semgrep_version_cache = 'unknown'
+        except Exception:
+            self._semgrep_version_cache = 'unknown'
+        return self._semgrep_version_cache
+
+    def _make_cache_key(self, config_name: str, config_path: str, test_path: str) -> str:
+        """Create a stable cache key for a (config, scenario) tuple."""
+        try:
+            with open(config_path, 'rb') as f:
+                cfg_hash = __import__('hashlib').sha256(f.read()).hexdigest()[:16]
+        except Exception:
+            cfg_hash = 'nohash'
+        parts = [
+            'v1',
+            config_name,
+            cfg_hash,
+            os.path.abspath(test_path),
+            ','.join(self.config.get('include_globs', [])),
+            ','.join(self.config.get('exclude_paths', [])),
+            str(self.config.get('jobs', '')),
+            str(self.config.get('max_target_bytes', '')),
+            self._get_semgrep_version(),
+        ]
+        return '|'.join(parts)
     
     def _generate_report(self) -> BenchmarkReport:
         """Generate comprehensive benchmark report"""
@@ -856,6 +946,7 @@ def main():
     parser.add_argument('--verbose', action='store_true', help='Verbose output')
     parser.add_argument('--json', action='store_true', help='Output results in JSON format')
     parser.add_argument('--html', action='store_true', help='Generate HTML report')
+    parser.add_argument('--no-cache', action='store_true', help='Disable benchmark result caching')
     parser.add_argument('--csv', action='store_true', help='Export CSV report alongside JSON')
     parser.add_argument('--md', action='store_true', help='Export Markdown report alongside JSON')
     parser.add_argument('--baseline', action='store_true', help='Save current run as performance baseline and exit')
@@ -865,7 +956,7 @@ def main():
     args = parser.parse_args()
     
     # Initialize benchmarker
-    benchmarker = PerformanceBenchmarker(args.config)
+    benchmarker = PerformanceBenchmarker(args.config, use_cache=(not args.no_cache))
     
     # Override config with command line arguments
     if args.rules:

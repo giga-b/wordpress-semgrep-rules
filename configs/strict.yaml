@@ -10,6 +10,14 @@ rules:
     metadata:
       category: "nonce-verification"
       cwe: "CWE-352"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           if (isset($_POST['submit'])) {
@@ -30,6 +38,14 @@ rules:
     metadata:
       category: "capability-checks"
       cwe: "CWE-285"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           if (isset($_POST['update_settings'])) {
@@ -50,6 +66,14 @@ rules:
     metadata:
       category: "sanitization"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           $data = $_POST['user_input'];
@@ -66,6 +90,14 @@ rules:
     metadata:
       category: "xss-prevention"
       cwe: "CWE-79"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           echo $_POST['data'];
@@ -80,6 +112,14 @@ rules:
     metadata:
       category: "sql-injection"
       cwe: "CWE-89"
+    paths:
+      include:
+        - '**/*.php'
+      exclude:
+        - '**/vendor/**'
+        - '**/node_modules/**'
+        - '**/.git/**'
+        - '**/results/**'
     patterns:
       - pattern: |
           $query = "SELECT * FROM wp_posts WHERE ID = " . $_GET['id'];
