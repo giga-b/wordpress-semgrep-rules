@@ -30,9 +30,16 @@ except Exception:
     from pathlib import Path as _P
     import sys as _sys
     _sys.path.append(str((_P(__file__).parent / '_lib').resolve()))
-    from metrics import load_ground_truth, compute_counts, calculate_metrics
-    from fp_detection import load_allowlist, collect_fp_candidates
-    from perf import start_perf, stop_perf
+    try:
+        from metrics import load_ground_truth, compute_counts, calculate_metrics
+        from fp_detection import load_allowlist, collect_fp_candidates
+        from perf import start_perf, stop_perf
+    except Exception:
+        # Final fallback to absolute imports via package
+        _sys.path.append(str((_P(__file__).parent).resolve()))
+        from _lib.metrics import load_ground_truth, compute_counts, calculate_metrics
+        from _lib.fp_detection import load_allowlist, collect_fp_candidates
+        from _lib.perf import start_perf, stop_perf
 
 class AdvancedTestingFramework:
     def __init__(self, project_root: str, default_timeout: int = 300):

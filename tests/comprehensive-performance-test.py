@@ -31,7 +31,10 @@ import subprocess
 import argparse
 import datetime
 import statistics
-import psutil
+try:
+    import psutil  # type: ignore
+except Exception:
+    psutil = None
 import threading
 import queue
 import sqlite3
@@ -114,14 +117,98 @@ class ComprehensivePerformanceTester:
         self.monitoring_queue = queue.Queue()
         self.monitoring_data = []
         
+        # Regression thresholds
+        self.regression_thresholds = {
+            'max_scan_time_regression_pct': 15.0,
+            'max_memory_regression_pct': 10.0
+        }
+    
+    def _get_semgrep_memory_mb(self) -> float:
+        """Return total RSS memory in MB for semgrep child processes.
+
+        If psutil is unavailable or no semgrep child is found, returns 0.0.
+        """
+        if psutil is None:
+            return 0.0
+        try:
+            parent = psutil.Process()
+            total_rss = 0
+            for child in parent.children(recursive=True):
+                try:
+                    name = ''
+                    cmdline = ''
+                    try:
+                        name = (child.name() or '').lower()
+                    except Exception:
+                        pass
+                    try:
+                        cmdline = ' '.join(child.cmdline()).lower()
+                    except Exception:
+                        pass
+                    if 'semgrep' in name or 'semgrep' in cmdline:
+                        mi = child.memory_info()
+                        total_rss += getattr(mi, 'rss', 0)
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+            return float(total_rss) / 1024.0 / 1024.0
+        except Exception:
+            return 0.0
+
+    def _get_semgrep_cpu(self) -> Tuple[float, float]:
+        """Return (cpu_percent_sum, cpu_time_sum) for semgrep child processes.
+
+        If no semgrep children are found, falls back to current process values.
+        """
+        if psutil is None:
+            return (0.0, 0.0)
+        try:
+            parent = psutil.Process()
+            total_percent = 0.0
+            total_time = 0.0
+            found = False
+            for child in parent.children(recursive=True):
+                try:
+                    name = ''
+                    cmdline = ''
+                    try:
+                        name = (child.name() or '').lower()
+                    except Exception:
+                        pass
+                    try:
+                        cmdline = ' '.join(child.cmdline()).lower()
+                    except Exception:
+                        pass
+                    if 'semgrep' in name or 'semgrep' in cmdline:
+                        found = True
+                        total_percent += float(child.cpu_percent(interval=0.0))
+                        c = child.cpu_times()
+                        total_time += float(getattr(c, 'user', 0.0) + getattr(c, 'system', 0.0))
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    continue
+            if not found:
+                try:
+                    p = parent
+                    percent = float(p.cpu_percent(interval=0.0))
+                    c = p.cpu_times()
+                    ctime = float(getattr(c, 'user', 0.0) + getattr(c, 'system', 0.0))
+                    return (percent, ctime)
+                except Exception:
+                    return (0.0, 0.0)
+            return (total_percent, total_time)
+        except Exception:
+            return (0.0, 0.0)
+        
     def _load_config(self, config_path: Optional[str] = None) -> Dict[str, Any]:
-        """Load test configuration"""
+        """Load test configuration and normalize critical paths"""
+        base_dir = Path(__file__).parent.resolve()
+        project_root = base_dir.parent
+
         default_config = {
             'semgrep_binary': 'semgrep',
-            'rules_path': '../packs/',
-            'tests_path': './',
-            'configs_path': '../configs/',
-            'output_path': './performance-results/',
+            'rules_path': str(project_root / 'packs'),
+            'tests_path': str(base_dir),
+            'configs_path': str(project_root / 'configs'),
+            'output_path': str(base_dir / 'performance-results'),
             'iterations': 10,
             'warmup_runs': 3,
             'timeout': 300,
@@ -166,10 +253,15 @@ class ComprehensivePerformanceTester:
         }
         
         if config_path and os.path.exists(config_path):
-            with open(config_path, 'r') as f:
+            with open(config_path, 'r', encoding='utf-8') as f:
                 user_config = json.load(f)
                 default_config.update(user_config)
         
+        # Normalize paths to absolute strings
+        for key in ['rules_path', 'tests_path', 'configs_path', 'output_path']:
+            if key in default_config:
+                default_config[key] = str(Path(default_config[key]).resolve())
+
         return default_config
     
     def run_comprehensive_tests(self) -> PerformanceReport:
@@ -255,7 +347,14 @@ class ComprehensivePerformanceTester:
                     cmd.append(str(test_path))
             
             # Run the command
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=self.config['tests_path'])
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=self.config['tests_path'],
+                encoding='utf-8',
+                errors='replace'
+            )
             
             end_time = time.time()
             scan_time = end_time - start_time
@@ -355,22 +454,26 @@ class ComprehensivePerformanceTester:
     
     def _monitor_performance(self):
         """Monitor system performance during test execution"""
+        if psutil is None:
+            return
         process = psutil.Process()
         
         while self.monitoring_active:
             try:
                 # Get process metrics
-                memory_info = process.memory_info()
-                cpu_percent = process.cpu_percent()
+                # Memory from semgrep child processes; fall back to current process RSS if zero
+                semgrep_mb = self._get_semgrep_memory_mb()
+                memory_rss_mb = semgrep_mb if semgrep_mb > 0 else (process.memory_info().rss / 1024 / 1024)
+                cpu_percent, cpu_time_abs = self._get_semgrep_cpu()
                 cpu_times = process.cpu_times()
                 io_counters = process.io_counters()
                 
                 monitoring_point = {
                     'timestamp': time.time(),
-                    'memory_rss': memory_info.rss / 1024 / 1024,  # MB
-                    'memory_vms': memory_info.vms / 1024 / 1024,  # MB
+                    'memory_rss': memory_rss_mb,  # MB
+                    'memory_vms': getattr(process.memory_info(), 'vms', 0) / 1024 / 1024,  # MB
                     'cpu_percent': cpu_percent,
-                    'cpu_time': cpu_times.user + cpu_times.system,
+                    'cpu_time': cpu_time_abs if cpu_percent > 0 else (cpu_times.user + cpu_times.system),
                     'io_read_bytes': io_counters.read_bytes,
                     'io_write_bytes': io_counters.write_bytes
                 }
@@ -604,6 +707,7 @@ class ComprehensivePerformanceTester:
     def _save_results(self, report: PerformanceReport):
         """Save test results"""
         # Save JSON report
+        os.makedirs(self.config['output_path'], exist_ok=True)
         output_file = os.path.join(self.config['output_path'], 'comprehensive-performance-report.json')
         with open(output_file, 'w') as f:
             json.dump(asdict(report), f, indent=2, default=str)
@@ -614,6 +718,125 @@ class ComprehensivePerformanceTester:
             json.dump([asdict(r) for r in self.results], f, indent=2, default=str)
         
         print(f"Results saved to {self.config['output_path']}")
+
+    def export_csv(self, report: PerformanceReport):
+        """Export test summaries to CSV in the output directory"""
+        import csv
+        csv_path = os.path.join(self.config['output_path'], 'comprehensive-performance-report.csv')
+        rows = []
+        for s in report.test_summaries:
+            rows.append({
+                'config_name': s.config_name,
+                'test_path': s.test_path,
+                'iterations': s.iterations,
+                'mean_scan_time': f"{s.mean_scan_time:.6f}",
+                'std_scan_time': f"{s.std_scan_time:.6f}",
+                'min_scan_time': f"{s.min_scan_time:.6f}",
+                'max_scan_time': f"{s.max_scan_time:.6f}",
+                'mean_memory_peak': f"{s.mean_memory_peak:.3f}",
+                'mean_cpu_percent': f"{s.mean_cpu_percent:.2f}",
+                'mean_findings_count': f"{s.mean_findings_count:.2f}",
+                'success_rate': f"{s.success_rate:.4f}",
+                'throughput_files_per_second': f"{s.throughput_files_per_second:.6f}",
+                'throughput_rules_per_second': f"{s.throughput_rules_per_second:.6f}"
+            })
+        fieldnames = list(rows[0].keys()) if rows else [
+            'config_name','test_path','iterations','mean_scan_time','std_scan_time','min_scan_time','max_scan_time','mean_memory_peak','mean_cpu_percent','mean_findings_count','success_rate','throughput_files_per_second','throughput_rules_per_second']
+        with open(csv_path, 'w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=fieldnames)
+            writer.writeheader()
+            for r in rows:
+                writer.writerow(r)
+        print(f"CSV saved to: {csv_path}")
+
+    def export_markdown(self, report: PerformanceReport):
+        """Export a concise Markdown report to the output directory"""
+        md_path = os.path.join(self.config['output_path'], 'comprehensive-performance-report.md')
+        lines = []
+        lines.append("# Comprehensive Performance Report\n\n")
+        lines.append(f"- Timestamp: {report.timestamp}\n")
+        lines.append(f"- Duration: {report.duration:.2f} seconds\n")
+        lines.append(f"- Total Tests: {report.total_tests}\n")
+        lines.append(f"- Success Rate: {(report.successful_tests / report.total_tests * 100 if report.total_tests else 0):.1f}%\n\n")
+        lines.append("## Top Fastest Configurations\n")
+        for cfg in report.performance_rankings.get('fastest_configs', [])[:5]:
+            lines.append(f"- {cfg}\n")
+        lines.append("\n## Summary Table\n")
+        lines.append("| Config | Test Path | Iter | Mean Time (s) | Peak Mem (MB) | CPU (%) | Findings | Files/s | Rules/s |\n")
+        lines.append("|---|---|---:|---:|---:|---:|---:|---:|---:|\n")
+        for s in report.test_summaries:
+            lines.append(f"| {s.config_name} | {s.test_path} | {s.iterations} | {s.mean_scan_time:.2f} | {s.mean_memory_peak:.1f} | {s.mean_cpu_percent:.1f} | {s.mean_findings_count:.1f} | {s.throughput_files_per_second:.2f} | {s.throughput_rules_per_second:.2f} |\n")
+        with open(md_path, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+        print(f"Markdown saved to: {md_path}")
+
+    def save_baseline(self, report: PerformanceReport, baseline_file: Optional[str] = None):
+        """Save performance baseline for regression checks."""
+        baseline_path = baseline_file or os.path.join(self.config['output_path'], 'comprehensive-performance-baseline.json')
+        with open(baseline_path, 'w') as f:
+            json.dump(asdict(report), f, indent=2, default=str)
+        print(f"Baseline saved to: {baseline_path}")
+
+    def compare_with_baseline(self, report: PerformanceReport, baseline_file: Optional[str] = None) -> Dict[str, Any]:
+        """Compare current test summaries with baseline and detect regressions."""
+        baseline_path = baseline_file or os.path.join(self.config['output_path'], 'comprehensive-performance-baseline.json')
+        if not os.path.exists(baseline_path):
+            return {'status': 'no_baseline', 'message': 'Baseline not found', 'baseline_path': baseline_path}
+        try:
+            with open(baseline_path, 'r') as f:
+                baseline = json.load(f)
+        except Exception as e:
+            return {'status': 'error', 'message': f'Failed to read baseline: {e}'}
+
+        def idx(summaries: List[Dict[str, Any]]) -> Dict[str, Dict[str, Any]]:
+            d = {}
+            for s in summaries:
+                key = f"{s['config_name']}::{s['test_path']}"
+                d[key] = s
+            return d
+
+        current_idx = idx([asdict(s) for s in report.test_summaries])
+        baseline_idx = idx(baseline.get('test_summaries', []))
+
+        max_time_pct = self.regression_thresholds['max_scan_time_regression_pct']
+        max_mem_pct = self.regression_thresholds['max_memory_regression_pct']
+
+        regressions = []
+        for key, base in baseline_idx.items():
+            cur = current_idx.get(key)
+            if not cur:
+                continue
+            btime = max(float(base.get('mean_scan_time', 0.0)), 0.0)
+            ctime = max(float(cur.get('mean_scan_time', 0.0)), 0.0)
+            t_pct = ((ctime - btime) / btime * 100.0) if btime > 0 else 0.0
+            bmem = max(float(base.get('mean_memory_peak', 0.0)), 0.0)
+            cmem = max(float(cur.get('mean_memory_peak', 0.0)), 0.0)
+            m_pct = ((cmem - bmem) / bmem * 100.0) if bmem > 0 else 0.0
+            dims = []
+            if t_pct > max_time_pct:
+                dims.append('time')
+            if m_pct > max_mem_pct:
+                dims.append('memory')
+            if dims:
+                cfg, tpath = key.split('::', 1)
+                regressions.append({
+                    'config_name': cfg,
+                    'test_path': tpath,
+                    'time_baseline': btime,
+                    'time_current': ctime,
+                    'time_regression_pct': t_pct,
+                    'memory_baseline': bmem,
+                    'memory_current': cmem,
+                    'memory_regression_pct': m_pct,
+                    'dimensions': dims
+                })
+
+        return {
+            'status': 'regressions_found' if regressions else 'no_regressions',
+            'regressions': regressions,
+            'thresholds': {'time_pct': max_time_pct, 'memory_pct': max_mem_pct},
+            'baseline_path': baseline_path
+        }
     
     def generate_visualizations(self, report: PerformanceReport):
         """Generate performance visualizations"""
@@ -763,9 +986,13 @@ def main():
     parser.add_argument('--json', action='store_true', help='Output results in JSON format')
     parser.add_argument('--html', action='store_true', help='Generate HTML report')
     parser.add_argument('--optimize', action='store_true', help='Run optimization analysis')
-    parser.add_argument('--baseline', action='store_true', help='Establish performance baseline')
-    parser.add_argument('--compare', action='store_true', help='Compare against baseline')
+    # Deprecated placeholders (kept for backward compatibility, will be overridden below)
+    parser.add_argument('--baseline', action='store_true', help='Save current results as baseline and exit')
+    parser.add_argument('--compare', action='store_true', help='Compare against baseline and fail on regression')
     parser.add_argument('--visualize', action='store_true', help='Generate performance visualizations')
+    parser.add_argument('--csv', action='store_true', help='Export CSV report')
+    parser.add_argument('--md', action='store_true', help='Export Markdown report')
+    parser.add_argument('--baseline-file', help='Custom baseline file path for save/compare')
     
     args = parser.parse_args()
     
@@ -779,9 +1006,9 @@ def main():
         tester.config['tests_path'] = args.tests
     if args.output:
         tester.config['output_path'] = args.output
-    if args.iterations:
+    if args.iterations is not None:
         tester.config['iterations'] = args.iterations
-    if args.warmup:
+    if args.warmup is not None:
         tester.config['warmup_runs'] = args.warmup
     
     # Run comprehensive tests
@@ -790,6 +1017,10 @@ def main():
     # Generate visualizations if requested
     if args.visualize:
         tester.generate_visualizations(report)
+    if args.csv:
+        tester.export_csv(report)
+    if args.md:
+        tester.export_markdown(report)
     
     # Print summary
     print(f"\n{'='*60}")
@@ -811,6 +1042,29 @@ def main():
     
     if args.json:
         print(f"\nDetailed results saved to: {tester.config['output_path']}/comprehensive-performance-report.json")
+
+    # Baseline handling
+    if args.baseline:
+        tester.save_baseline(report, args.baseline_file)
+        print("Baseline saved. Exiting as requested.")
+        sys.exit(0)
+
+    if args.compare:
+        comparison = tester.compare_with_baseline(report, args.baseline_file)
+        if comparison.get('status') == 'no_baseline':
+            print(f"No baseline found at {comparison.get('baseline_path')}")
+            sys.exit(2)
+        if comparison.get('status') == 'error':
+            print(f"Error comparing with baseline: {comparison.get('message')}")
+            sys.exit(2)
+        regs = comparison.get('regressions', [])
+        if regs:
+            print("\nPerformance regressions detected:")
+            for r in regs:
+                print(f"  {r['config_name']} on {r['test_path']}: time +{r['time_regression_pct']:.1f}%, memory +{r['memory_regression_pct']:.1f}%")
+            sys.exit(1)
+        else:
+            print("No performance regressions detected.")
 
 if __name__ == '__main__':
     main()
