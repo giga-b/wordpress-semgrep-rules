@@ -22,7 +22,11 @@ from pathlib import Path
 from typing import Dict, List, Optional
 import fnmatch
 
-from .metrics import normalize_rel_path
+# Support running both as a package (tests._lib) and as a plain module with tests/_lib on sys.path
+try:
+    from .metrics import normalize_rel_path  # type: ignore
+except Exception:  # pragma: no cover
+    from metrics import normalize_rel_path  # type: ignore
 
 
 def load_allowlist(project_root: Path) -> Dict:

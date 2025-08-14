@@ -65,6 +65,12 @@ class MasterTestRunner:
                 'script': 'tests/final-validation.py',
                 'description': 'Final Validation',
                 'required': False
+            },
+            {
+                'name': 'curated-eval',
+                'script': 'tests/eval-new-files.py',
+                'description': 'Curated Generic Evaluation',
+                'required': True
             }
         ]
         
@@ -116,6 +122,13 @@ class MasterTestRunner:
             start_time = time.time()
             
             # Run the component
+            # Ensure UTF-8 for child process stdout/stderr to avoid Windows cp1252 issues
+            child_env = os.environ.copy()
+            child_env.setdefault('PYTHONUTF8', '1')
+            child_env.setdefault('PYTHONIOENCODING', 'utf-8')
+            child_env.setdefault('LC_ALL', 'C.UTF-8')
+            child_env.setdefault('LANG', 'C.UTF-8')
+
             process = subprocess.run(
                 cmd,
                 capture_output=True,
@@ -123,7 +136,8 @@ class MasterTestRunner:
                 cwd=self.project_root,
                 timeout=1800,  # 30 minute timeout
                 encoding='utf-8',
-                errors='replace'
+                errors='replace',
+                env=child_env
             )
             
             end_time = time.time()

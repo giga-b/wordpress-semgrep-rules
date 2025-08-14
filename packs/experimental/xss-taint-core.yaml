@@ -4,6 +4,12 @@ rules:
   severity: ERROR
   languages: [php]
   mode: taint
+  metadata:
+    category: xss-taint-analysis
+    cwe: CWE-79
+    confidence: high
+    vuln_class: xss
+    tags: [wordpress, xss, taint, security]
   pattern-propagators:
     - pattern: $TO = $FROM;
       from: $FROM

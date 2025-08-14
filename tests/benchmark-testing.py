@@ -49,6 +49,7 @@ class BenchmarkTester:
         self._load_ground_truth = load_ground_truth
         self._compute_counts = compute_counts
         self._calculate_metrics = calculate_metrics
+        self._collect_fp_candidates = collect_fp_candidates
         self._ground_truth_index = self._load_ground_truth(self.project_root)
         self._allowlist = load_allowlist(self.project_root)
     
@@ -60,24 +61,64 @@ class BenchmarkTester:
             return self.config['global_targets'][key]
     
     def run_rule_on_corpus(self, rule_file: str, corpus_path: Path) -> Dict:
-        """Run a rule against a corpus and return findings."""
+        """Run a rule against a corpus and return findings.
+
+        Workaround Semgrep's default 'only git-tracked' behavior by expanding
+        explicit file lists for our tests directories so untracked files are scanned.
+        """
         try:
-            # Perf measurement
             perf_t = start_perf()
 
-            result = subprocess.run([
+            cmd = [
                 'semgrep', '--config', rule_file,
-                '--json', '--quiet', '--no-git-ignore',
-                str(corpus_path)
-            ], capture_output=True, text=True, cwd=self.project_root, timeout=300)
+                '--json', '--quiet', '--no-git-ignore', '--metrics=off'
+            ]
+
+            target = str(corpus_path)
+            # Expand explicit files for tests directories to avoid git-tracked filtering
+            try:
+                cpath = Path(corpus_path)
+                if cpath.exists() and cpath.is_dir() and cpath.name in {'safe-examples', 'vulnerable-examples'}:
+                    files = sorted([str(p) for p in cpath.rglob('*.php')])
+                    if files:
+                        cmd.extend(files)
+                    else:
+                        cmd.append(target)
+                else:
+                    cmd.append(target)
+            except Exception:
+                cmd.append(target)
+
+            result = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                cwd=self.project_root,
+                timeout=300,
+                encoding='utf-8',
+                errors='replace'
+            )
             
-            if result.returncode == 0:
-                findings = json.loads(result.stdout)
+            if result.returncode in (0, 1):
+                raw = result.stdout or ''
+                findings = {}
+                try:
+                    findings = json.loads(raw)
+                except Exception:
+                    # Extract JSON payload even if banners/summary are present
+                    start = raw.find('{"version"')
+                    if start != -1:
+                        end = raw.rfind('}')
+                        if end != -1 and end > start:
+                            try:
+                                findings = json.loads(raw[start:end+1])
+                            except Exception:
+                                findings = {}
                 perf = stop_perf(perf_t)
                 return {
                     'success': True,
-                    'findings_count': len(findings.get('results', [])),
-                    'findings': findings.get('results', []),
+                    'findings_count': len(findings.get('results', [])) if isinstance(findings, dict) else 0,
+                    'findings': findings.get('results', []) if isinstance(findings, dict) else [],
                     'scan_time': findings.get('time', {}).get('total', perf.get('wall_time_seconds', 0)),
                     'memory_usage': perf.get('process_rss_delta_bytes', 0),
                     'cpu_time': perf.get('process_cpu_time_seconds', 0.0),
@@ -218,7 +259,7 @@ class BenchmarkTester:
         metrics = self.calculate_metrics(estimated_tp, estimated_fp, estimated_fn)
 
         # False positive candidates (for visibility during benchmarks)
-        fp_info = collect_fp_candidates(
+        fp_info = self._collect_fp_candidates(
             self.project_root,
             safe_results,
             wp_results,
@@ -308,17 +349,18 @@ class BenchmarkTester:
         start_time = time.time()
         
         for i, rule_file in enumerate(rule_files, 1):
-            print(f"\n[{i}/{len(rule_files)}] Benchmarking {rule_file.name}...")
+            rule_path_obj = Path(rule_file) if isinstance(rule_file, str) else rule_file
+            print(f"\n[{i}/{len(rule_files)}] Benchmarking {rule_path_obj.name}...")
             
             # Extract metadata
-            metadata = self.extract_rule_metadata(rule_file)
+            metadata = self.extract_rule_metadata(str(rule_path_obj))
             
             # Run tests
             print(f"  Running tests...")
-            test_results = self.run_semgrep_tests(rule_file)
+            test_results = self.run_semgrep_tests(str(rule_path_obj))
             
             # Estimate metrics from corpus
-            metrics_data = self.estimate_metrics_from_corpus(rule_file, metadata)
+            metrics_data = self.estimate_metrics_from_corpus(str(rule_path_obj), metadata)
             
             # Evaluate against targets
             evaluation = self.evaluate_rule_against_targets(

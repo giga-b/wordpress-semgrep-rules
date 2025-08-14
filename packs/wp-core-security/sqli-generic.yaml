@@ -1,0 +1,19 @@
+rules:
+- id: wordpress.sqli.generic.concat-into-query
+  languages: [php]
+  message: Potential SQL injection. Variable concatenated into SQL query.
+  severity: ERROR
+  metadata:
+    category: sql-injection
+    cwe: CWE-89
+    vuln_class: sqli
+    confidence: medium
+    tags: [sqli, wordpress, wpdb]
+  patterns:
+  - pattern-regex: '(?i)\$wpdb\s*->\s*(get_results|get_row|query)\s*\(([^)]*)\)'
+  - pattern-regex: '(?i)(SELECT|INSERT|UPDATE|DELETE)'
+  - pattern-regex: '\$[A-Za-z_][A-Za-z0-9_]*\s*='
+  - pattern-regex: '\.\s*\$[A-Za-z_][A-Za-z0-9_]+'
+  - pattern-not-regex: '(?i)\$wpdb\s*->\s*(get_results|get_row|query)\s*\(\s*\$wpdb->prepare\s*\('
+
+

@@ -1,0 +1,18 @@
+rules:
+- id: wordpress.file.unzip.user-controlled-archive-dest
+  languages: [php]
+  message: unzip_file to user-controlled destination path.
+  severity: ERROR
+  metadata:
+    category: file_upload
+    cwe: CWE-22
+    vuln_class: file_upload
+    confidence: medium
+    tags: [path-traversal, wordpress]
+  patterns:
+  - pattern: unzip_file($ZIP, $DEST);
+  - metavariable-pattern:
+      metavariable: $DEST
+      pattern: $_POST[...]
+
+

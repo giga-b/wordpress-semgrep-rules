@@ -6,6 +6,8 @@ rules:
   metadata:
     category: ajax-security
     cwe: CWE-434
+    confidence: high
+    tags: [ajax, file-upload, wordpress, security]
     vuln_class: file_upload
   pattern-either:
     - patterns:
@@ -35,6 +37,8 @@ rules:
   metadata:
     category: file-operations
     cwe: CWE-434
+    confidence: high
+    tags: [file-upload, wordpress, security]
     vuln_class: file_upload
   patterns:
     - pattern: |
@@ -63,6 +67,8 @@ rules:
   metadata:
     category: file-operations
     cwe: CWE-434
+    confidence: high
+    tags: [info, file-upload, wordpress, security]
     vuln_class: file_upload
   pattern-either:
     - patterns:

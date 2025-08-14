@@ -1,0 +1,20 @@
+rules:
+- id: wordpress.file.upload.missing-validation-generic
+  languages: [php]
+  message: File uploaded without MIME/type/content checks before move.
+  severity: ERROR
+  metadata:
+    category: file_upload
+    cwe: CWE-434
+    vuln_class: file_upload
+    confidence: medium
+    tags: [file-upload, wordpress]
+  patterns:
+  - pattern: |
+      move_uploaded_file($TMP, $DEST);
+  - pattern-not-regex: '(?i)wp_check_filetype_and_ext\s*\('
+  - pattern-not-regex: '(?i)mime_content_type\s*\('
+  - pattern-not-regex: '(?i)exif_imagetype\s*\('
+  - pattern-not-regex: '(?i)/uploads/\s*quarantine|wp_mkdir_p\s*\('
+
+

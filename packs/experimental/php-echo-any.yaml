@@ -4,3 +4,9 @@ rules:
   severity: INFO
   languages: [php]
   pattern: echo $X;
+  metadata:
+    category: control
+    cwe: CWE-200
+    confidence: medium
+    vuln_class: xss
+    tags: [control, wordpress]

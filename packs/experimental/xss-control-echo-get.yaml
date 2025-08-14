@@ -9,5 +9,7 @@ rules:
     echo $X;
   metadata:
     category: control
+    cwe: CWE-79
+    confidence: high
     vuln_class: xss
     tags: [control, wordpress]

@@ -1,0 +1,16 @@
+rules:
+- id: wordpress.deserialization.unserialize.user-input
+  languages: [php]
+  message: Unserialize called on user-controlled input.
+  severity: ERROR
+  metadata:
+    category: deserialization
+    cwe: CWE-502
+    vuln_class: deserialization
+    confidence: medium
+    tags: [deserialization, wordpress]
+  patterns:
+  - pattern-regex: '(?i)unserialize\s*\(\s*\$_(GET|POST|REQUEST)\['
+  - pattern-not-regex: '(?i)allowed_classes\s*=>'
+
+

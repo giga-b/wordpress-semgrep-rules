@@ -138,7 +138,6 @@ rules:
               ...
             }
             ...
->>>>>>> 70b2fce1 (feat(upload-rules): advanced file upload rules + tests; ignore results artifacts\n\n- weak MIME validation\n- content analysis requirement\n- malware scan checks (result-not-checked, after-move)\n- quarantine rule for async scanning\n- add safe/vuln fixtures\n- update TASK_MANAGEMENT; add .gitignore for /results)
           }
 
   # Error when move_uploaded_file to unsanitized/unsafe destination

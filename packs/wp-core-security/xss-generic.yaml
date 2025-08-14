@@ -1,0 +1,17 @@
+rules:
+- id: wordpress.xss.generic.echo-user-input
+  languages: [php]
+  message: Potential XSS. User-controlled input echoed without escaping.
+  severity: ERROR
+  metadata:
+    category: xss-prevention
+    cwe: CWE-79
+    vuln_class: xss
+    confidence: medium
+    tags: [xss, wordpress, escaping]
+  patterns:
+  - pattern-regex: '(?i)\b(echo|print)\b[\t \r\n\v\f]*[^;]*(\$_(GET|POST|REQUEST)\[)'
+  - pattern-not-regex: '(?i)\b(echo|print)\b[\t \r\n\v\f]*[^;]*(esc_html|esc_attr|esc_url|esc_js|wp_kses_post|wp_json_encode)\s*\('
+  - pattern-not-regex: '(?i)sanitize_text_field\s*\(|sanitize_user\s*\(|wp_strip_all_tags\s*\('
+
+

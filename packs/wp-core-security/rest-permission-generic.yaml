@@ -1,0 +1,17 @@
+rules:
+- id: wordpress.rest.missing-permission-callback
+  languages: [php]
+  message: REST route without permission_callback.
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-306
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, authz]
+  patterns:
+  # Match routes with a callback in the args array, but no permission_callback
+  - pattern-regex: '(?s)register_rest_route\s*\(\s*[^,]+\s*,\s*[^,]+\s*,\s*\[.*?callback\s*=>.*?\]\s*\)'
+  - pattern-not-regex: '(?s)permission_callback\s*=>'
+
+
