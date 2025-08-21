@@ -11,7 +11,9 @@
     "max_scan_time": 30.0,
     "max_memory_usage": 500.0,
     "max_cpu_percent": 80.0,
-    "min_success_rate": 0.95
+    "min_success_rate": 0.95,
+    "min_throughput_files_per_second": 0.1,
+    "min_throughput_rules_per_second": 0.1
   },
   "test_suites": {
     "basic_security": {

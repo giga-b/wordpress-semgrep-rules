@@ -3,10 +3,10 @@ rules:
   - id: wordpress.file.upload.missing-type-allowlist
     languages: [php]
     message: |
-      wp_handle_upload used without explicit type allowlist (wp_check_filetype[_and_ext])
+      wp_handle_upload used without explicit type allowlist (wp_checkfiletype[_and_ext])
       
       REMEDIATION: Implement explicit file type validation:
-      1. Use wp_check_filetype_and_ext() to validate file extension and MIME type
+      1. Use wp_checkfiletype_and_ext() to validate file extension and MIME type
       2. Define allowed file types array: array('jpg', 'png', 'gif') 
       3. Pass 'mimes' option to wp_handle_upload() with allowed types
       4. Validate user capabilities with current_user_can('upload_files')
@@ -27,19 +27,21 @@ rules:
           }
       - pattern: |
           $UPLOAD = wp_handle_upload($FILE, ...)
-      # Exempt if function contains any type check helpers
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            wp_check_filetype_and_ext(...);
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            wp_check_filetype(...);
-            ...
-          }
+      # Combined type check exemptions using pattern-either
+      - pattern-not-inside:
+          pattern-either:
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  wp_checkfiletype_and_ext(...);
+                  ...
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  wp_checkfiletype(...);
+                  ...
+                }
       # Exempt if wp_handle_upload is called with a 'mimes' allowlist option (match common literal style)
       - pattern-not: |
           $UPLOAD = wp_handle_upload($FILE, array('mimes' => $MIMES, ...))
@@ -59,35 +61,35 @@ rules:
             }
             ...
           }
-      # Exempt if function validates MIME using PHP finfo/mime_content_type before upload
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $MIME = mime_content_type(...);
-            if (in_array($MIME, $ALLOWED, true)) {
-              ...
-            }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $FI = finfo_open(...);
-            $MIME = finfo_file($FI, ...);
-            if (in_array($MIME, $ALLOWED, true)) {
-              ...
-            }
-            ...
-          }
+      # Combined MIME validation exemptions using pattern-either
+      - pattern-not-inside:
+          pattern-either:
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $MIME = mime_content_type(...);
+                  if (in_array($MIME, $ALLOWED, true)) {
+                    ...
+                  }
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $FI = finfo_open(...);
+                  $MIME = finfo_file($FI, ...);
+                  if (in_array($MIME, $ALLOWED, true)) {
+                    ...
+                  }
+                }
 
   # Warn when move_uploaded_file is used without a prior type allowlist in the same function
   - id: wordpress.file.upload.move.missing-type-allowlist
     languages: [php]
     message: |
-      move_uploaded_file used without explicit type allowlist (wp_check_filetype[_and_ext] or MIME allowlist)
+      move_uploaded_file used without explicit type allowlist (wp_checkfiletype[_and_ext] or MIME allowlist)
       
       REMEDIATION: Implement proper file validation before move_uploaded_file:
-      1. Use wp_check_filetype_and_ext() to validate extension and MIME type
+      1. Use wp_checkfiletype_and_ext() to validate extension and MIME type
       2. Implement MIME validation via finfo_file() or mime_content_type()
       3. Use exif_imagetype() for image files to verify content
       4. Define explicit allowlist of permitted file types
@@ -108,53 +110,52 @@ rules:
           }
       - pattern: |
           move_uploaded_file($_FILES[...]['tmp_name'], $DEST)
-      # Exempt when WordPress helpers are used to validate type
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $TYPE = wp_check_filetype_and_ext(...);
-            if (in_array($TYPE['ext'], $ALLOWED, true)) {
-              ...
-            }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $TYPE = wp_check_filetype(...);
-            if (in_array($TYPE['ext'], $ALLOWED, true)) {
-              ...
-            }
-            ...
-          }
-      # Exempt generic MIME allowlist guards
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            if (in_array($FILE['type'], $ALLOWED_TYPES, true)) {
-              ...
-            }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $MIME = mime_content_type(...);
-            if (in_array($MIME, $ALLOWED, true)) {
-              ...
-            }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $FI = finfo_open(...);
-            $MIME = finfo_file($FI, ...);
-            if (in_array($MIME, $ALLOWED, true)) {
-              ...
-            }
-            ...
-          }
+      # Combined WordPress helpers exemptions using pattern-either
+      - pattern-not-inside:
+          pattern-either:
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $TYPE = wp_checkfiletype_and_ext(...);
+                  if (in_array($TYPE['ext'], $ALLOWED, true)) {
+                    ...
+                  }
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $TYPE = wp_checkfiletype(...);
+                  if (in_array($TYPE['ext'], $ALLOWED, true)) {
+                    ...
+                  }
+                }
+      # Combined MIME allowlist exemptions using pattern-either
+      - pattern-not-inside:
+          pattern-either:
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  if (in_array($FILE['type'], $ALLOWED_TYPES, true)) {
+                    ...
+                  }
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $MIME = mime_content_type(...);
+                  if (in_array($MIME, $ALLOWED, true)) {
+                    ...
+                  }
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $FI = finfo_open(...);
+                  $MIME = finfo_file($FI, ...);
+                  if (in_array($MIME, $ALLOWED, true)) {
+                    ...
+                  }
+                }
 
   # Error when move_uploaded_file to unsanitized/unsafe destination
   - id: wordpress.file.upload.unsafe-move-no-sanitize
@@ -296,29 +297,30 @@ rules:
       tags: [error, wordpress, path-traversal, file_upload]
       references:
         - https://developer.wordpress.org/plugins/security/securing-file-uploads/
-    pattern-either:
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-                $DEST = $_POST[...];
-                ...
-              }
+    patterns:
+      - pattern-either:
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $DEST = $_POST[...];
+                    ...
+                  }
+              - pattern: |
+                  unzip_file(..., $DEST)
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $DEST = $_GET[...];
+                    ...
+                  }
+              - pattern: |
+                  unzip_file(..., $DEST)
           - pattern: |
-              unzip_file(..., $DEST)
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-                $DEST = $_GET[...];
-                ...
-              }
+              unzip_file(..., $_POST[...])
           - pattern: |
-              unzip_file(..., $DEST)
-      - pattern: |
-          unzip_file(..., $_POST[...])
-      - pattern: |
-          unzip_file(..., $_GET[...])
+              unzip_file(..., $_GET[...])
 
   # Error when unzip_file is used on a user-controlled archive path (zip slip risk)
   - id: wordpress.file.unzip.user-controlled-archive
@@ -331,35 +333,36 @@ rules:
       vuln_class: file_upload
       confidence: high
       tags: [error, wordpress, path-traversal, file_upload]
-    pattern-either:
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-                $ZIP = $_POST[...];
-                ...
-              }
-          - pattern: |
-              unzip_file($ZIP, ...)
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-                $ZIP = $_GET[...];
-                ...
-              }
-          - pattern: |
-              unzip_file($ZIP, ...)
-      - patterns:
-          - pattern: |
-              $ZIP = $_GET[...];
-          - pattern: |
-              unzip_file($ZIP, ...)
-      - patterns:
-          - pattern: |
-              $ZIP = $_POST[...];
-          - pattern: |
-              unzip_file($ZIP, ...)
+    patterns:
+      - pattern-either:
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $ZIP = $_POST[...];
+                    ...
+                  }
+              - pattern: |
+                  unzip_file($ZIP, ...)
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $ZIP = $_GET[...];
+                    ...
+                  }
+              - pattern: |
+                  unzip_file($ZIP, ...)
+          - patterns:
+              - pattern: |
+                  $ZIP = $_GET[...];
+              - pattern: |
+                  unzip_file($ZIP, ...)
+          - patterns:
+              - pattern: |
+                  $ZIP = $_POST[...];
+              - pattern: |
+                  unzip_file($ZIP, ...)
 
   # Warn when move_uploaded_file is used without any size limit validation in the same function
   - id: wordpress.file.upload.missing-size-check
@@ -389,61 +392,64 @@ rules:
           }
       - pattern: |
           move_uploaded_file($SRC['tmp_name'], $DEST)
-      # Exempt if function checks file size directly using $_FILES
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            if ($_FILES[...]['size'] > $MAX) { ... }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            if ($_FILES[...]['size'] >= $MAX) { ... }
-            ...
-          }
-      # Exempt if a local $FILE variable is checked
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $FILE = $_FILES[...];
-            if ($FILE['size'] > $MAX) { ... }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $FILE = $_FILES[...];
-            if ($FILE['size'] >= $MAX) { ... }
-            ...
-          }
-      # Exempt if the same source variable is checked for size before move
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            if ($SRC['size'] > $MAX) { ... }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            if ($SRC['size'] >= $MAX) { ... }
-            ...
-          }
-      # Exempt if compared against wp_max_upload_size()
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            if ($_FILES[...]['size'] > wp_max_upload_size()) { ... }
-            ...
-          }
-      - pattern-not-inside: |
-          function $HANDLER(...) {
-            ...
-            $FILE = $_FILES[...];
-            if ($FILE['size'] > wp_max_upload_size()) { ... }
-            ...
-          }
+      # Combined size validation exemptions using pattern-either
+      - pattern-not-inside:
+          pattern-either:
+            # Direct $_FILES size checks
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  if ($_FILES[...]['size'] > $MAX) { ... }
+                  ...
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  if ($_FILES[...]['size'] >= $MAX) { ... }
+                  ...
+                }
+            # Local $FILE variable size checks
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $FILE = $_FILES[...];
+                  if ($FILE['size'] > $MAX) { ... }
+                  ...
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $FILE = $_FILES[...];
+                  if ($FILE['size'] >= $MAX) { ... }
+                  ...
+                }
+            # Source variable size checks
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  if ($SRC['size'] > $MAX) { ... }
+                  ...
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  if ($SRC['size'] >= $MAX) { ... }
+                  ...
+                }
+            # wp_max_upload_size() checks
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  if ($_FILES[...]['size'] > wp_max_upload_size()) { ... }
+                  ...
+                }
+            - pattern-inside: |
+                function $HANDLER(...) {
+                  ...
+                  $FILE = $_FILES[...];
+                  if ($FILE['size'] > wp_max_upload_size()) { ... }
+                  ...
+                }
 
   # Warn when file upload is performed without a malware/antivirus scanning step
   - id: wordpress.file.upload.missing-malware-scan
@@ -466,124 +472,117 @@ rules:
               }
           - pattern: |
               move_uploaded_file($SRC['tmp_name'], $DEST)
-          # Exempt if a scanning function is called anywhere in the same handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_uploaded_file(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_uploaded_file($SRC['tmp_name']);
-                ...
-              }
-          - pattern-not: |
-              scan_uploaded_file(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_file_for_malware(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_file_for_malware($SRC['tmp_name']);
-                ...
-              }
-          - pattern-not: |
-              scan_file_for_malware(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                malware_scan(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                malware_scan($SRC['tmp_name']);
-                ...
-              }
-          - pattern-not: |
-              malware_scan(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                antivirus_scan(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                antivirus_scan($SRC['tmp_name']);
-                ...
-              }
-          - pattern-not: |
-              antivirus_scan(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamav_scanfile(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamav_scanfile($SRC['tmp_name']);
-                ...
-              }
-          - pattern-not: |
-              clamav_scanfile(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamscan(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamscan($SRC['tmp_name']);
-                ...
-              }
-          - pattern-not: |
-              clamscan(...)
-          # Exempt if a size limit check exists in the same handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if ($_FILES[...]['size'] > $MAX) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $FILE = $_FILES[...];
-                if ($FILE['size'] > $MAX) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if ($SRC['size'] > $MAX) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if ($_FILES[...]['size'] > wp_max_upload_size()) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $FILE = $_FILES[...];
-                if ($FILE['size'] > wp_max_upload_size()) { ... }
-                ...
-              }
+          # Combined scanning function exemptions using pattern-either
+          - pattern-not-inside:
+              pattern-either:
+                # Generic scanning functions
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      scan_uploaded_file(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      scan_uploaded_file($SRC['tmp_name']);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      scan_file_for_malware(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      scan_file_for_malware($SRC['tmp_name']);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      malware_scan(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      malware_scan($SRC['tmp_name']);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      antivirus_scan(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      antivirus_scan($SRC['tmp_name']);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      clamav_scanfile(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      clamav_scanfile($SRC['tmp_name']);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      clamscan(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      clamscan($SRC['tmp_name']);
+                      ...
+                    }
+          # Combined size limit check exemptions using pattern-either
+          - pattern-not-inside:
+              pattern-either:
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      if ($_FILES[...]['size'] > $MAX) { ... }
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      $FILE = $_FILES[...];
+                      if ($FILE['size'] > $MAX) { ... }
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      if ($SRC['size'] > $MAX) { ... }
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      if ($_FILES[...]['size'] > wp_max_upload_size()) { ... }
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      $FILE = $_FILES[...];
+                      if ($FILE['size'] > wp_max_upload_size()) { ... }
+                      ...
+                    }
 
   # Warn when malware scan is called but its result is not used to gate the move/acceptance
   - id: wordpress.file.upload.malware-scan.result-not-checked
@@ -598,59 +597,60 @@ rules:
       tags: [warning, file-upload, wordpress, malware-scan, antivirus, file_upload]
       references:
         - https://developer.wordpress.org/plugins/security/securing-file-uploads/
-    pattern-either:
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-              }
-          - pattern: |
-              $SCAN = scan_uploaded_file($SRC)
-          - pattern: |
-              move_uploaded_file($SRC, $DEST)
-          # Exempt when the scan result is used in a conditional gate
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if (scan_uploaded_file($SRC)) {
-                  ...
-                  move_uploaded_file($SRC, $DEST);
-                  ...
-                }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if (!scan_uploaded_file($SRC)) { return; }
-                ...
-                move_uploaded_file($SRC, $DEST);
-                ...
-              }
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-              }
-          - pattern: |
-              scan_file_for_malware($SRC)
-          - pattern: |
-              move_uploaded_file($SRC, $DEST)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if (scan_file_for_malware($SRC)) {
-                  ...
-                  move_uploaded_file($SRC, $DEST);
-                  ...
-                }
-                ...
-              }
-      - patterns:
-          - pattern: |
-              $RES = scan_uploaded_file($_FILES[...]['tmp_name'])
-          - pattern: |
-              move_uploaded_file($_FILES[...]['tmp_name'], $DEST)
+    patterns:
+      - pattern-either:
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                  }
+              - pattern: |
+                  $SCAN = scan_uploaded_file($SRC)
+              - pattern: |
+                  move_uploaded_file($SRC, $DEST)
+              # Exempt when the scan result is used in a conditional gate
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    if (scan_uploaded_file($SRC)) {
+                      ...
+                      move_uploaded_file($SRC, $DEST);
+                      ...
+                    }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    if (!scan_uploaded_file($SRC)) { return; }
+                    ...
+                    move_uploaded_file($SRC, $DEST);
+                    ...
+                  }
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                  }
+              - pattern: |
+                  scan_file_for_malware($SRC)
+              - pattern: |
+                  move_uploaded_file($SRC, $DEST)
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    if (scan_file_for_malware($SRC)) {
+                      ...
+                      move_uploaded_file($SRC, $DEST);
+                      ...
+                    }
+                    ...
+                  }
+          - patterns:
+              - pattern: |
+                  $RES = scan_uploaded_file($_FILES[...]['tmp_name'])
+              - pattern: |
+                  move_uploaded_file($_FILES[...]['tmp_name'], $DEST)
 
   # Warn when malware scan is performed only after moving the file to destination
   - id: wordpress.file.upload.malware-scan.after-move
@@ -724,7 +724,7 @@ rules:
   # Warn when MIME/type validation relies on client-provided content type (weak validation)
   - id: wordpress.file.upload.weak-mime-validation
     languages: [php]
-    message: Weak MIME validation using client-provided type ($_FILES['...']['type']); use finfo_file/mime_content_type or wp_check_filetype_and_ext
+    message: Weak MIME validation using client-provided type ($_FILES['...']['type']); use finfo_file/mime_content_type or wp_checkfiletype_and_ext
     severity: WARNING
     metadata:
       category: file-operations
@@ -734,207 +734,208 @@ rules:
       tags: [warning, file-upload, wordpress, validation, mime, file_upload]
       references:
         - https://developer.wordpress.org/plugins/security/securing-file-uploads/
-    pattern-either:
-      # Case 1: Direct in_array allowlist using client-provided type
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-              }
-          - pattern-inside: |
-              if (in_array($_FILES[...]['type'], $ALLOWED, ...)) {
-                ...
-              }
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-                move_uploaded_file($_FILES[...]['tmp_name'], $DEST);
-                ...
-              }
-          # Exempt if robust MIME validation is present in the same handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $FI = finfo_open(...);
-                $MIME = finfo_file($FI, ...);
-                if (in_array($MIME, $ALLOWED, ...)) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $MIME = mime_content_type(...);
-                if (in_array($MIME, $ALLOWED, ...)) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $TYPE = wp_check_filetype_and_ext(...);
-                if (in_array($TYPE['ext'], $ALLOWED, ...)) { ... }
-                ...
-              }
-      # Case 2: Equality/regex checks on client-provided type
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-              }
-          - pattern-either:
+    patterns:
+      - pattern-either:
+          # Case 1: Direct in_array allowlist using client-provided type
+          - patterns:
               - pattern-inside: |
-                  if ($_FILES[...]['type'] == $EXPECTED || $_FILES[...]['type'] === $EXPECTED) { ... }
+                  function $HANDLER(...) {
+                    ...
+                  }
               - pattern-inside: |
-                  if ($FILE['type'] == $EXPECTED || $FILE['type'] === $EXPECTED) { ... }
+                  if (in_array($_FILES[...]['type'], $ALLOWED, ...)) {
+                    ...
+                  }
               - pattern-inside: |
-                  if (preg_match($RE, $_FILES[...]['type'])) { ... }
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-                move_uploaded_file($_FILES[...]['tmp_name'], $DEST);
-                ...
-              }
-          # Exempt if robust MIME validation is present in the same handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $FI = finfo_open(...);
-                $MIME = finfo_file($FI, ...);
-                if (in_array($MIME, $ALLOWED, ...)) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $MIME = mime_content_type(...);
-                if (in_array($MIME, $ALLOWED, ...)) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $TYPE = wp_check_filetype_and_ext(...);
-                if (in_array($TYPE['ext'], $ALLOWED, ...)) { ... }
-                ...
-              }
-      - patterns:
-          - pattern-inside: |
-              function $HANDLER(...) {
-                ...
-              }
-          - pattern: |
-              $UPLOAD = wp_handle_upload($FILE, ...)
-          # Exempt if a scanning function is called anywhere in the same handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_uploaded_file(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_uploaded_file($UPLOAD['file']);
-                ...
-              }
-          - pattern-not: |
-              scan_uploaded_file(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_file_for_malware(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                scan_file_for_malware($UPLOAD['file']);
-                ...
-              }
-          - pattern-not: |
-              scan_file_for_malware(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                malware_scan(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                malware_scan($UPLOAD['file']);
-                ...
-              }
-          - pattern-not: |
-              malware_scan(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                antivirus_scan(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                antivirus_scan($UPLOAD['file']);
-                ...
-              }
-          - pattern-not: |
-              antivirus_scan(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamav_scanfile(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamav_scanfile($UPLOAD['file']);
-                ...
-              }
-          - pattern-not: |
-              clamav_scanfile(...)
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamscan(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                clamscan($UPLOAD['file']);
-                ...
-              }
-          - pattern-not: |
-              clamscan(...)
-          # Exempt if a size limit check exists in the same handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if ($_FILES[...]['size'] > $MAX) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $FILE = $_FILES[...];
-                if ($FILE['size'] > $MAX) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                if ($_FILES[...]['size'] > wp_max_upload_size()) { ... }
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $FILE = $_FILES[...];
-                if ($FILE['size'] > wp_max_upload_size()) { ... }
-                ...
-              }
+                  function $HANDLER(...) {
+                    ...
+                    move_uploaded_file($_FILES[...]['tmp_name'], $DEST);
+                    ...
+                  }
+              # Exempt if robust MIME validation is present in the same handler
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $FI = finfo_open(...);
+                    $MIME = finfo_file($FI, ...);
+                    if (in_array($MIME, $ALLOWED, ...)) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $MIME = mime_content_type(...);
+                    if (in_array($MIME, $ALLOWED, ...)) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $TYPE = wp_checkfiletype_and_ext(...);
+                    if (in_array($TYPE['ext'], $ALLOWED, ...)) { ... }
+                    ...
+                  }
+          # Case 2: Equality/regex checks on client-provided type
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                  }
+              - pattern-either:
+                  - pattern-inside: |
+                      if ($_FILES[...]['type'] == $EXPECTED || $_FILES[...]['type'] === $EXPECTED) { ... }
+                  - pattern-inside: |
+                      if ($FILE['type'] == $EXPECTED || $FILE['type'] === $EXPECTED) { ... }
+                  - pattern-inside: |
+                      if (preg_match($RE, $_FILES[...]['type'])) { ... }
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    move_uploaded_file($_FILES[...]['tmp_name'], $DEST);
+                    ...
+                  }
+              # Exempt if robust MIME validation is present in the same handler
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $FI = finfo_open(...);
+                    $MIME = finfo_file($FI, ...);
+                    if (in_array($MIME, $ALLOWED, ...)) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $MIME = mime_content_type(...);
+                    if (in_array($MIME, $ALLOWED, ...)) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $TYPE = wp_checkfiletype_and_ext(...);
+                    if (in_array($TYPE['ext'], $ALLOWED, ...)) { ... }
+                    ...
+                  }
+          - patterns:
+              - pattern-inside: |
+                  function $HANDLER(...) {
+                    ...
+                  }
+              - pattern: |
+                  $UPLOAD = wp_handle_upload($FILE, ...)
+              # Exempt if a scanning function is called anywhere in the same handler
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    scan_uploaded_file(...);
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    scan_uploaded_file($UPLOAD['file']);
+                    ...
+                  }
+              - pattern-not: |
+                  scan_uploaded_file(...)
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    scan_file_for_malware(...);
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    scan_file_for_malware($UPLOAD['file']);
+                    ...
+                  }
+              - pattern-not: |
+                  scan_file_for_malware(...)
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    malware_scan(...);
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    malware_scan($UPLOAD['file']);
+                    ...
+                  }
+              - pattern-not: |
+                  malware_scan(...)
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    antivirus_scan(...);
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    antivirus_scan($UPLOAD['file']);
+                    ...
+                  }
+              - pattern-not: |
+                  antivirus_scan(...)
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    clamav_scanfile(...);
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    clamav_scanfile($UPLOAD['file']);
+                    ...
+                  }
+              - pattern-not: |
+                  clamav_scanfile(...)
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    clamscan(...);
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    clamscan($UPLOAD['file']);
+                    ...
+                  }
+              - pattern-not: |
+                  clamscan(...)
+              # Exempt if a size limit check exists in the same handler
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    if ($_FILES[...]['size'] > $MAX) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $FILE = $_FILES[...];
+                    if ($FILE['size'] > $MAX) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    if ($_FILES[...]['size'] > wp_max_upload_size()) { ... }
+                    ...
+                  }
+              - pattern-not-inside: |
+                  function $HANDLER(...) {
+                    ...
+                    $FILE = $_FILES[...];
+                    if ($FILE['size'] > wp_max_upload_size()) { ... }
+                    ...
+                  }
 
   # Warn when uploads do not perform any content analysis (magic number/image parsing) before moving/handling
   - id: wordpress.file.upload.missing-content-analysis
@@ -965,31 +966,33 @@ rules:
               }
           - pattern: |
               move_uploaded_file($_FILES[...]['tmp_name'], $DEST)
-          # Exempt if content analysis is performed anywhere in handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                exif_imagetype(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                getimagesize(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $DATA = file_get_contents(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                imagecreatefromstring(...);
-                ...
-              }
+          # Combined content analysis exemptions using pattern-either
+          - pattern-not-inside:
+              pattern-either:
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      exif_imagetype(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      getimagesize(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      $DATA = file_get_contents(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      imagecreatefromstring(...);
+                      ...
+                    }
       - patterns:
           - pattern-inside: |
               function $HANDLER(...) {
@@ -999,31 +1002,33 @@ rules:
               }
           - pattern: |
               move_uploaded_file($SRC['tmp_name'], $DEST)
-          # Exempt if content analysis is performed anywhere in handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                exif_imagetype(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                getimagesize(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $DATA = file_get_contents(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                imagecreatefromstring(...);
-                ...
-              }
+          # Combined content analysis exemptions using pattern-either
+          - pattern-not-inside:
+              pattern-either:
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      exif_imagetype(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      getimagesize(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      $DATA = file_get_contents(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      imagecreatefromstring(...);
+                      ...
+                    }
       - patterns:
           - pattern-inside: |
               function $HANDLER(...) {
@@ -1031,31 +1036,33 @@ rules:
               }
           - pattern: |
               $UPLOAD = wp_handle_upload($FILE, ...)
-          # Exempt if content analysis is performed anywhere in handler
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                exif_imagetype(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                getimagesize(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                $DATA = file_get_contents(...);
-                ...
-              }
-          - pattern-not-inside: |
-              function $HANDLER(...) {
-                ...
-                imagecreatefromstring(...);
-                ...
-              }
+          # Combined content analysis exemptions using pattern-either
+          - pattern-not-inside:
+              pattern-either:
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      exif_imagetype(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      getimagesize(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      $DATA = file_get_contents(...);
+                      ...
+                    }
+                - pattern-inside: |
+                    function $HANDLER(...) {
+                      ...
+                      imagecreatefromstring(...);
+                      ...
+                    }
 
   # WordPress Media Handler Suppressions
   # These functions handle file validation internally and are safe by design

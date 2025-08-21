@@ -6,7 +6,7 @@ rules:
     
     REMEDIATION: Use WordPress built-in handlers or implement proper validation:
     1. Use wp_handle_upload() for media uploads (handles validation internally)
-    2. For custom uploads, validate MIME type via finfo_file() or wp_check_filetype_and_ext()
+    2. For custom uploads, validate MIME type via finfo_file() or wp_checkfiletype_and_ext()
     3. Sanitize filename with sanitize_file_name()
     4. Store under wp_upload_dir()['path'] with wp_unique_filename()
     5. Implement file size limits and user capability checks
@@ -39,38 +39,95 @@ rules:
   
   # Essential suppressions for patterns not covered by structured blocks
   - pattern-not-regex: '(?i)wp_check_filetype_and_ext\s*\('
-  
-  # Suppress when robust MIME/content checks exist in the same function before move
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $MIME = mime_content_type(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
+  - pattern-not-regex: '(?i)wp_checkfiletype\s*\('
+  - pattern-not-regex: '(?i)wp_handle_upload\s*\('
 
+  # Combined MIME/content validation suppressions using pattern-either
   - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $FI = finfo_open(...);
-          $MIME = finfo_file($FI, ...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
+      pattern-either:
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $MIME = mime_content_type(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $FI = finfo_open(...);
+              $MIME = finfo_file($FI, ...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $T = exif_imagetype(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $SIZE = getimagesize(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
 
+  # Combined quarantine and safety flow suppressions using pattern-either
   - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $T = exif_imagetype(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
+      pattern-either:
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $Q = sys_get_temp_dir() . $ANY;
+              ...
+              move_uploaded_file($TMP, $Q);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              wp_mkdir_p($QUARANTINE_DIR);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+
+  # Combined WordPress upload flow suppressions using pattern-either
+  - pattern-not:
+      pattern-either:
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $UP = wp_upload_dir(...);
+              ...
+              $SAFE = sanitize_file_name(...);
+              ...
+              $UNIQ = wp_unique_filename(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              if ( current_user_can('upload_files') ) { ... move_uploaded_file($TMP, $DEST); ... }
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              if ($F['size'] > wp_max_upload_size()) { ... }
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
 
   # Suppress quarantine-first flows (tmp then async scan/rename) in same function
   - pattern-not:
@@ -83,12 +140,12 @@ rules:
           ...
         }
 
-  # Suppress when quarantine directory is created before move in same function
+  # Suppress when an explicit scan function gates the move operation in same function
   - pattern-not:
       pattern-inside: |
         function $FUNC(...) {
           ...
-          wp_mkdir_p($QUARANTINE_DIR);
+          if (!$SCAN($TMP)) { ... }
           ...
           move_uploaded_file($TMP, $DEST);
           ...

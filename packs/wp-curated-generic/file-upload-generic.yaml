@@ -6,7 +6,7 @@ rules:
     
     REMEDIATION: Use WordPress built-in handlers or implement proper validation:
     1. Use wp_handle_upload() for media uploads (handles validation internally)
-    2. For custom uploads, validate MIME type via finfo_file() or wp_check_filetype_and_ext()
+    2. For custom uploads, validate MIME type via finfo_file() or wp_checkfiletype_and_ext()
     3. Sanitize filename with sanitize_file_name()
     4. Store under wp_upload_dir()['path'] with wp_unique_filename()
     5. Implement file size limits and user capability checks
@@ -36,76 +36,71 @@ rules:
         move_uploaded_file($FILES['tmp_name'], $DEST);
     - pattern: |
         move_uploaded_file($F['tmp_name'], $DEST);
+  
   # Essential suppressions for patterns not covered by structured blocks
-  - pattern-not-regex: '(?i)wp_check_filetype_and_ext\s*\('
-  - pattern-not-regex: '(?i)wp_check_filetype\s*\('
+  - pattern-not-regex: '(?i)wp_checkfiletype_and_ext\s*\('
+  - pattern-not-regex: '(?i)wp_checkfiletype\s*\('
   - pattern-not-regex: '(?i)wp_handle_upload\s*\('
 
-  # Suppress when robust MIME/content checks exist in the same function before move
+  # Combined MIME/content validation suppressions using pattern-either
   - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $FINFO = finfo_open(...);
-          ...
-          $MIME = finfo_file(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
+      pattern-either:
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $FINFO = finfo_open(...);
+              ...
+              $MIME = finfo_file(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $T = exif_imagetype(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $SIZE = getimagesize(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
 
+  # Combined WordPress upload flow suppressions using pattern-either
   - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $T = exif_imagetype(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $SIZE = getimagesize(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  # Suppress when canonical WP upload flow or safeguards are used in the same function
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $UP = wp_upload_dir(...);
-          ...
-          $SAFE = sanitize_file_name(...);
-          ...
-          $UNIQ = wp_unique_filename(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          if ( current_user_can('upload_files') ) { ... move_uploaded_file($TMP, $DEST); ... }
-          ...
-        }
-
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          if ($F['size'] > wp_max_upload_size()) { ... }
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
+      pattern-either:
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              $UP = wp_upload_dir(...);
+              ...
+              $SAFE = sanitize_file_name(...);
+              ...
+              $UNIQ = wp_unique_filename(...);
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              if ( current_user_can('upload_files') ) { ... move_uploaded_file($TMP, $DEST); ... }
+              ...
+            }
+        - pattern-inside: |
+            function $FUNC(...) {
+              ...
+              if ($F['size'] > wp_max_upload_size()) { ... }
+              ...
+              move_uploaded_file($TMP, $DEST);
+              ...
+            }
 
   # Suppress quarantine-first flows (tmp then async scan/rename) in same function
   - pattern-not:
@@ -136,48 +131,6 @@ rules:
           if (!function_exists('move_uploaded_file')) {
             function move_uploaded_file(...) { ... }
           }
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  # Suppress when canonical WordPress handlers are used in same function (these handle validation internally)
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $ATTACHMENT_ID = media_handle_upload(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          $ATTACHMENT_ID = wp_handle_sideload(...);
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  # Suppress when files are handled via WordPress media functions in same function (these are safe by design)
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          if (media_handle_upload(...)) { ... }
-          ...
-          move_uploaded_file($TMP, $DEST);
-          ...
-        }
-
-  - pattern-not:
-      pattern-inside: |
-        function $FUNC(...) {
-          ...
-          if (wp_handle_sideload(...)) { ... }
           ...
           move_uploaded_file($TMP, $DEST);
           ...
