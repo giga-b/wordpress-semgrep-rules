@@ -10,11 +10,92 @@ rules:
     confidence: medium
     tags: [file-upload, wordpress]
   patterns:
-  - pattern: |
-      move_uploaded_file($TMP, $DEST);
+  # Constrain $TMP to only real upload sources to reduce false positives
+  - pattern-either:
+    - pattern: |
+        move_uploaded_file($_FILES[$X]['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($f['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($file['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($FILE['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($upload['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($UPLOAD['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($FILES['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($F['tmp_name'], $DEST);
+  
+  # Essential suppressions for patterns not covered by structured blocks
   - pattern-not-regex: '(?i)wp_check_filetype_and_ext\s*\('
-  - pattern-not-regex: '(?i)mime_content_type\s*\('
-  - pattern-not-regex: '(?i)exif_imagetype\s*\('
-  - pattern-not-regex: '(?i)/uploads/\s*quarantine|wp_mkdir_p\s*\('
+  
+  # Suppress when robust MIME/content checks exist in the same function before move
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          $MIME = mime_content_type(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          $FI = finfo_open(...);
+          $MIME = finfo_file($FI, ...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          $T = exif_imagetype(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  # Suppress quarantine-first flows (tmp then async scan/rename) in same function
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          $Q = sys_get_temp_dir() . $ANY;
+          ...
+          move_uploaded_file($TMP, $Q);
+          ...
+        }
+
+  # Suppress when quarantine directory is created before move in same function
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          wp_mkdir_p($QUARANTINE_DIR);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  # Suppress when move_uploaded_file is locally stubbed in test functions
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          if (!function_exists('move_uploaded_file')) {
+            function move_uploaded_file(...) { ... }
+          }
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
 

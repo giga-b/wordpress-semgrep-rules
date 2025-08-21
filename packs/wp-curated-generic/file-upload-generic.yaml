@@ -10,85 +10,169 @@ rules:
     confidence: medium
     tags: [file-upload, wordpress]
   patterns:
-  - pattern: |
-      move_uploaded_file($TMP, $DEST);
-  # Allow if common validation or quarantine/scan appears nearby in file
+  # Constrain $TMP to only real upload sources to reduce false positives
+  - pattern-either:
+    - pattern: |
+        move_uploaded_file($_FILES[$X]['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($f['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($file['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($FILE['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($upload['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($UPLOAD['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($FILES['tmp_name'], $DEST);
+    - pattern: |
+        move_uploaded_file($F['tmp_name'], $DEST);
+  # Essential suppressions for patterns not covered by structured blocks
   - pattern-not-regex: '(?i)wp_check_filetype_and_ext\s*\('
   - pattern-not-regex: '(?i)wp_check_filetype\s*\('
-  - pattern-not-regex: '(?i)mime_content_type\s*\('
-  - pattern-not-regex: '(?i)finfo_(open|buffer|file)\s*\('
-  - pattern-not-regex: '(?i)getimagesize\s*\('
-  - pattern-not-regex: '(?i)exif_imagetype\s*\('
   - pattern-not-regex: '(?i)wp_handle_upload\s*\('
-  # Quarantine suppression now handled via structured pattern-inside blocks
-  # Additional safe patterns observed in repo safe examples
-  - pattern-not-regex: '(?i)wp_upload_dir\s*\('
-  - pattern-not-regex: '(?i)sanitize_file_name\s*\('
-  - pattern-not-regex: '(?i)wp_unique_filename\s*\('
-  - pattern-not-regex: "(?i)current_user_can\\s*\\(\\s*[\\\"']upload_files[\\\"']\\s*\\)"
-  - pattern-not-regex: '(?i)wp_max_upload_size\s*\('
 
-  # Suppress when robust MIME/content checks exist in the same scope before move
+  # Suppress when robust MIME/content checks exist in the same function before move
   - pattern-not:
       pattern-inside: |
-        ...
-        $FINFO = finfo_open(...);
-        ...
-        $MIME = finfo_file(...);
-        ...
-        move_uploaded_file($TMP, $DEST);
+        function $FUNC(...) {
+          ...
+          $FINFO = finfo_open(...);
+          ...
+          $MIME = finfo_file(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
   - pattern-not:
       pattern-inside: |
-        ...
-        $T = exif_imagetype(...);
-        ...
-        move_uploaded_file($TMP, $DEST);
+        function $FUNC(...) {
+          ...
+          $T = exif_imagetype(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
   - pattern-not:
       pattern-inside: |
-        ...
-        $SIZE = getimagesize(...);
-        ...
-        move_uploaded_file($TMP, $DEST);
+        function $FUNC(...) {
+          ...
+          $SIZE = getimagesize(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
-  # Suppress when canonical WP upload flow or safeguards are used in the same scope
+  # Suppress when canonical WP upload flow or safeguards are used in the same function
   - pattern-not:
       pattern-inside: |
-        ...
-        $UP = wp_upload_dir(...);
-        ...
-        $SAFE = sanitize_file_name(...);
-        ...
-        $UNIQ = wp_unique_filename(...);
-        ...
-        move_uploaded_file($TMP, $DEST);
+        function $FUNC(...) {
+          ...
+          $UP = wp_upload_dir(...);
+          ...
+          $SAFE = sanitize_file_name(...);
+          ...
+          $UNIQ = wp_unique_filename(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
   - pattern-not:
       pattern-inside: |
-        if ( current_user_can('upload_files') ) { ... move_uploaded_file($TMP, $DEST); ... }
+        function $FUNC(...) {
+          ...
+          if ( current_user_can('upload_files') ) { ... move_uploaded_file($TMP, $DEST); ... }
+          ...
+        }
 
   - pattern-not:
       pattern-inside: |
-        ...
-        if ($F['size'] > wp_max_upload_size()) { ... }
-        ...
-        move_uploaded_file($TMP, $DEST);
+        function $FUNC(...) {
+          ...
+          if ($F['size'] > wp_max_upload_size()) { ... }
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
-  # Suppress quarantine-first flows (tmp then async scan/rename)
+  # Suppress quarantine-first flows (tmp then async scan/rename) in same function
   - pattern-not:
       pattern-inside: |
-        ...
-        $Q = sys_get_temp_dir() . $ANY;
-        ...
-        move_uploaded_file($TMP, $Q);
+        function $FUNC(...) {
+          ...
+          $Q = sys_get_temp_dir() . $ANY;
+          ...
+          move_uploaded_file($TMP, $Q);
+          ...
+        }
 
-  # Suppress when an explicit scan function gates the move operation
+  # Suppress when an explicit scan function gates the move operation in same function
   - pattern-not:
       pattern-inside: |
-        ...
-        if (!$SCAN($TMP)) { ... }
-        ...
-        move_uploaded_file($TMP, $DEST);
+        function $FUNC(...) {
+          ...
+          if (!$SCAN($TMP)) { ... }
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  # Suppress when move_uploaded_file is locally stubbed in test functions
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          if (!function_exists('move_uploaded_file')) {
+            function move_uploaded_file(...) { ... }
+          }
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  # Suppress when canonical WordPress handlers are used in same function (these handle validation internally)
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          $ATTACHMENT_ID = media_handle_upload(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          $ATTACHMENT_ID = wp_handle_sideload(...);
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  # Suppress when files are handled via WordPress media functions in same function (these are safe by design)
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          if (media_handle_upload(...)) { ... }
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
+
+  - pattern-not:
+      pattern-inside: |
+        function $FUNC(...) {
+          ...
+          if (wp_handle_sideload(...)) { ... }
+          ...
+          move_uploaded_file($TMP, $DEST);
+          ...
+        }
 
 
