@@ -2,7 +2,15 @@ rules:
   # Warn when wp_handle_upload is used without any prior file type validation in the same function
   - id: wordpress.file.upload.missing-type-allowlist
     languages: [php]
-    message: wp_handle_upload used without explicit type allowlist (wp_check_filetype[_and_ext])
+    message: |
+      wp_handle_upload used without explicit type allowlist (wp_check_filetype[_and_ext])
+      
+      REMEDIATION: Implement explicit file type validation:
+      1. Use wp_check_filetype_and_ext() to validate file extension and MIME type
+      2. Define allowed file types array: array('jpg', 'png', 'gif') 
+      3. Pass 'mimes' option to wp_handle_upload() with allowed types
+      4. Validate user capabilities with current_user_can('upload_files')
+      5. Consider implementing additional content validation for critical uploads
     severity: WARNING
     metadata:
       category: file-operations
@@ -75,7 +83,15 @@ rules:
   # Warn when move_uploaded_file is used without a prior type allowlist in the same function
   - id: wordpress.file.upload.move.missing-type-allowlist
     languages: [php]
-    message: move_uploaded_file used without explicit type allowlist (wp_check_filetype[_and_ext] or MIME allowlist)
+    message: |
+      move_uploaded_file used without explicit type allowlist (wp_check_filetype[_and_ext] or MIME allowlist)
+      
+      REMEDIATION: Implement proper file validation before move_uploaded_file:
+      1. Use wp_check_filetype_and_ext() to validate extension and MIME type
+      2. Implement MIME validation via finfo_file() or mime_content_type()
+      3. Use exif_imagetype() for image files to verify content
+      4. Define explicit allowlist of permitted file types
+      5. Validate file size against wp_max_upload_size() or custom limits
     severity: WARNING
     metadata:
       category: file-operations
@@ -143,7 +159,15 @@ rules:
   # Error when move_uploaded_file to unsanitized/unsafe destination
   - id: wordpress.file.upload.unsafe-move-no-sanitize
     languages: [php]
-    message: move_uploaded_file to destination without sanitize_file_name or wp_unique_filename
+    message: |
+      move_uploaded_file to destination without sanitize_file_name or wp_unique_filename
+      
+      REMEDIATION: Implement proper filename sanitization and path handling:
+      1. Use sanitize_file_name() to clean the uploaded filename
+      2. Use wp_unique_filename() to prevent filename conflicts
+      3. Store files under wp_upload_dir()['path'] for proper WordPress structure
+      4. Avoid user-controlled directory paths in destination
+      5. Consider using wp_handle_upload() which handles these automatically
     severity: ERROR
     metadata:
       category: file-operations
@@ -168,7 +192,15 @@ rules:
   # Error when user-controlled directory is used as upload destination (path traversal risk)
   - id: wordpress.file.upload.path-traversal.user-dir
     languages: [php]
-    message: User-controlled directory used in upload destination; validate and restrict to wp_upload_dir
+    message: |
+      User-controlled directory used in upload destination; validate and restrict to wp_upload_dir
+      
+      REMEDIATION: Restrict upload destinations to WordPress upload directory:
+      1. Use wp_upload_dir()['path'] as the base directory for uploads
+      2. Never use user-controlled paths in upload destinations
+      3. Implement path traversal protection with realpath() validation
+      4. Use wp_unique_filename() to generate safe filenames
+      5. Consider using wp_handle_upload() which handles path security automatically
     severity: ERROR
     metadata:
       category: file-operations
@@ -332,7 +364,15 @@ rules:
   # Warn when move_uploaded_file is used without any size limit validation in the same function
   - id: wordpress.file.upload.missing-size-check
     languages: [php]
-    message: move_uploaded_file used without file size validation (compare $_FILES['...']['size'] to a limit or wp_max_upload_size())
+    message: |
+      move_uploaded_file used without file size validation (compare $_FILES['...']['size'] to a limit or wp_max_upload_size())
+      
+      REMEDIATION: Implement file size validation before upload:
+      1. Check $_FILES['file']['size'] against wp_max_upload_size()
+      2. Implement custom size limits for specific upload types
+      3. Validate size before processing or moving the file
+      4. Consider using wp_handle_upload() which handles size validation
+      5. Add user-friendly error messages for oversized files
     severity: WARNING
     metadata:
       category: file-operations
@@ -899,7 +939,15 @@ rules:
   # Warn when uploads do not perform any content analysis (magic number/image parsing) before moving/handling
   - id: wordpress.file.upload.missing-content-analysis
     languages: [php]
-    message: File upload handling without content analysis (magic number/image parsing). Use exif_imagetype/getimagesize or parse bytes before moving.
+    message: |
+      File upload handling without content analysis (magic number/image parsing). Use exif_imagetype/getimagesize or parse bytes before moving.
+      
+      REMEDIATION: Implement content-based file validation:
+      1. Use exif_imagetype() to verify image file headers
+      2. Use getimagesize() to validate image dimensions and type
+      3. Implement magic number validation for specific file types
+      4. Parse file content before moving to detect malicious files
+      5. Consider using wp_handle_upload() with proper MIME validation
     severity: WARNING
     metadata:
       category: file-operations
@@ -1008,4 +1056,32 @@ rules:
                 imagecreatefromstring(...);
                 ...
               }
+
+  # WordPress Media Handler Suppressions
+  # These functions handle file validation internally and are safe by design
+  - id: wordpress.file.upload.media-handler-suppression
+    languages: [php]
+    message: WordPress media handlers (media_handle_upload, wp_handle_sideload) are safe by design and handle validation internally
+    severity: INFO
+    metadata:
+      category: file-operations
+      cwe: CWE-434
+      vuln_class: file_upload
+      confidence: high
+      tags: [info, file-upload, wordpress, media-handlers]
+      references:
+        - https://developer.wordpress.org/reference/functions/media_handle_upload/
+        - https://developer.wordpress.org/reference/functions/wp_handle_sideload/
+    patterns:
+      # Suppress when media_handle_upload is used (WordPress handles validation)
+      - pattern: |
+          $ATTACHMENT_ID = media_handle_upload($FILE, $POST_ID, ...);
+      # Suppress when wp_handle_sideload is used (WordPress handles validation)
+      - pattern: |
+          $ATTACHMENT_ID = wp_handle_sideload($FILE, $POST_ID, ...);
+      # Suppress when these handlers are used in conditional contexts
+      - pattern: |
+          if (media_handle_upload($FILE, $POST_ID, ...)) { ... }
+      - pattern: |
+          if (wp_handle_sideload($FILE, $POST_ID, ...)) { ... }
 

@@ -159,12 +159,19 @@ rules:
     - security
     vuln_class: sqli
 - id: wp-ajax-unsafe-file-upload
-  message: AJAX handler with unsafe file upload - missing validation and sanitization
+  message: |
+    AJAX handler with unsafe file upload - missing validation and sanitization
+    
+    REMEDIATION: Implement secure AJAX file upload handling:
+    1. Use wp_handle_upload() for WordPress media uploads
+    2. Validate nonce with wp_verify_nonce() for security
+    3. Check user capabilities with current_user_can('upload_files')
+    4. Implement file type validation via wp_check_filetype_and_ext()
+    5. Sanitize filenames and restrict to wp_upload_dir()
   severity: ERROR
   languages:
   - php
   patterns:
-
   - pattern: "add_action('wp_ajax_$ACTION', '$HANDLER');\nfunction $HANDLER() {\n  ...\n\
     \  $FILE = $_FILES['$FIELD'];\n  move_uploaded_file($FILE['tmp_name'], $FILE['name']);\n\
     \  ...\n}\n"
@@ -386,7 +393,15 @@ rules:
     - rest-api
     vuln_class: rest_ajax
 - id: wp-ajax-missing-content-type-validation
-  message: AJAX handler missing content-type validation for file uploads
+  message: |
+    AJAX handler missing content-type validation for file uploads
+    
+    REMEDIATION: Implement proper content-type validation for AJAX file uploads:
+    1. Validate $_FILES['file']['type'] against allowed MIME types
+    2. Use wp_check_filetype_and_ext() for comprehensive validation
+    3. Implement server-side MIME validation via finfo_file()
+    4. Consider using wp_handle_upload() with 'mimes' option
+    5. Add proper error handling for invalid file types
   severity: WARNING
   languages:
   - php

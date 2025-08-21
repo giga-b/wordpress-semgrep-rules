@@ -1,7 +1,15 @@
 rules:
 - id: wordpress.file.upload.missing-validation-generic
   languages: [php]
-  message: File uploaded without MIME/type/content checks before move.
+  message: |
+    File uploaded without MIME/type/content checks before move. 
+    
+    REMEDIATION: Use WordPress built-in handlers or implement proper validation:
+    1. Use wp_handle_upload() for media uploads (handles validation internally)
+    2. For custom uploads, validate MIME type via finfo_file() or wp_check_filetype_and_ext()
+    3. Sanitize filename with sanitize_file_name()
+    4. Store under wp_upload_dir()['path'] with wp_unique_filename()
+    5. Implement file size limits and user capability checks
   severity: ERROR
   metadata:
     category: file_upload

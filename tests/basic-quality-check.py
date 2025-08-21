@@ -151,7 +151,7 @@ class BasicQualityChecker:
         if rule_files is None:
             # Find all rule files
             rule_files = []
-            for pack_dir in ['packs/wp-core-security', 'packs/wp-core-quality', 'packs/experimental']:
+            for pack_dir in ['packs/wp-core-security', 'packs/wp-core-quality', 'packs/experimental', 'packs/wp-curated-generic']:
                 pack_path = self.project_root / pack_dir
                 if pack_path.exists():
                     rule_files.extend(pack_path.glob('*.yaml'))

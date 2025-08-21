@@ -1,4 +1,4 @@
-rules:
+﻿rules:
 - id: wordpress.ajax.missing-nonce-check
   languages: [php]
   message: AJAX handler without nonce verification.
@@ -14,5 +14,3 @@ rules:
   - pattern-not-regex: "(?i)check_ajax_referer\\s*\\("
   - pattern-not-regex: "(?i)wp_verify_nonce\\s*\\("
   - pattern-regex: "(?i)(update_option|wp_send_json_success|wp_send_json_error|delete_option)\\s*\\("
-
-
