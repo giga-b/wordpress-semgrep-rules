@@ -41,6 +41,11 @@ rules:
   - pattern-not-regex: '(?i)wp_check_filetype_and_ext\s*\('
   - pattern-not-regex: '(?i)wp_checkfiletype\s*\('
   - pattern-not-regex: '(?i)wp_handle_upload\s*\('
+  
+  # WordPress Media Handler Suppressions
+  # These functions handle file validation internally and are safe by design
+  - pattern-not-regex: '(?i)media_handle_upload\s*\('
+  - pattern-not-regex: '(?i)wp_handle_sideload\s*\('
 
   # Combined MIME/content validation suppressions using pattern-either
   - pattern-not:
