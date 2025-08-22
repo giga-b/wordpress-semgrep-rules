@@ -1,0 +1,264 @@
+rules:
+- id: wordpress.rest.missing-permission-callback
+  languages: [php]
+  message: REST route missing permission_callback - potential authorization bypass
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-306
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, authz, missing-permission]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'callback' => $CALLBACK,
+        ...
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'permission_callback' => $PERMISSION,
+        ...
+      ])
+
+- id: wordpress.rest.missing-permission-callback-array
+  languages: [php]
+  message: REST route missing permission_callback - potential authorization bypass
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-306
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, authz, missing-permission]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, array(
+        ...,
+        'callback' => $CALLBACK,
+        ...
+      ))
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, array(
+        ...,
+        'permission_callback' => $PERMISSION,
+        ...
+      ))
+
+- id: wordpress.rest.missing-permission-callback-single-line
+  languages: [php]
+  message: REST route missing permission_callback - potential authorization bypass
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-306
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, authz, missing-permission]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, ['callback' => $CALLBACK])
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, array('callback' => $CALLBACK))
+
+- id: wordpress.rest.weak-permission-callback
+  languages: [php]
+  message: REST route with weak permission_callback that always returns true
+  severity: WARNING
+  metadata:
+    category: rest-ajax
+    cwe: CWE-306
+    vuln_class: rest_ajax
+    confidence: medium
+    tags: [rest, wordpress, authz, weak-permission]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'permission_callback' => function() { return true; },
+        ...
+      ])
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, array(
+        ...,
+        'permission_callback' => function() { return true; },
+        ...
+      ))
+
+- id: wordpress.rest.missing-nonce-verification
+  languages: [php]
+  message: REST route missing nonce verification in permission_callback
+  severity: WARNING
+  metadata:
+    category: rest-ajax
+    cwe: CWE-352
+    vuln_class: rest_ajax
+    confidence: medium
+    tags: [rest, wordpress, authz, missing-nonce]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'permission_callback' => function($REQUEST) {
+          return current_user_can($CAPABILITY);
+        },
+        ...
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'permission_callback' => function($REQUEST) {
+          return current_user_can($CAPABILITY) && wp_verify_nonce($REQUEST->get_header('X-WP-Nonce'), 'wp_rest');
+        },
+        ...
+      ])
+
+- id: wordpress.rest.public-endpoint-without-validation
+  languages: [php]
+  message: Public REST endpoint without proper input validation
+  severity: WARNING
+  metadata:
+    category: rest-ajax
+    cwe: CWE-20
+    vuln_class: rest_ajax
+    confidence: medium
+    tags: [rest, wordpress, input-validation, public-endpoint]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        'methods' => 'GET',
+        'callback' => $CALLBACK,
+        'permission_callback' => '__return_true'
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        'methods' => 'GET',
+        'callback' => $CALLBACK,
+        'permission_callback' => '__return_true',
+        'args' => [
+          ...,
+          'validate_callback' => $VALIDATION,
+          ...
+        ]
+      ])
+
+- id: wordpress.rest.admin-endpoint-without-capability-check
+  languages: [php]
+  message: Admin REST endpoint without proper capability check
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-285
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, authz, admin-endpoint]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        'methods' => 'POST',
+        'callback' => $CALLBACK,
+        'permission_callback' => function($REQUEST) {
+          return true;
+        }
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        'methods' => 'POST',
+        'callback' => $CALLBACK,
+        'permission_callback' => function($REQUEST) {
+          return current_user_can($CAPABILITY);
+        }
+      ])
+
+- id: wordpress.rest.missing-input-sanitization
+  languages: [php]
+  message: REST endpoint callback missing input sanitization
+  severity: WARNING
+  metadata:
+    category: rest-ajax
+    cwe: CWE-20
+    vuln_class: rest_ajax
+    confidence: medium
+    tags: [rest, wordpress, input-validation, sanitization]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'callback' => function($REQUEST) {
+          $DATA = $REQUEST->get_param($PARAM);
+          return $DATA;
+        },
+        ...
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'callback' => function($REQUEST) {
+          $DATA = $REQUEST->get_param($PARAM);
+          $SANITIZED = sanitize_text_field($DATA);
+          return $SANITIZED;
+        },
+        ...
+      ])
+
+- id: wordpress.rest.unsafe-file-upload
+  languages: [php]
+  message: REST endpoint allowing file uploads without proper validation
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-434
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, file-upload, validation]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        'methods' => 'POST',
+        'callback' => function($REQUEST) {
+          $FILE = $REQUEST->get_file_params();
+          move_uploaded_file($FILE['file']['tmp_name'], $DESTINATION);
+        },
+        ...
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        'methods' => 'POST',
+        'callback' => function($REQUEST) {
+          $FILE = $REQUEST->get_file_params();
+          if (wp_check_filetype($FILE['file']['name'])['ext'] === 'jpg') {
+            move_uploaded_file($FILE['file']['tmp_name'], $DESTINATION);
+          }
+        },
+        ...
+      ])
+
+- id: wordpress.rest.sql-injection-vulnerable
+  languages: [php]
+  message: REST endpoint callback vulnerable to SQL injection
+  severity: ERROR
+  metadata:
+    category: rest-ajax
+    cwe: CWE-89
+    vuln_class: rest_ajax
+    confidence: high
+    tags: [rest, wordpress, sql-injection, database]
+  patterns:
+  - pattern: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'callback' => function($REQUEST) {
+          $QUERY = $wpdb->query("SELECT * FROM $TABLE WHERE id = " . $REQUEST->get_param('id'));
+        },
+        ...
+      ])
+  - pattern-not: |
+      register_rest_route($NAMESPACE, $ROUTE, [
+        ...,
+        'callback' => function($REQUEST) {
+          $QUERY = $wpdb->prepare("SELECT * FROM $TABLE WHERE id = %d", $REQUEST->get_param('id'));
+        },
+        ...
+      ])

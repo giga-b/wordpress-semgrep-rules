@@ -5,17 +5,12 @@ rules:
   languages:
   - php
   patterns:
-  - pattern: 'add_action(''wp_ajax_$ACTION'', ''$CALLBACK'');'
+  - pattern: 'add_action($ACTION, $CALLBACK);'
   metadata:
     category: ajax-security
     technology:
     - wordpress
-    description: 'Detects WordPress AJAX action registrations using add_action(''wp_ajax_*'').
-
-      Used for cross-file analysis to identify AJAX endpoints that may lack security
-      checks.
-
-      '
+    description: "Detects WordPress AJAX action registrations using add_action('wp_ajax_*'). Used for cross-file analysis to identify AJAX endpoints that may lack security checks."
     confidence: high
     cwe: CWE-285
     tags:
@@ -27,23 +22,19 @@ rules:
     - security
     - rest-api
     vuln_class: rest_ajax
+
 - id: wordpress.ajax.nopriv-action-registration-detection
   message: 'AJAX nopriv action registration detected: $ACTION -> $CALLBACK'
   severity: INFO
   languages:
   - php
   patterns:
-  - pattern: 'add_action(''wp_ajax_nopriv_$ACTION'', ''$CALLBACK'');'
+  - pattern: 'add_action($ACTION, $CALLBACK);'
   metadata:
     category: ajax-security
     technology:
     - wordpress
-    description: 'Detects WordPress AJAX nopriv action registrations using add_action(''wp_ajax_nopriv_*'').
-
-      These actions are accessible to non-logged-in users and require special security
-      attention.
-
-      '
+    description: "Detects WordPress AJAX nopriv action registrations using add_action('wp_ajax_nopriv_*'). These actions are accessible to non-logged-in users and require special security attention."
     confidence: high
     cwe: CWE-285
     tags:
@@ -55,6 +46,7 @@ rules:
     - security
     - rest-api
     vuln_class: rest_ajax
+
 - id: wordpress.ajax.both-action-registration-detection
   message: 'AJAX both action registration detected: $ACTION -> $CALLBACK'
   severity: INFO
@@ -62,18 +54,13 @@ rules:
   - php
   patterns:
   - pattern: |
-      add_action('wp_ajax_$ACTION', '$CALLBACK');
-      add_action('wp_ajax_nopriv_$ACTION', '$CALLBACK');
+      add_action($ACTION1, $CALLBACK);
+      add_action($ACTION2, $CALLBACK);
   metadata:
     category: ajax-security
     technology:
     - wordpress
-    description: 'Detects WordPress AJAX actions that are registered for both logged-in
-      and non-logged-in users.
-
-      These require careful security consideration as they''re accessible to all users.
-
-      '
+    description: "Detects WordPress AJAX actions that are registered for both logged-in and non-logged-in users. These require careful security consideration as they're accessible to all users."
     confidence: high
     cwe: CWE-285
     tags:

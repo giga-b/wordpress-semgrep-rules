@@ -1,0 +1,121 @@
+rules:
+# =============================================================================
+# WORDPRESS FILE UPLOAD SECURITY RULES
+# =============================================================================
+# Comprehensive file upload security rules using proper Semgrep syntax
+# Detects path traversal, missing validation, and unsafe file operations
+
+- id: wordpress.file.unzip.user-controlled-destination
+  languages: [php]
+  message: |
+    unzip_file() with potentially user-controlled destination path. This can lead to path traversal attacks.
+    
+    REMEDIATION:
+    1. Validate and sanitize the destination path
+    2. Use wp_upload_dir() for safe upload locations
+    3. Implement proper path canonicalization
+    4. Restrict to safe directories only
+  severity: ERROR
+  metadata:
+    category: file_upload
+    cwe: CWE-22
+    vuln_class: path_traversal
+    confidence: medium
+    tags: [path-traversal, file-upload, wordpress, unzip]
+  patterns:
+    - pattern: unzip_file($ZIP, $DEST)
+
+- id: wordpress.file.upload.user-controlled-directory
+  languages: [php]
+  message: |
+    File upload to potentially user-controlled directory. This can lead to path traversal attacks.
+    
+    REMEDIATION:
+    1. Use wp_upload_dir() for safe upload locations
+    2. Validate and sanitize directory paths
+    3. Implement proper path canonicalization
+    4. Restrict to safe directories only
+  severity: ERROR
+  metadata:
+    category: file_upload
+    cwe: CWE-22
+    vuln_class: path_traversal
+    confidence: medium
+    tags: [path-traversal, file-upload, wordpress]
+  patterns:
+    - pattern: move_uploaded_file($TMP, $DEST)
+
+- id: wordpress.file.upload.missing-validation
+  languages: [php]
+  message: |
+    File upload without proper validation. This can lead to malicious file uploads.
+    
+    REMEDIATION:
+    1. Validate file type using wp_check_filetype_and_ext()
+    2. Check file size limits
+    3. Implement MIME type validation
+    4. Use WordPress built-in handlers when possible
+  severity: WARNING
+  metadata:
+    category: file_upload
+    cwe: CWE-434
+    vuln_class: file_upload
+    confidence: medium
+    tags: [file-upload, validation, wordpress]
+  patterns:
+    - pattern: move_uploaded_file($TMP, $DEST)
+    - pattern-not-regex: '(?i)wp_check_filetype'
+    - pattern-not-regex: '(?i)wp_handle_upload'
+    - pattern-not-regex: '(?i)media_handle_upload'
+
+- id: wordpress.file.operation.unsafe-path
+  languages: [php]
+  message: |
+    Unsafe file operation with potentially user-controlled path. This can lead to path traversal attacks.
+    
+    REMEDIATION:
+    1. Validate and sanitize file paths
+    2. Use wp_upload_dir() for safe locations
+    3. Implement proper path canonicalization
+    4. Restrict to safe directories only
+  severity: ERROR
+  metadata:
+    category: file_upload
+    cwe: CWE-22
+    vuln_class: path_traversal
+    confidence: medium
+    tags: [path-traversal, file-operation, wordpress]
+  patterns:
+    - pattern-either:
+        - pattern: file_get_contents($PATH)
+        - pattern: file_put_contents($PATH, ...)
+        - pattern: fopen($PATH, ...)
+        - pattern: unlink($PATH)
+        - pattern: rmdir($PATH)
+        - pattern: mkdir($PATH, ...)
+
+- id: wordpress.file.upload.direct-filename
+  languages: [php]
+  message: |
+    File upload using filename directly from user input. This can lead to path traversal attacks.
+    
+    REMEDIATION:
+    1. Use sanitize_file_name() to clean filenames
+    2. Use wp_unique_filename() to prevent conflicts
+    3. Store under wp_upload_dir()['path']
+    4. Implement proper path validation
+  severity: ERROR
+  metadata:
+    category: file_upload
+    cwe: CWE-22
+    vuln_class: path_traversal
+    confidence: high
+    tags: [path-traversal, file-upload, wordpress]
+  patterns:
+    - pattern: move_uploaded_file($TMP, $FILENAME)
+    - metavariable-pattern:
+        metavariable: $FILENAME
+        patterns:
+          - pattern: $_FILES[...]['name']
+          - pattern: $FILE['name']
+          - pattern: $f['name']

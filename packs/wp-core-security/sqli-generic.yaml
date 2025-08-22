@@ -1,19 +1,60 @@
 rules:
-- id: wordpress.sqli.generic.concat-into-query
+- id: wordpress.sqli.generic.taint-analysis
   languages: [php]
-  message: Potential SQL injection. Variable concatenated into SQL query.
+  message: "Potential SQL injection: tainted input flows to database query without proper sanitization"
   severity: ERROR
+  mode: taint
   metadata:
     category: sql-injection
     cwe: CWE-89
     vuln_class: sqli
-    confidence: medium
-    tags: [sqli, wordpress, wpdb]
-  patterns:
-  - pattern-regex: '(?i)\$wpdb\s*->\s*(get_results|get_row|query)\s*\(([^)]*)\)'
-  - pattern-regex: '(?i)(SELECT|INSERT|UPDATE|DELETE)'
-  - pattern-regex: '\$[A-Za-z_][A-Za-z0-9_]*\s*='
-  - pattern-regex: '\.\s*\$[A-Za-z_][A-Za-z0-9_]+'
-  - pattern-not-regex: '(?i)\$wpdb\s*->\s*(get_results|get_row|query)\s*\(\s*\$wpdb->prepare\s*\('
+    confidence: high
+    tags: [sqli, wordpress, wpdb, database, security]
+  pattern-propagators:
+    - pattern: $TO = $FROM;
+      from: $FROM
+      to: $TO
+    - pattern: $TO = "<...>" . $FROM . "<...>";
+      from: $FROM
+      to: $TO
+    - pattern: $TO = $FROM . "<...>";
+      from: $FROM
+      to: $TO
+    - pattern: $TO = "<...>" . $FROM;
+      from: $FROM
+      to: $TO
+  pattern-sources:
+    - pattern: $_GET[...]
+    - pattern: $_POST[...]
+    - pattern: $_REQUEST[...]
+    - pattern: $_COOKIE[...]
+    - pattern: $request->get_param(...)
+    - pattern: $request->get_json_params()
+    - pattern: $request->get_body_params()
+  pattern-sinks:
+    - pattern: $wpdb->query($SINK)
+    - pattern: $wpdb->get_results($SINK)
+    - pattern: $wpdb->get_row($SINK)
+    - pattern: $wpdb->get_var($SINK)
+    - pattern: $wpdb->prepare($SINK, ...)
+    - pattern: $wpdb->query("SELECT * FROM table WHERE id = " . $SINK)
+    - pattern: $wpdb->query("SELECT * FROM table WHERE name = '$SINK'")
+    - pattern: $wpdb->query("SELECT * FROM table WHERE email = '$SINK'")
+    - pattern: $wpdb->query("INSERT INTO table VALUES ('$SINK')")
+    - pattern: $wpdb->query("UPDATE table SET field = '$SINK'")
+    - pattern: $wpdb->query("DELETE FROM table WHERE id = $SINK")
+  pattern-sanitizers:
+    - pattern: $wpdb->prepare(...)
+    - pattern: esc_sql(...)
+    - pattern: sanitize_text_field(...)
+    - pattern: sanitize_email(...)
+    - pattern: sanitize_url(...)
+    - pattern: intval(...)
+    - pattern: (int)$VAR
+    - pattern: (float)$VAR
+    - pattern: (string)$VAR
+    - pattern: is_numeric($VAR)
+    - pattern: is_email($VAR)
+    - pattern: is_url($VAR)
 
 
