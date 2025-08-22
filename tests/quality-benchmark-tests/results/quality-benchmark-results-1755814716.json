@@ -1,0 +1,33 @@
+{
+  "timestamp": "2025-08-21T18:18:34",
+  "project_root": "..\\..",
+  "test_files_count": 102,
+  "configs_tested": [
+    "basic.yaml"
+  ],
+  "quality_targets": {
+    "precision_min": 0.95,
+    "recall_min": 0.95,
+    "fp_rate_max": 0.05,
+    "fn_rate_max": 0.05,
+    "test_coverage_min": 1.0,
+    "baseline_stability_min": 0.99
+  },
+  "expected_total_findings": 0,
+  "results": {
+    "basic.yaml": {
+      "scan_result": {
+        "success": false,
+        "error": "Semgrep failed with return code 7",
+        "stdout": "{\"version\":\"1.132.1\",\"results\":[],\"errors\":[{\"code\":2,\"level\":\"error\",\"type\":\"SemgrepError\",\"message\":\"WARNING: unable to find a config; path `..\\\\..\\\\configs\\\\basic.yaml` does not exist\"},{\"code\":7,\"level\":\"error\",\"type\":\"SemgrepError\",\"message\":\"invalid configuration file found (1 configs were invalid)\"}],\"paths\":{\"scanned\":[]},\"engine_requested\":\"OSS\",\"skipped_rules\":[]}\n",
+        "stderr": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nC:\\Users\\mobet\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\opentelemetry\\instrumentation\\dependencies.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  from pkg_resources import (\n",
+        "duration": 2.570664405822754,
+        "config": "basic.yaml"
+      },
+      "analysis": {
+        "analysis_success": false,
+        "error": "Semgrep failed with return code 7"
+      }
+    }
+  }
+}

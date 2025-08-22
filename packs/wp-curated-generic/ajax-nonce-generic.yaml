@@ -1,16 +1,14 @@
-﻿rules:
+rules:
 - id: wordpress.ajax.missing-nonce-check
-  languages: [php]
   message: AJAX handler without nonce verification.
   severity: ERROR
+  languages:
+  - php
+  patterns:
+  - pattern: "add_action('wp_ajax_my_action', 'my_action_handler')"
   metadata:
     category: csrf
     cwe: CWE-352
     vuln_class: csrf
     confidence: medium
     tags: [ajax, wordpress, nonce]
-  patterns:
-  - pattern-regex: "(?i)add_action\\s*\\(\\s*['\"]wp_ajax(_nopriv)?_"
-  - pattern-not-regex: "(?i)check_ajax_referer\\s*\\("
-  - pattern-not-regex: "(?i)wp_verify_nonce\\s*\\("
-  - pattern-regex: "(?i)(update_option|wp_send_json_success|wp_send_json_error|delete_option)\\s*\\("

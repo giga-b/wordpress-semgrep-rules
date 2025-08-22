@@ -1,0 +1,12 @@
+rules:
+- id: test.xss.unsafe-echo
+  languages: [php]
+  message: "Unsafe echo of user input without escaping"
+  severity: ERROR
+  patterns:
+  - pattern: |
+      $user_input = $_GET['user_input'];
+      echo $user_input;
+  - pattern-not: |
+      $user_input = esc_html($_GET['user_input']);
+      echo $user_input;

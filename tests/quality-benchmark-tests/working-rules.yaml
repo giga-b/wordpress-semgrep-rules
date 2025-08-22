@@ -1,0 +1,85 @@
+rules:
+# XSS Rules
+- id: wordpress.xss.unsafe-echo
+  languages: [php]
+  message: "Unsafe echo of user input without escaping"
+  severity: ERROR
+  pattern: echo $user_input;
+
+- id: wordpress.xss.unsafe-echo-get
+  languages: [php]
+  message: "Unsafe echo of GET parameter without escaping"
+  severity: ERROR
+  pattern: echo $_GET['user_input'];
+
+- id: wordpress.xss.unsafe-echo-post
+  languages: [php]
+  message: "Unsafe echo of POST parameter without escaping"
+  severity: ERROR
+  pattern: echo $_POST['user_input'];
+
+- id: wordpress.xss.unsafe-echo-request
+  languages: [php]
+  message: "Unsafe echo of REQUEST parameter without escaping"
+  severity: ERROR
+  pattern: echo $_REQUEST['user_input'];
+
+# SQL Injection Rules
+- id: wordpress.sqli.unsafe-concatenation
+  languages: [php]
+  message: "Unsafe SQL query with string concatenation"
+  severity: ERROR
+  pattern: $query = "SELECT * FROM {$wpdb->prefix}users WHERE ID = " . $user_id;
+
+- id: wordpress.sqli.unsafe-concatenation-get
+  languages: [php]
+  message: "Unsafe SQL query with GET parameter concatenation"
+  severity: ERROR
+  pattern: $query = "SELECT * FROM {$wpdb->prefix}users WHERE ID = " . $_GET['user_id'];
+
+- id: wordpress.sqli.unsafe-query
+  languages: [php]
+  message: "Unsafe SQL query with user input"
+  severity: ERROR
+  pattern: $wpdb->query("SELECT * FROM posts WHERE title LIKE '%$user_input%'");
+
+# CSRF Rules
+- id: wordpress.csrf.missing-nonce
+  languages: [php]
+  message: "Missing nonce verification for form submission"
+  severity: ERROR
+  pattern: if (isset($_POST['submit'])) { $data = $_POST['data']; }
+
+# Authorization Rules
+- id: wordpress.authz.missing-capability
+  languages: [php]
+  message: "Missing capability check for sensitive operation"
+  severity: ERROR
+  pattern: if (isset($_POST['delete_user'])) { wp_delete_user($user_id); }
+
+# File Upload Rules
+- id: wordpress.file.unsafe-upload
+  languages: [php]
+  message: "Unsafe file upload without validation"
+  severity: ERROR
+  pattern: move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+
+# Deserialization Rules
+- id: wordpress.deserialization.unsafe
+  languages: [php]
+  message: "Unsafe deserialization of user input"
+  severity: ERROR
+  pattern: $data = unserialize($_POST['data']);
+
+# Dynamic Execution Rules
+- id: wordpress.execution.eval
+  languages: [php]
+  message: "Unsafe eval usage with user input"
+  severity: ERROR
+  pattern: eval($_POST['code']);
+
+- id: wordpress.execution.create-function
+  languages: [php]
+  message: "Unsafe create_function usage with user input"
+  severity: ERROR
+  pattern: create_function('$a', $_POST['code']);

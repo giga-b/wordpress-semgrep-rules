@@ -1,0 +1,709 @@
+{
+  "success": true,
+  "findings": [
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.execution.eval",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 379
+      },
+      "end": {
+        "line": 17,
+        "col": 26,
+        "offset": 400
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe eval usage with user input",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "590117fe0705e85a35672fdb34530724d709dc88cd2fd8fd8085297b6a7826d94e908377e16b19c8a36abe05f788be84e8110f73112c6faf5a5b628ddcd1f799_0",
+        "lines": "    eval($_POST['code']); // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.deserialization.unsafe",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 480
+      },
+      "end": {
+        "line": 19,
+        "col": 41,
+        "offset": 516
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe deserialization of user input",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "1b24e54ec291f7de99de19f4e7ad7de44640772424eafcbf6bbe352c15539d8270058d45e6a6ea9f49b7b71170be705dd1f2b6dfc77b9933a1d6c9133fb45e78_0",
+        "lines": "    $data = unserialize($_POST['data']); // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+      "start": {
+        "line": 23,
+        "col": 5,
+        "offset": 729
+      },
+      "end": {
+        "line": 23,
+        "col": 30,
+        "offset": 754
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "674cd74487530aa5279a2cb614b8ca8c419727b06323ab5bff64af02334739787722b8b38de0224b263beac3a801c9a178f06f494defc1b445ce6fa4cf2b8c5d_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.execution.eval",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 357
+      },
+      "end": {
+        "line": 17,
+        "col": 26,
+        "offset": 378
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe eval usage with user input",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "89d17d123d1e796411023a710e7e5c732eda6ff1a623bf6befcc26e6583899d7b85ae14dd965a8f4f93a009bd76587ca66089b96c0921bed7220d594be97e379_0",
+        "lines": "    eval($_POST['code']); // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.deserialization.unsafe",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 458
+      },
+      "end": {
+        "line": 19,
+        "col": 41,
+        "offset": 494
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe deserialization of user input",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "ca6f1aa1c2a5d2eaee423c222e2c822f647cffcb7ef1156a0842e192b26e73ff661c9a4b1993c2fba41fa227713fce7aa07461edda099dc830241aadf752a393_0",
+        "lines": "    $data = unserialize($_POST['data']); // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-path-traversal-xss-authz-combo.php",
+      "start": {
+        "line": 21,
+        "col": 5,
+        "offset": 666
+      },
+      "end": {
+        "line": 21,
+        "col": 30,
+        "offset": 691
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "2b68d47df325c1ab25df3b1d39ac685e08b39c3b0fd2162752b3e08c91ed625521b06aa1be5257727d7ab3fed48afb276ffeb201b63e84a26e43b0c4462c5d5b_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-xss-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 492
+      },
+      "end": {
+        "line": 19,
+        "col": 30,
+        "offset": 517
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "0e452fe613ab60f06f9c8d2590fea094b527c3a807fffba0e8e50b340273cb9070daa71a7b015e63d39b5b6e7d90029f4bea875c71eeb231217a6a705aaa7100_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-xss-authz-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 488
+      },
+      "end": {
+        "line": 19,
+        "col": 30,
+        "offset": 513
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "e99f28a2e84ffb8328c12382d8a5680730bdcfc23a0fdd3ebe18bbb8e330126d27b18250542bcaa2b8c3b616eee7f639024251121ebd8291ef916652aaceec1a_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.deserialization.unsafe",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-deserialization-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 481
+      },
+      "end": {
+        "line": 19,
+        "col": 41,
+        "offset": 517
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe deserialization of user input",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "6102894b0a2019351833d0d68ab64f590302263c04c28f28d4a38adb076e2cab15805b0f57863f705dbf045dac5a7a50b6b22a246a6d5f959bd918303bdf669a_0",
+        "lines": "    $data = unserialize($_POST['data']); // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\simple-test.php",
+      "start": {
+        "line": 3,
+        "col": 1,
+        "offset": 43
+      },
+      "end": {
+        "line": 3,
+        "col": 18,
+        "offset": 60
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "40bd4eb8dccf630b29cd6ef6635715a68e2e7523acd1c863120bcd95e1b0cb83e1a5cc7c423173b55e87abe6baf396abc2883eeea065968b6a426e8e6fffc9e6_0",
+        "lines": "echo $user_input;",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-basic-query.php",
+      "start": {
+        "line": 18,
+        "col": 5,
+        "offset": 364
+      },
+      "end": {
+        "line": 18,
+        "col": 74,
+        "offset": 433
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with string concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "90a25567df7dfeb6444e289a207301742cc6de57f8eba2a0af78afc12fe0590bd5fe133c3e28431f8810d97b594ef14bdd41821d7f0c3ada6e8d3db3a151c72d_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $user_id; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-concatenation.php",
+      "start": {
+        "line": 18,
+        "col": 5,
+        "offset": 378
+      },
+      "end": {
+        "line": 18,
+        "col": 74,
+        "offset": 447
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with string concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "a99191c9c8b7cd25a249b68453b08d5ca85c7bc05c0b6569812816972322f794919ca3019e0b5c887e84987c1dc68aad2977560dc448f41140377ab278b150dd_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $user_id; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-authz-file-upload-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 361
+      },
+      "end": {
+        "line": 17,
+        "col": 82,
+        "offset": 438
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with GET parameter concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "cee2db99647f056e89af1fb1cd414d9a8577e133ff34a21650ca2dd7cf006f43303004233049a89182c9d7ad10408435b9b84577067df6e5ea74d43735bed4f5_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $_GET['user_id']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-rest-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 340
+      },
+      "end": {
+        "line": 17,
+        "col": 82,
+        "offset": 417
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with GET parameter concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "c57a5d175304c4a07ae069369969a550588d72482a60414432e95da6fc47dc403b5056fa37c8e48353e9ea505183b7c46012c257819ffae4f99e91875e478842_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $_GET['user_id']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-union.php",
+      "start": {
+        "line": 18,
+        "col": 5,
+        "offset": 356
+      },
+      "end": {
+        "line": 18,
+        "col": 74,
+        "offset": 425
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with string concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "1949220e4de18736613318b4150f746ec8ad899c17bd3cc7a1bc6865bc130260f891c128fb0d83dfb6b222381626b611d7ec43f6e505bde9faf361a4625c9ba7_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $user_id; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-wpdb-prepare-misuse.php",
+      "start": {
+        "line": 18,
+        "col": 5,
+        "offset": 370
+      },
+      "end": {
+        "line": 18,
+        "col": 74,
+        "offset": 439
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with string concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "2cd40ca10eb0a9ad216195e29c611b3fc670e92f5aa8b8c8c7087dc8158e50a847b08991e0afbe41b564f25c20407762c561a2975cd01a0601c2180c517e2d24_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $user_id; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-attribute-context.php",
+      "start": {
+        "line": 16,
+        "col": 5,
+        "offset": 343
+      },
+      "end": {
+        "line": 16,
+        "col": 22,
+        "offset": 360
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "d2967550a6905aee56e7dd4e3f3a6980abff69cd2add3891031e8619cddc085252f75f12f84999ed6bc08b250f82fafb9cd450cf8f2142deb98bd1b2d76965b6_0",
+        "lines": "    echo $user_input; // VULNERABLE: Should use esc_html()",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-authz-file-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 342
+      },
+      "end": {
+        "line": 17,
+        "col": 30,
+        "offset": 367
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "7637c7fa79f5fc74040ff7d4b20112e816a74704e7c79dc1e2e157b4ab52db3b564fb246cecf1f3b6ea4676000fe5f6bf9bb1c0abddbed3f66e26f6e034787d1_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output-simple.php",
+      "start": {
+        "line": 3,
+        "col": 1,
+        "offset": 43
+      },
+      "end": {
+        "line": 3,
+        "col": 18,
+        "offset": 60
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "ca2d6c1ff86571062f7291292e703cc0ad342a548e76e4bf9a05e8eb43406ad496047888c27eb53f540cdf542681c5fdf9f1372ed370bfaae7908c8a584a8d5e_0",
+        "lines": "echo $user_input;",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output.php",
+      "start": {
+        "line": 16,
+        "col": 5,
+        "offset": 340
+      },
+      "end": {
+        "line": 16,
+        "col": 22,
+        "offset": 357
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "a82d73b6f721a3d9251bf50b03cc100c26091c695591c33b13f98b1ce381ceccf3ae5784a37479f368cb2eb6a15295f73ed554a6ac0caf78ac9e58689d3f81ab_0",
+        "lines": "    echo $user_input; // VULNERABLE: Should use esc_html()",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-javascript-context.php",
+      "start": {
+        "line": 16,
+        "col": 5,
+        "offset": 340
+      },
+      "end": {
+        "line": 16,
+        "col": 22,
+        "offset": 357
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "8dd8e221b885c68c75ebc4c1ba872f46a04779ec189e0bccc45ab8d77a9513a09a8777ec9cfa8c5bb5648f5b74d716936c4ed9b1baa11572a17b13d772e779be_0",
+        "lines": "    echo $user_input; // VULNERABLE: Should use esc_html()",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-reflected.php",
+      "start": {
+        "line": 16,
+        "col": 5,
+        "offset": 333
+      },
+      "end": {
+        "line": 16,
+        "col": 22,
+        "offset": 350
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "f7b3453f199a861f3af0b7799af46c28cb225299452d3fbce5fa8260e43de62febd0ccb98090e5f0ec6a661ae412ffd6620a8124a202e6fe321b21948568e938_0",
+        "lines": "    echo $user_input; // VULNERABLE: Should use esc_html()",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 322
+      },
+      "end": {
+        "line": 17,
+        "col": 30,
+        "offset": 347
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "4e9000ea0d39792076df329f306c581b5f75acfa1e21303d2c95d47963cc215fffd05106df40d83a01b6859ccff494cb507adde342ddce65b06ffced78682870_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 427
+      },
+      "end": {
+        "line": 19,
+        "col": 82,
+        "offset": 504
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with GET parameter concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "ac749592e94679d257b244ce6b9687cc59f5c5c40c26ebf589cdceb00c2cce2a313d21d03ec91f492d3db9df4e5eeb79d37879cc57e3b74a05dcd4a571554dea_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $_GET['user_id']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+      "start": {
+        "line": 17,
+        "col": 5,
+        "offset": 345
+      },
+      "end": {
+        "line": 17,
+        "col": 30,
+        "offset": 370
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of GET parameter without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "d4e4a08d2147be206e39d6bef61edb82f5bf6fad299e5691a37c6cfef495c70ebce125e5578d547d62e58ab63a634201b012101a830919d6f167f9ce4c50edcb_0",
+        "lines": "    echo $_GET['user_input']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.sqli.unsafe-concatenation-get",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+      "start": {
+        "line": 19,
+        "col": 5,
+        "offset": 450
+      },
+      "end": {
+        "line": 19,
+        "col": 82,
+        "offset": 527
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe SQL query with GET parameter concatenation",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "a3d3646970fa6d8babb31e32b964ceba50a337b3e2766b86a10da2add1e581c774184e5cc4610eecee3add56b3d6bb7475cf8a73419cfb7de5a2b7fc5d6470d5_0",
+        "lines": "    $query = \"SELECT * FROM {$wpdb->prefix}users WHERE ID = \" . $_GET['user_id']; // VULNERABLE",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-stored.php",
+      "start": {
+        "line": 16,
+        "col": 5,
+        "offset": 327
+      },
+      "end": {
+        "line": 16,
+        "col": 22,
+        "offset": 344
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "79a612abeb698a5de41fc710f19351b556369150e70258540e72060ba64531ac4ed086c68c2243731b01043b51ac64c7f2d1e29fd0b0166081b1dc0cce6fb1e4_0",
+        "lines": "    echo $user_input; // VULNERABLE: Should use esc_html()",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    },
+    {
+      "check_id": "tests.quality-benchmark-tests.wordpress.xss.unsafe-echo",
+      "path": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-url-context.php",
+      "start": {
+        "line": 16,
+        "col": 5,
+        "offset": 326
+      },
+      "end": {
+        "line": 16,
+        "col": 22,
+        "offset": 343
+      },
+      "extra": {
+        "metavars": {},
+        "message": "Unsafe echo of user input without escaping",
+        "metadata": {},
+        "severity": "ERROR",
+        "fingerprint": "0aac1ae0abf4aafa8a93cdd5fc80dd59d290de0cc8122d87c3beb3f84cf23b6c7319860c5ed072a0119019f4caed2d402a61e300f0349be659ff894023573e21_0",
+        "lines": "    echo $user_input; // VULNERABLE: Should use esc_html()",
+        "is_ignored": false,
+        "validation_state": "NO_VALIDATOR",
+        "engine_kind": "OSS"
+      }
+    }
+  ],
+  "scan_time": 16.549109935760498,
+  "vuln_counts": {
+    "quality-benchmark-tests": 28
+  }
+}

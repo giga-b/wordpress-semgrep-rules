@@ -1,10 +1,10 @@
-﻿rules:
+rules:
 - id: wordpress.experimental.control.echo-direct
   message: "Control: direct echo of GET"
   severity: INFO
   languages: [php]
   pattern: |
-    echo $_GET[...];
+    echo $_GET[$KEY];
   metadata:
     category: control
     cwe: CWE-79

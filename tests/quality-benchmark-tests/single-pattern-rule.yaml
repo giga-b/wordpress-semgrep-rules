@@ -1,0 +1,6 @@
+rules:
+- id: wordpress.xss.unsafe-echo
+  languages: [php]
+  message: "Unsafe echo of user input without escaping"
+  severity: ERROR
+  pattern: echo $user_input;

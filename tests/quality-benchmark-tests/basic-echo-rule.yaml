@@ -1,0 +1,6 @@
+rules:
+- id: basic.echo
+  languages: [php]
+  message: "Found echo statement"
+  severity: INFO
+  pattern: echo ...;

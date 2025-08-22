@@ -5,11 +5,10 @@ rules:
   languages:
   - php
   patterns:
-
-  - pattern: '$_GET[...]'
-    paths:
-      include:
-      - '**/*.php'
+  - pattern: '$_GET[$KEY]'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -22,16 +21,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-post-input
   message: User input source - data from $_POST
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '$_POST[...]
-
-    '
+  - pattern: '$_POST[$KEY]'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -44,16 +44,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-request-input
   message: User input source - data from $_REQUEST
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '$_REQUEST[...]
-
-    '
+  - pattern: '$_REQUEST[$KEY]'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -66,16 +67,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-cookie-input
   message: User input source - data from $_COOKIE
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '$_COOKIE[...]
-
-    '
+  - pattern: '$_COOKIE[$KEY]'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -88,16 +90,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-server-input
   message: User input source - data from $_SERVER
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '$_SERVER[...]
-
-    '
+  - pattern: '$_SERVER[$KEY]'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -110,16 +113,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-file-content
   message: File content source - data from file operations
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'file_get_contents(...)
-
-    '
+  - pattern: 'file_get_contents($FILE)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -135,16 +139,17 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-source-file-read
   message: File content source - data from file read operations
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'fread(...)
-
-    '
+  - pattern: 'fread($HANDLE, $LENGTH)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -160,17 +165,17 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-source-database-query
   message: Database query source - data from database operations
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '$wpdb->get_results(...)'
-    paths:
-      include:
-      - '**/*.php'
+  - pattern: '$wpdb->get_results($QUERY)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -186,16 +191,17 @@ rules:
     - database
     - security
     vuln_class: sqli
+
 - id: taint-source-database-row
   message: Database row source - data from database rows
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '$wpdb->get_row(...)
-
-    '
+  - pattern: '$wpdb->get_row($QUERY)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -208,16 +214,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-external-api
   message: External API source - data from external API calls
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'wp_remote_get(...)
-
-    '
+  - pattern: 'wp_remote_get($URL)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -230,16 +237,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-source-curl
   message: External API source - data from cURL operations
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'curl_exec(...)
-
-    '
+  - pattern: 'curl_exec($CH)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: source
@@ -252,16 +260,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sink-xss-echo
   message: XSS sink - tainted data in echo statement
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'echo $tainted_data;
-
-    '
+  - pattern: 'echo $DATA;'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -277,16 +286,17 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-sink-xss-print
   message: XSS sink - tainted data in print statement
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'print $tainted_data;
-
-    '
+  - pattern: 'print $DATA;'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -302,16 +312,17 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-sink-xss-printf
   message: XSS sink - tainted data in printf statement
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'printf($tainted_data, ...);
-
-    '
+  - pattern: 'printf($FORMAT, $DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -327,16 +338,17 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-sink-sql-query
   message: SQL injection sink - tainted data in database query
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: '$wpdb->query($tainted_data);
-
-    '
+  - pattern: '$wpdb->query($QUERY)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -353,16 +365,17 @@ rules:
     - database
     - security
     vuln_class: sqli
+
 - id: taint-sink-sql-prepare
   message: SQL injection sink - tainted data in prepared statement
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: '$wpdb->prepare($tainted_data, ...);
-
-    '
+  - pattern: '$wpdb->prepare($QUERY, $ARGS)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -379,16 +392,17 @@ rules:
     - database
     - security
     vuln_class: sqli
+
 - id: taint-sink-file-include
   message: File inclusion sink - tainted data in include statement
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'include $tainted_data;
-
-    '
+  - pattern: 'include $FILE;'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -405,16 +419,17 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-sink-file-require
   message: File inclusion sink - tainted data in require statement
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'require $tainted_data;
-
-    '
+  - pattern: 'require $FILE;'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -431,16 +446,17 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-sink-file-get-contents
   message: File operation sink - tainted data in file_get_contents
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'file_get_contents($tainted_data);
-
-    '
+  - pattern: 'file_get_contents($FILE)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -457,16 +473,17 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-sink-command-exec
   message: Command execution sink - tainted data in exec
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'exec($tainted_data);
-
-    '
+  - pattern: 'exec($COMMAND)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -482,16 +499,17 @@ rules:
     - deserialization
     - security
     vuln_class: deserialization
+
 - id: taint-sink-command-system
   message: Command execution sink - tainted data in system
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'system($tainted_data);
-
-    '
+  - pattern: 'system($COMMAND)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -507,16 +525,17 @@ rules:
     - deserialization
     - security
     vuln_class: deserialization
+
 - id: taint-sink-command-shell-exec
   message: Command execution sink - tainted data in shell_exec
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'shell_exec($tainted_data);
-
-    '
+  - pattern: 'shell_exec($COMMAND)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -532,16 +551,17 @@ rules:
     - deserialization
     - security
     vuln_class: deserialization
+
 - id: taint-sink-header-injection
   message: Header injection sink - tainted data in header function
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: 'header($tainted_data);
-
-    '
+  - pattern: 'header($HEADER)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sink
@@ -555,16 +575,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-wp-sanitize-text-field
   message: WordPress sanitizer - sanitize_text_field
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'sanitize_text_field($tainted_data)
-
-    '
+  - pattern: 'sanitize_text_field($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -579,16 +600,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-wp-sanitize-email
   message: WordPress sanitizer - sanitize_email
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'sanitize_email($tainted_data)
-
-    '
+  - pattern: 'sanitize_email($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -604,16 +626,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-wp-sanitize-url
   message: WordPress sanitizer - sanitize_url
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'sanitize_url($tainted_data)
-
-    '
+  - pattern: 'sanitize_url($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -629,16 +652,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-wp-sanitize-file-name
   message: WordPress sanitizer - sanitize_file_name
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'sanitize_file_name($tainted_data)
-
-    '
+  - pattern: 'sanitize_file_name($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -656,16 +680,17 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-sanitizer-wp-esc-html
   message: WordPress sanitizer - esc_html
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'esc_html($tainted_data)
-
-    '
+  - pattern: 'esc_html($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -682,16 +707,17 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-sanitizer-wp-esc-attr
   message: WordPress sanitizer - esc_attr
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'esc_attr($tainted_data)
-
-    '
+  - pattern: 'esc_attr($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -708,16 +734,17 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-sanitizer-wp-esc-js
   message: WordPress sanitizer - esc_js
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'esc_js($tainted_data)
-
-    '
+  - pattern: 'esc_js($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -734,16 +761,17 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-sanitizer-wp-esc-sql
   message: WordPress sanitizer - esc_sql
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'esc_sql($tainted_data)
-
-    '
+  - pattern: 'esc_sql($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -761,16 +789,17 @@ rules:
     - database
     - security
     vuln_class: sqli
+
 - id: taint-sanitizer-type-cast-int
   message: Type casting sanitizer - integer casting
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '(int)$tainted_data
-
-    '
+  - pattern: '(int)$DATA'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -786,16 +815,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-type-cast-float
   message: Type casting sanitizer - float casting
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '(float)$tainted_data
-
-    '
+  - pattern: '(float)$DATA'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -811,16 +841,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-type-cast-string
   message: Type casting sanitizer - string casting
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '(string)$tainted_data
-
-    '
+  - pattern: '(string)$DATA'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -835,16 +866,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-type-cast-array
   message: Type casting sanitizer - array casting
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: '(array)$tainted_data
-
-    '
+  - pattern: '(array)$DATA'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -859,16 +891,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-is-numeric
   message: Validation sanitizer - is_numeric check
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'is_numeric($tainted_data)
-
-    '
+  - pattern: 'is_numeric($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -884,16 +917,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-is-email
   message: Validation sanitizer - is_email check
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'is_email($tainted_data)
-
-    '
+  - pattern: 'is_email($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -908,16 +942,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-sanitizer-is-url
   message: Validation sanitizer - is_url check
   severity: INFO
   languages:
   - php
   patterns:
-
-  - pattern: 'is_url($tainted_data)
-
-    '
+  - pattern: 'is_url($DATA)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: sanitizer
@@ -932,20 +967,20 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-flow-xss-user-to-output
   message: XSS vulnerability - tainted user input flows to output
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: '$user_input = $_GET[...];
-
-    ...
-
-    echo $user_input;
-
-    '
+  - pattern: |
+      $user_input = $_GET[$KEY];
+      ...
+      echo $user_input;
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: flow
@@ -961,20 +996,20 @@ rules:
     - html
     - security
     vuln_class: xss
+
 - id: taint-flow-sql-user-to-query
   message: SQL injection vulnerability - tainted user input flows to query
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: '$user_input = $_POST[...];
-
-    ...
-
-    $wpdb->query("SELECT * FROM users WHERE id = " . $user_input);
-
-    '
+  - pattern: |
+      $user_input = $_POST[$KEY];
+      ...
+      $wpdb->query("SELECT * FROM users WHERE id = " . $user_input);
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: flow
@@ -991,20 +1026,20 @@ rules:
     - database
     - security
     vuln_class: sqli
+
 - id: taint-flow-file-user-to-include
   message: File inclusion vulnerability - tainted user input flows to include
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: '$user_input = $_GET[...];
-
-    ...
-
-    include $user_input;
-
-    '
+  - pattern: |
+      $user_input = $_GET[$KEY];
+      ...
+      include $user_input;
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: flow
@@ -1021,20 +1056,20 @@ rules:
     - path-traversal
     - security
     vuln_class: file_upload
+
 - id: taint-flow-command-user-to-exec
   message: Command injection vulnerability - tainted user input flows to exec
   severity: ERROR
   languages:
   - php
   patterns:
-
-  - pattern: '$user_input = $_POST[...];
-
-    ...
-
-    exec($user_input);
-
-    '
+  - pattern: |
+      $user_input = $_POST[$KEY];
+      ...
+      exec($user_input);
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: flow
@@ -1050,14 +1085,17 @@ rules:
     - deserialization
     - security
     vuln_class: deserialization
+
 - id: taint-config-sources
   message: Taint analysis sources configuration
   severity: INFO
   languages:
   - php
   patterns:
-
   - pattern: '$_GET'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: configuration
@@ -1070,14 +1108,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-config-sinks
   message: Taint analysis sinks configuration
   severity: INFO
   languages:
   - php
   patterns:
-
   - pattern: 'echo $VARIABLE;'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: configuration
@@ -1090,14 +1131,17 @@ rules:
     - security
     - other
     vuln_class: other
+
 - id: taint-config-sanitizers
   message: Taint analysis sanitizers configuration
   severity: INFO
   languages:
   - php
   patterns:
-
   - pattern: 'sanitize_text_field($VARIABLE)'
+  paths:
+    include:
+    - '**/*.php'
   metadata:
     category: taint-analysis
     type: configuration

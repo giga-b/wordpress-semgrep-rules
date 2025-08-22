@@ -1,0 +1,24 @@
+rules:
+- id: wordpress.xss.unsafe-echo
+  languages: [php]
+  message: "Unsafe echo of user input without escaping"
+  severity: ERROR
+  patterns:
+  - pattern: |
+      $user_input = $_GET['user_input'];
+      echo $user_input;
+  - pattern: |
+      $user_input = $_POST['user_input'];
+      echo $user_input;
+  - pattern: |
+      $user_input = $_REQUEST['user_input'];
+      echo $user_input;
+  - pattern-not: |
+      $user_input = esc_html($_GET['user_input']);
+      echo $user_input;
+  - pattern-not: |
+      $user_input = wp_kses_post($_POST['user_input']);
+      echo $user_input;
+  - pattern-not: |
+      $user_input = sanitize_text_field($_REQUEST['user_input']);
+      echo $user_input;

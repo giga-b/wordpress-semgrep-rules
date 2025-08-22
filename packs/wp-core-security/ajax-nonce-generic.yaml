@@ -1,0 +1,19 @@
+rules:
+- id: wordpress.ajax.nonce-generic
+  message: AJAX handler without nonce verification - potential CSRF vulnerability
+  severity: ERROR
+  languages:
+  - php
+  patterns:
+  - pattern-regex: "(?i)add_action\\s*\\(\\s*['\"]wp_ajax_[^'\"]+['\"]\\s*,\\s*['\"][^'\"]+['\"]\\s*\\)"
+  - pattern-not-regex: "(?i)check_ajax_referer\\s*\\("
+  - pattern-not-regex: "(?i)wp_verify_nonce\\s*\\("
+  metadata:
+    category: csrf
+    cwe: CWE-352
+    vuln_class: csrf
+    confidence: medium
+    tags: [ajax, wordpress, nonce, csrf]
+    references:
+    - https://developer.wordpress.org/plugins/security/nonces/
+    - https://codex.wordpress.org/Function_Reference/check_ajax_referer

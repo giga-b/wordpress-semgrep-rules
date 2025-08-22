@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-08-21T18:23:59",
+  "project_root": "..\\..",
+  "test_files_count": 102,
+  "configs_tested": [
+    "comprehensive-test-config.yaml"
+  ],
+  "quality_targets": {
+    "precision_min": 0.95,
+    "recall_min": 0.95,
+    "fp_rate_max": 0.05,
+    "fn_rate_max": 0.05,
+    "test_coverage_min": 1.0,
+    "baseline_stability_min": 0.99
+  },
+  "expected_total_findings": 0,
+  "results": {
+    "comprehensive-test-config.yaml": {
+      "error": "Configuration file not found: ..\\..\\configs\\comprehensive-test-config.yaml"
+    }
+  }
+}

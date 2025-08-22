@@ -1,0 +1,103 @@
+# Comprehensive Security Test Configuration
+# This combines multiple rule packs to test full coverage
+
+include:
+  # Core WordPress Security Rules
+  - ../../packs/wp-core-security/nonce-verification.yaml
+  - ../../packs/wp-core-security/capability-checks.yaml
+  - ../../packs/wp-core-security/sanitization-functions.yaml
+  - ../../packs/wp-core-security/xss-prevention.yaml
+  - ../../packs/wp-core-security/sql-injection.yaml
+  - ../../packs/wp-core-security/file-upload-generic.yaml
+  - ../../packs/wp-core-security/ajax-security.yaml
+  - ../../packs/wp-core-security/rest-api-security.yaml
+  
+  # Generic Security Rules
+  - ../../packs/wp-curated-generic/deserialization-generic.yaml
+  - ../../packs/wp-curated-generic/secrets-storage-generic.yaml
+  - ../../packs/wp-curated-generic/path-traversal-unzip-generic.yaml
+  
+  # Experimental Advanced Rules
+  - ../../packs/experimental/advanced-obfuscation-rules.yaml
+  - ../../packs/experimental/comprehensive-security-rules.yaml
+
+# Additional custom rules for comprehensive testing
+rules:
+  # XSS Detection
+  - id: wordpress.xss.unsafe-echo
+    languages: [php]
+    message: "Unsafe echo of user input without escaping"
+    severity: ERROR
+    pattern: echo $user_input;
+    metadata:
+      category: xss
+      cwe: CWE-79
+
+  # SQL Injection Detection
+  - id: wordpress.sqli.unsafe-concatenation
+    languages: [php]
+    message: "Unsafe SQL query with string concatenation"
+    severity: ERROR
+    pattern: $query = "SELECT * FROM {$wpdb->prefix}users WHERE ID = " . $user_id;
+    metadata:
+      category: sql-injection
+      cwe: CWE-89
+
+  # CSRF Detection
+  - id: wordpress.csrf.missing-nonce
+    languages: [php]
+    message: "Missing nonce verification for form submission"
+    severity: ERROR
+    pattern: if (isset($_POST['submit'])) { $data = $_POST['data']; }
+    metadata:
+      category: csrf
+      cwe: CWE-352
+
+  # Authorization Detection
+  - id: wordpress.authz.missing-capability
+    languages: [php]
+    message: "Missing capability check for sensitive operation"
+    severity: ERROR
+    pattern: if (isset($_POST['delete_user'])) { wp_delete_user($user_id); }
+    metadata:
+      category: authorization
+      cwe: CWE-285
+
+  # File Upload Detection
+  - id: wordpress.file.unsafe-upload
+    languages: [php]
+    message: "Unsafe file upload without validation"
+    severity: ERROR
+    pattern: move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+    metadata:
+      category: file-upload
+      cwe: CWE-434
+
+  # Deserialization Detection
+  - id: wordpress.deserialization.unsafe
+    languages: [php]
+    message: "Unsafe deserialization of user input"
+    severity: ERROR
+    pattern: $data = unserialize($_POST['data']);
+    metadata:
+      category: deserialization
+      cwe: CWE-502
+
+  # Dynamic Execution Detection
+  - id: wordpress.execution.eval
+    languages: [php]
+    message: "Unsafe eval usage with user input"
+    severity: ERROR
+    pattern: eval($_POST['code']);
+    metadata:
+      category: dynamic-execution
+      cwe: CWE-95
+
+  - id: wordpress.execution.create-function
+    languages: [php]
+    message: "Unsafe create_function usage with user input"
+    severity: ERROR
+    pattern: create_function('$a', $_POST['code']);
+    metadata:
+      category: dynamic-execution
+      cwe: CWE-95

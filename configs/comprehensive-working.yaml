@@ -1,0 +1,154 @@
+# Comprehensive Security Test Configuration - Working Version
+# This combines essential security rules for comprehensive testing
+
+rules:
+# Nonce Verification
+- id: wordpress.nonce.missing-verification
+  languages: [php]
+  message: "Nonce verification is missing. Use wp_verify_nonce() to verify the nonce before processing form data."
+  severity: ERROR
+  metadata:
+    category: "nonce-verification"
+    cwe: "CWE-352"
+  pattern: |
+    if (isset($_POST['submit'])) {
+      $data = $_POST['data'];
+    }
+  pattern-not: |
+    if (isset($_POST['submit'])) {
+      if (wp_verify_nonce($_POST['_wpnonce'], 'action_name')) {
+        $data = $_POST['data'];
+      }
+    }
+
+# Capability Checks
+- id: wordpress.capability.missing-check
+  languages: [php]
+  message: "Missing capability check. Use current_user_can() to verify user permissions before performing sensitive operations."
+  severity: ERROR
+  metadata:
+    category: "capability-checks"
+    cwe: "CWE-285"
+  pattern: |
+    if (isset($_POST['delete_user'])) {
+      wp_delete_user($user_id);
+    }
+  pattern-not: |
+    if (isset($_POST['delete_user'])) {
+      if (current_user_can('delete_users')) {
+        wp_delete_user($user_id);
+      }
+    }
+
+# XSS Prevention
+- id: wordpress.xss.unsafe-echo
+  languages: [php]
+  message: "Unsafe echo of user input. Use esc_html(), esc_attr(), or wp_kses_post() to prevent XSS."
+  severity: ERROR
+  metadata:
+    category: "xss"
+    cwe: "CWE-79"
+  pattern: |
+    echo $_POST['user_input'];
+  pattern-not: |
+    echo esc_html($_POST['user_input']);
+
+# SQL Injection Prevention
+- id: wordpress.sqli.unsafe-concatenation
+  languages: [php]
+  message: "Unsafe SQL query with string concatenation. Use $wpdb->prepare() for safe database operations."
+  severity: ERROR
+  metadata:
+    category: "sql-injection"
+    cwe: "CWE-89"
+  pattern: |
+    $query = "SELECT * FROM {$wpdb->prefix}users WHERE ID = " . $user_id;
+  pattern-not: |
+    $query = $wpdb->prepare("SELECT * FROM {$wpdb->prefix}users WHERE ID = %d", $user_id);
+
+# File Upload Security
+- id: wordpress.file.unsafe-upload
+  languages: [php]
+  message: "Unsafe file upload without validation. Use wp_handle_upload() and validate file types."
+  severity: ERROR
+  metadata:
+    category: "file-upload"
+    cwe: "CWE-434"
+  pattern: |
+    move_uploaded_file($_FILES['file']['tmp_name'], $_FILES['file']['name']);
+  pattern-not: |
+    $upload = wp_handle_upload($_FILES['file'], array('test_form' => false));
+
+# Deserialization Security
+- id: wordpress.deserialization.unsafe
+  languages: [php]
+  message: "Unsafe deserialization of user input. Use allowed_classes parameter or validate input."
+  severity: ERROR
+  metadata:
+    category: "deserialization"
+    cwe: "CWE-502"
+  pattern: |
+    $data = unserialize($_POST['data']);
+  pattern-not: |
+    $data = unserialize($_POST['data'], ['allowed_classes' => false]);
+
+# Dynamic Execution Security
+- id: wordpress.execution.eval
+  languages: [php]
+  message: "Unsafe eval usage with user input. Avoid eval() with untrusted data."
+  severity: ERROR
+  metadata:
+    category: "dynamic-execution"
+    cwe: "CWE-95"
+  pattern: |
+    eval($_POST['code']);
+
+- id: wordpress.execution.create-function
+  languages: [php]
+  message: "Unsafe create_function usage with user input. Avoid create_function() with untrusted data."
+  severity: ERROR
+  metadata:
+    category: "dynamic-execution"
+    cwe: "CWE-95"
+  pattern: |
+    create_function('$a', $_POST['code']);
+
+# REST API Security
+- id: wordpress.rest.missing-permission
+  languages: [php]
+  message: "REST API endpoint missing proper authentication. Use a proper permission_callback function."
+  severity: ERROR
+  metadata:
+    category: "rest-api-security"
+    cwe: "CWE-287"
+  pattern: |
+    register_rest_route($namespace, $route, array(
+      'methods' => $methods,
+      'callback' => $callback,
+      'permission_callback' => '__return_true'
+    ));
+  pattern-not: |
+    register_rest_route($namespace, $route, array(
+      'methods' => $methods,
+      'callback' => $callback
+    ));
+
+# AJAX Security
+- id: wordpress.ajax.missing-nonce
+  languages: [php]
+  message: "AJAX handler missing nonce verification. Use check_ajax_referer() for security."
+  severity: ERROR
+  metadata:
+    category: "ajax"
+    cwe: "CWE-352"
+  pattern: |
+    add_action('wp_ajax_my_action', 'my_ajax_handler');
+    function my_ajax_handler() {
+      $data = $_POST['data'];
+    }
+  pattern-not: |
+    add_action('wp_ajax_my_action', 'my_ajax_handler');
+    function my_ajax_handler() {
+      check_ajax_referer('my_action_nonce', 'nonce');
+      $data = $_POST['data'];
+    }

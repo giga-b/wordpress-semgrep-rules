@@ -5,29 +5,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "function $FUNCTION_NAME() {\n  ...\n}\n"
-  - pattern-inside: |-
-      $FILE_CONTENT
-    paths:
-      include:
-      - '**/includes/**'
-      - '**/admin/**'
-      - '**/classes/**'
-      - '**/src/**'
-    metavariable-pattern:
-      metavariable: $FILE_CONTENT
-      pattern: /\A(?!.*<<<?\s*['\"]?EOD['\"]?).*\z/s
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects standard function definitions. Used for cross-file analysis
-      to trace
-
-      callback functions and their security implementations.
-
-      '
+    description: 'Detects standard function definitions. Used for cross-file analysis to trace callback functions and their security implementations.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -42,29 +32,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "function $FUNCTION_NAME($PARAMS) {\n  ...\n}\n"
-  - pattern-inside: |-
-      $FILE_CONTENT
-    paths:
-      include:
-      - '**/includes/**'
-      - '**/admin/**'
-      - '**/classes/**'
-      - '**/src/**'
-    metavariable-pattern:
-      metavariable: $FILE_CONTENT
-      pattern: /\A(?!.*<<<?\s*['\"]?EOD['\"]?).*\z/s
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects function definitions with parameters. Used for cross-file
-      analysis
-
-      to trace callback functions that accept input parameters.
-
-      '
+    description: 'Detects function definitions with parameters. Used for cross-file analysis to trace callback functions that accept input parameters.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -79,29 +59,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "class $CLASS_NAME {\n  ...\n  function $METHOD_NAME() {\n    ...\n  }\n  ...\n}\n"
-  - pattern-inside: |-
-      $FILE_CONTENT
-    paths:
-      include:
-      - '**/includes/**'
-      - '**/admin/**'
-      - '**/classes/**'
-      - '**/src/**'
-    metavariable-pattern:
-      metavariable: $FILE_CONTENT
-      pattern: /\A(?!.*<<<?\s*['\"]?EOD['\"]?).*\z/s
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects class method definitions. Used for cross-file analysis to
-      trace
-
-      object method callbacks and their security implementations.
-
-      '
+    description: 'Detects class method definitions. Used for cross-file analysis to trace object method callbacks and their security implementations.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -116,18 +86,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "class $CLASS_NAME {\n  ...\n  function $METHOD_NAME($PARAMS) {\n    ...\n  }\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects class method definitions with parameters. Used for cross-file
-      analysis
-
-      to trace object method callbacks that accept input parameters.
-
-      '
+    description: 'Detects class method definitions with parameters. Used for cross-file analysis to trace object method callbacks that accept input parameters.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -142,18 +113,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "class $CLASS_NAME {\n  ...\n  public function $METHOD_NAME() {\n    ...\n  }\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects public class method definitions. Used for cross-file analysis
-      to trace
-
-      public object method callbacks.
-
-      '
+    description: 'Detects public class method definitions. Used for cross-file analysis to trace public object method callbacks.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -168,18 +140,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "class $CLASS_NAME {\n  ...\n  private function $METHOD_NAME() {\n    ...\n  }\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects private class method definitions. Used for cross-file analysis
-      to trace
-
-      private object method callbacks.
-
-      '
+    description: 'Detects private class method definitions. Used for cross-file analysis to trace private object method callbacks.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -194,18 +167,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "class $CLASS_NAME {\n  ...\n  protected function $METHOD_NAME() {\n    ...\n  }\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects protected class method definitions. Used for cross-file
-      analysis to trace
-
-      protected object method callbacks.
-
-      '
+    description: 'Detects protected class method definitions. Used for cross-file analysis to trace protected object method callbacks.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -220,18 +194,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "class $CLASS_NAME {\n  ...\n  static function $METHOD_NAME() {\n    ...\n  }\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects static class method definitions. Used for cross-file analysis
-      to trace
-
-      static object method callbacks.
-
-      '
+    description: 'Detects static class method definitions. Used for cross-file analysis to trace static object method callbacks.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -246,18 +221,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "function() {\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects anonymous function definitions. Used for cross-file analysis
-      to trace
-
-      anonymous function callbacks.
-
-      '
+    description: 'Detects anonymous function definitions. Used for cross-file analysis to trace anonymous function callbacks.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -272,18 +248,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: "function($PARAMS) {\n  ...\n}\n"
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects anonymous function definitions with parameters. Used for
-      cross-file analysis
-
-      to trace anonymous function callbacks that accept input parameters.
-
-      '
+    description: 'Detects anonymous function definitions with parameters. Used for cross-file analysis to trace anonymous function callbacks that accept input parameters.'
     confidence: high
     cwe: CWE-200
     tags:
@@ -298,18 +275,19 @@ rules:
   languages:
   - php
   patterns:
-
   - pattern: 'function($PARAMS) { return $EXPRESSION; }'
+  paths:
+    include:
+    - '**/includes/**'
+    - '**/admin/**'
+    - '**/classes/**'
+    - '**/src/**'
+    - '**/tests/**'
   metadata:
     category: callback-tracing
     technology:
     - wordpress
-    description: 'Detects arrow function definitions. Used for cross-file analysis
-      to trace
-
-      arrow function callbacks.
-
-      '
+    description: 'Detects arrow function definitions. Used for cross-file analysis to trace arrow function callbacks.'
     confidence: high
     cwe: CWE-200
     tags:

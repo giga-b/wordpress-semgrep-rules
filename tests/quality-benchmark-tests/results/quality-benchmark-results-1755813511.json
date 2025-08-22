@@ -1,0 +1,1043 @@
+{
+  "timestamp": "2025-08-21T17:57:13",
+  "project_root": "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules",
+  "test_files_count": 100,
+  "configs_tested": [
+    "basic.yaml",
+    "optimized-15s.yaml",
+    "optimized-30s.yaml",
+    "performance-optimized.yaml",
+    "plugin-development.yaml",
+    "strict.yaml"
+  ],
+  "quality_targets": {
+    "precision_min": 0.95,
+    "recall_min": 0.95,
+    "fp_rate_max": 0.05,
+    "fn_rate_max": 0.05,
+    "test_coverage_min": 1.0,
+    "baseline_stability_min": 0.99
+  },
+  "expected_total_findings": 0,
+  "results": {
+    "basic.yaml": {
+      "scan_result": {
+        "success": true,
+        "findings": {
+          "version": "1.132.1",
+          "results": [],
+          "errors": [],
+          "paths": {
+            "scanned": [
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-authz.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-csrf.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-sqli.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-xss.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-nonce-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-csrf-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-no-capability.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-rest-permission.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-authz-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-csrf-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-file-upload-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-sqli-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-xss-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\create-function-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-admin-post.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-ajax.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\deserialization-unsafe.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-extension-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-no-validation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-basic.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-csrf-authz-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-no-permissions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-admin-page.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-callback.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-basic-functions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-capability-check.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-cron-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-database-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-email-sending.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-form-processing.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-hook-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-meta-handling.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-option-storage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-activation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-deactivation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-redirect.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-rest-endpoint.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-shortcode.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-template-file.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-widget-render.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-deserialization-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-meta.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-options.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-basic-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-concatenation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-authz-file-upload-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-rest-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-union.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-wpdb-prepare-misuse.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-authz-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-csrf-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-file-upload-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-sqli-encoding.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-xss-obfuscation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-attribute-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-authz-file-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-javascript-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-reflected.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-stored.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-url-context.php"
+            ]
+          },
+          "time": {
+            "rules": [],
+            "rules_parse_time": 0.03208112716674805,
+            "profiling_times": {
+              "config_time": 0.3337514400482178,
+              "core_time": 12.204221248626709,
+              "ignores_time": 5.602836608886719e-05,
+              "total_time": 12.542145013809204
+            },
+            "parsing_time": {
+              "total_time": 0.08269476890563965,
+              "per_file_time": {
+                "mean": 0.0008438241725065277,
+                "std_dev": 1.3487444825554104e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "scanning_time": {
+              "total_time": 0.18523478507995605,
+              "per_file_time": {
+                "mean": 0.00185234785079956,
+                "std_dev": 2.348648480045768e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "matching_time": {
+              "total_time": 0.046419382095336914,
+              "per_file_and_rule_time": {
+                "mean": 0.0001251196282893179,
+                "std_dev": 1.4999266922592174e-07
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_files": []
+            },
+            "tainting_time": {
+              "total_time": 0.0,
+              "per_def_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_defs": []
+            },
+            "fixpoint_timeouts": [],
+            "targets": [],
+            "total_bytes": 0,
+            "max_memory_bytes": 87110144
+          },
+          "engine_requested": "OSS",
+          "interfile_languages_used": [],
+          "skipped_rules": []
+        },
+        "duration": 15.014671802520752,
+        "config": "basic.yaml",
+        "files_scanned": 100
+      },
+      "analysis": {
+        "analysis_success": true,
+        "total_findings": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1_score": 0,
+        "fp_rate": 0,
+        "fn_rate": 0,
+        "findings_per_file": {},
+        "quality_targets_met": {
+          "precision": false,
+          "recall": false,
+          "fp_rate": true,
+          "fn_rate": true
+        }
+      }
+    },
+    "optimized-15s.yaml": {
+      "scan_result": {
+        "success": true,
+        "findings": {
+          "version": "1.132.1",
+          "results": [],
+          "errors": [],
+          "paths": {
+            "scanned": [
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-authz.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-csrf.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-sqli.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-xss.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-nonce-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-csrf-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-no-capability.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-rest-permission.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-authz-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-csrf-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-file-upload-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-sqli-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-xss-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\create-function-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-admin-post.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-ajax.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\deserialization-unsafe.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-extension-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-no-validation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-basic.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-csrf-authz-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-no-permissions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-admin-page.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-callback.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-basic-functions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-capability-check.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-cron-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-database-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-email-sending.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-form-processing.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-hook-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-meta-handling.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-option-storage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-activation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-deactivation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-redirect.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-rest-endpoint.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-shortcode.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-template-file.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-widget-render.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-deserialization-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-meta.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-options.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-basic-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-concatenation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-authz-file-upload-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-rest-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-union.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-wpdb-prepare-misuse.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-authz-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-csrf-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-file-upload-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-sqli-encoding.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-xss-obfuscation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-attribute-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-authz-file-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-javascript-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-reflected.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-stored.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-url-context.php"
+            ]
+          },
+          "time": {
+            "rules": [],
+            "rules_parse_time": 0.01599860191345215,
+            "profiling_times": {
+              "config_time": 0.27196812629699707,
+              "core_time": 12.27579402923584,
+              "ignores_time": 2.0265579223632812e-05,
+              "total_time": 12.55266547203064
+            },
+            "parsing_time": {
+              "total_time": 0.012012720108032227,
+              "per_file_time": {
+                "mean": 0.0030031800270080566,
+                "std_dev": 1.6518360393291687e-05
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "scanning_time": {
+              "total_time": 0.03400015830993652,
+              "per_file_time": {
+                "mean": 0.00034000158309936533,
+                "std_dev": 2.065308586060155e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "matching_time": {
+              "total_time": 0.003996133804321289,
+              "per_file_and_rule_time": {
+                "mean": 0.0009990334510803223,
+                "std_dev": 2.994203509132376e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_files": []
+            },
+            "tainting_time": {
+              "total_time": 0.0,
+              "per_def_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_defs": []
+            },
+            "fixpoint_timeouts": [],
+            "targets": [],
+            "total_bytes": 0,
+            "max_memory_bytes": 68526144
+          },
+          "engine_requested": "OSS",
+          "interfile_languages_used": [],
+          "skipped_rules": []
+        },
+        "duration": 14.900750398635864,
+        "config": "optimized-15s.yaml",
+        "files_scanned": 100
+      },
+      "analysis": {
+        "analysis_success": true,
+        "total_findings": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1_score": 0,
+        "fp_rate": 0,
+        "fn_rate": 0,
+        "findings_per_file": {},
+        "quality_targets_met": {
+          "precision": false,
+          "recall": false,
+          "fp_rate": true,
+          "fn_rate": true
+        }
+      }
+    },
+    "optimized-30s.yaml": {
+      "scan_result": {
+        "success": true,
+        "findings": {
+          "version": "1.132.1",
+          "results": [],
+          "errors": [],
+          "paths": {
+            "scanned": [
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-authz.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-csrf.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-sqli.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-xss.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-nonce-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-csrf-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-no-capability.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-rest-permission.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-authz-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-csrf-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-file-upload-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-sqli-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-xss-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\create-function-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-admin-post.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-ajax.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\deserialization-unsafe.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-extension-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-no-validation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-basic.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-csrf-authz-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-no-permissions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-admin-page.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-callback.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-basic-functions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-capability-check.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-cron-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-database-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-email-sending.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-form-processing.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-hook-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-meta-handling.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-option-storage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-activation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-deactivation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-redirect.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-rest-endpoint.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-shortcode.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-template-file.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-widget-render.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-deserialization-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-meta.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-options.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-basic-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-concatenation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-authz-file-upload-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-rest-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-union.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-wpdb-prepare-misuse.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-authz-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-csrf-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-file-upload-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-sqli-encoding.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-xss-obfuscation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-attribute-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-authz-file-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-javascript-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-reflected.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-stored.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-url-context.php"
+            ]
+          },
+          "time": {
+            "rules": [],
+            "rules_parse_time": 0.024471521377563477,
+            "profiling_times": {
+              "config_time": 0.2711153030395508,
+              "core_time": 12.071234464645386,
+              "ignores_time": 2.9325485229492188e-05,
+              "total_time": 12.346984624862671
+            },
+            "parsing_time": {
+              "total_time": 0.04974722862243652,
+              "per_file_time": {
+                "mean": 0.0009949445724487306,
+                "std_dev": 1.4712775788439106e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "scanning_time": {
+              "total_time": 0.07301783561706543,
+              "per_file_time": {
+                "mean": 0.0007301783561706542,
+                "std_dev": 1.943450914831146e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "matching_time": {
+              "total_time": 0.006103038787841797,
+              "per_file_and_rule_time": {
+                "mean": 0.00011515167524229805,
+                "std_dev": 3.3022229108474205e-07
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_files": []
+            },
+            "tainting_time": {
+              "total_time": 0.0,
+              "per_def_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_defs": []
+            },
+            "fixpoint_timeouts": [],
+            "targets": [],
+            "total_bytes": 0,
+            "max_memory_bytes": 75051520
+          },
+          "engine_requested": "OSS",
+          "interfile_languages_used": [],
+          "skipped_rules": []
+        },
+        "duration": 14.72007417678833,
+        "config": "optimized-30s.yaml",
+        "files_scanned": 100
+      },
+      "analysis": {
+        "analysis_success": true,
+        "total_findings": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1_score": 0,
+        "fp_rate": 0,
+        "fn_rate": 0,
+        "findings_per_file": {},
+        "quality_targets_met": {
+          "precision": false,
+          "recall": false,
+          "fp_rate": true,
+          "fn_rate": true
+        }
+      }
+    },
+    "performance-optimized.yaml": {
+      "scan_result": {
+        "success": false,
+        "error": "Semgrep failed with return code 7",
+        "stdout": "{\"version\":\"1.132.1\",\"results\":[],\"errors\":[{\"code\":4,\"level\":\"error\",\"type\":\"InvalidRuleSchemaError\",\"long_msg\":\"One of these properties is missing: 'rules'\",\"short_msg\":\"Invalid rule schema\",\"spans\":[{\"file\":\"C:\\\\Users\\\\mobet\\\\DevProjects\\\\wordpress-semgrep-rules\\\\configs\\\\performance-optimized.yaml\",\"start\":{\"line\":5,\"col\":1,\"offset\":-1},\"end\":{\"line\":47,\"col\":1,\"offset\":-1},\"source_hash\":\"e2bd42a9653be0c745036039e7d83f223ed843dffdf37e397b32d61706cd0743\"}]},{\"code\":7,\"level\":\"error\",\"type\":\"SemgrepError\",\"message\":\"invalid configuration file found (1 configs were invalid)\"}],\"paths\":{\"scanned\":[]},\"engine_requested\":\"OSS\",\"skipped_rules\":[]}\n",
+        "stderr": "[00.07][WARNING](ca-certs): Ignored 1 trust anchors.\nC:\\Users\\mobet\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\opentelemetry\\instrumentation\\dependencies.py:4: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.\n  from pkg_resources import (\n",
+        "duration": 2.8504343032836914,
+        "config": "performance-optimized.yaml"
+      },
+      "analysis": {
+        "analysis_success": false,
+        "error": "Semgrep failed with return code 7"
+      }
+    },
+    "plugin-development.yaml": {
+      "scan_result": {
+        "success": true,
+        "findings": {
+          "version": "1.132.1",
+          "results": [],
+          "errors": [],
+          "paths": {
+            "scanned": [
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-authz.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-csrf.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-sqli.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-xss.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-nonce-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-csrf-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-no-capability.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-rest-permission.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-authz-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-csrf-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-file-upload-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-sqli-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-xss-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\create-function-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-admin-post.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-ajax.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\deserialization-unsafe.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-extension-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-no-validation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-basic.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-csrf-authz-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-no-permissions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-admin-page.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-callback.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-basic-functions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-capability-check.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-cron-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-database-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-email-sending.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-form-processing.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-hook-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-meta-handling.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-option-storage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-activation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-deactivation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-redirect.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-rest-endpoint.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-shortcode.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-template-file.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-widget-render.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-deserialization-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-meta.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-options.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-basic-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-concatenation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-authz-file-upload-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-rest-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-union.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-wpdb-prepare-misuse.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-authz-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-csrf-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-file-upload-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-sqli-encoding.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-xss-obfuscation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-attribute-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-authz-file-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-javascript-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-reflected.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-stored.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-url-context.php"
+            ]
+          },
+          "time": {
+            "rules": [],
+            "rules_parse_time": 0.015910863876342773,
+            "profiling_times": {
+              "config_time": 0.13563323020935059,
+              "core_time": 12.320365905761719,
+              "ignores_time": 3.719329833984375e-05,
+              "total_time": 12.461547374725342
+            },
+            "parsing_time": {
+              "total_time": 0.0645301342010498,
+              "per_file_time": {
+                "mean": 0.0012906026840209957,
+                "std_dev": 3.1625938770275766e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "scanning_time": {
+              "total_time": 0.0955207347869873,
+              "per_file_time": {
+                "mean": 0.0009552073478698734,
+                "std_dev": 3.6119338793184847e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "matching_time": {
+              "total_time": 0.007019996643066406,
+              "per_file_and_rule_time": {
+                "mean": 0.0001231578358432702,
+                "std_dev": 4.59174457992256e-07
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_files": []
+            },
+            "tainting_time": {
+              "total_time": 0.0,
+              "per_def_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_defs": []
+            },
+            "fixpoint_timeouts": [],
+            "targets": [],
+            "total_bytes": 0,
+            "max_memory_bytes": 76100096
+          },
+          "engine_requested": "OSS",
+          "interfile_languages_used": [],
+          "skipped_rules": []
+        },
+        "duration": 14.92761516571045,
+        "config": "plugin-development.yaml",
+        "files_scanned": 100
+      },
+      "analysis": {
+        "analysis_success": true,
+        "total_findings": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1_score": 0,
+        "fp_rate": 0,
+        "fn_rate": 0,
+        "findings_per_file": {},
+        "quality_targets_met": {
+          "precision": false,
+          "recall": false,
+          "fp_rate": true,
+          "fn_rate": true
+        }
+      }
+    },
+    "strict.yaml": {
+      "scan_result": {
+        "success": true,
+        "findings": {
+          "version": "1.132.1",
+          "results": [],
+          "errors": [],
+          "paths": {
+            "scanned": [
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-authz.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-csrf.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-sqli.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\advanced-obfuscation-xss.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ajax-nonce-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-csrf-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-no-capability.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\authz-rest-permission.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-authz-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-csrf-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-file-upload-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-sqli-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\complex-xss-chain.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\create-function-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\cross-file-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-admin-post.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-ajax.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\csrf-no-nonce.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\deserialization-unsafe.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\edge-case-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-path-traversal-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-deserialization-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\eval-usage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-extension-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-no-validation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\file-upload-xss-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\mega-vulnerability-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-basic.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\path-traversal-xss-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\performance-test-large-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-ajax-csrf-authz-secrets-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\rest-no-permissions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-admin-page.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-callback.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-ajax-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-basic-functions.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-capability-check.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-cron-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-database-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-email-sending.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-file-upload.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-form-processing.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-hook-handler.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-meta-handling.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-option-storage.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-activation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-plugin-deactivation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-redirect.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-rest-endpoint.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-shortcode.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-template-file.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\safe-widget-render.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-deserialization-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-meta.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\secrets-in-options.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-basic-query.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-concatenation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-authz-file-upload-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-csrf-rest-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-union.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\sqli-wpdb-prepare-misuse.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-authz-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-csrf-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-file-upload-bypass.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-sqli-encoding.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\subtle-xss-obfuscation.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-1.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-2.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-3.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-4.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\ultra-complex-5.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-attribute-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-authz-file-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-basic-output.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-javascript-context.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-reflected.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-sqli-csrf-authz-combo.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-stored.php",
+              "C:\\Users\\mobet\\DevProjects\\wordpress-semgrep-rules\\tests\\quality-benchmark-tests\\xss-url-context.php"
+            ]
+          },
+          "time": {
+            "rules": [],
+            "rules_parse_time": 0.01709890365600586,
+            "profiling_times": {
+              "config_time": 0.14046597480773926,
+              "core_time": 12.732982635498047,
+              "ignores_time": 2.6702880859375e-05,
+              "total_time": 12.880154132843018
+            },
+            "parsing_time": {
+              "total_time": 0.08401775360107422,
+              "per_file_time": {
+                "mean": 0.0008843974063270971,
+                "std_dev": 1.3560243499636357e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "scanning_time": {
+              "total_time": 0.13332796096801758,
+              "per_file_time": {
+                "mean": 0.0013332796096801756,
+                "std_dev": 2.2507108444415293e-06
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_files": []
+            },
+            "matching_time": {
+              "total_time": 0.014182090759277344,
+              "per_file_and_rule_time": {
+                "mean": 7.23576059146803e-05,
+                "std_dev": 7.952870883699529e-08
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_files": []
+            },
+            "tainting_time": {
+              "total_time": 0.0,
+              "per_def_and_rule_time": {
+                "mean": 0.0,
+                "std_dev": 0.0
+              },
+              "very_slow_stats": {
+                "time_ratio": 0.0,
+                "count_ratio": 0.0
+              },
+              "very_slow_rules_on_defs": []
+            },
+            "fixpoint_timeouts": [],
+            "targets": [],
+            "total_bytes": 0,
+            "max_memory_bytes": 83964416
+          },
+          "engine_requested": "OSS",
+          "interfile_languages_used": [],
+          "skipped_rules": []
+        },
+        "duration": 15.349257230758667,
+        "config": "strict.yaml",
+        "files_scanned": 100
+      },
+      "analysis": {
+        "analysis_success": true,
+        "total_findings": 0,
+        "true_positives": 0,
+        "false_positives": 0,
+        "false_negatives": 0,
+        "precision": 0,
+        "recall": 0,
+        "f1_score": 0,
+        "fp_rate": 0,
+        "fn_rate": 0,
+        "findings_per_file": {},
+        "quality_targets_met": {
+          "precision": false,
+          "recall": false,
+          "fp_rate": true,
+          "fn_rate": true
+        }
+      }
+    }
+  }
+}
